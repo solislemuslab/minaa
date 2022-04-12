@@ -1,12 +1,18 @@
+// mna.cpp
+// Microbial Network Alignment
+// Reed Nelson
+
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <iostream>
 #include <fstream>
-#include <algorithm>
+#include <iostream>
 
-#include "orca.h"
+// #include "top_sim.h"
+#include "orca.h"  // debug
 
 using namespace std;
 
@@ -15,22 +21,20 @@ using namespace std;
  * char* input file 2
  * char* output location
  */
-int main(int argc, char* argv[])
-{
-    if (argc != 4) {
-		cerr << "Incorrect number of arguments." << endl;
-		cerr << "Usage: mna.exe [graph 1 - input file] [graph 2 - input file] [alignment - output file]" << endl;
-		return 0;
-	}
- 
-	char* afin = argv[1];
-	char* bfin = argv[2];
-	char* fout = argv[3]; 
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cerr << "Incorrect number of arguments." << endl;
+        cerr << "Usage: mna.exe [graph 1 - input file] [graph 2 - input file]" << endl;
+        return 0;
+    }
 
-	char* afout = "orbit-counts.out"; 
-	char* bfout = "orbit-counts.out"; 
+    char* gfin = argv[1];  // graph G file input
+    char* hfin = argv[2];  // graph H file input
 
-	orca(afin, afout);
- 
+    orca(gfin);  // debug (circumvent top_sim)
+
+    // Calculate the topological similarity matrix
+    // top_sim(gfin, hfin);
+
     return 0;
 }

@@ -1,15 +1,27 @@
+/* orca.cpp
+ * This code was modified from its original form.
+ * The original code for ORCA is available at https://github.com/thocevar/orca.
+ */
+
+/* Runtime Complexity (for graphlet order 5)
+ * n = number of nodes in the graph
+ * d = maximum node degree
+ * GraphCrunch: O(nd^4)
+ * ORCA:        O(nd^3)
+ */
+
+#include "orca.h"
+
+#include <algorithm>
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 #include <ctime>
+#include <fstream>
 #include <iostream>
-#include <fstream> 
 #include <set>
 #include <unordered_map>
-#include <algorithm>
-
-#include "orca.h"
 
 using namespace std;
 
@@ -95,10 +107,8 @@ int *adj_matrix;  // compressed adjacency matrix
 const int adj_chunk = 8 * sizeof(int);
 bool adjacent_matrix(int x, int y) { return adj_matrix[(x * n + y) / adj_chunk] & (1 << ((x * n + y) % adj_chunk)); }
 bool (*adjacent)(int, int);
-int getEdgeId(int x, int y) { return inc[x][lower_bound(adj[x], adj[x] + deg[x], y) - adj[x]].second; }
 
-int64 **orbit;   // orbit[x][o] - how many times does node x participate in orbit o
-int64 **eorbit;  // eorbit[x][o] - how many times does node x participate in edge orbit o
+int64 **orbit;  // orbit[x][o] - how many times does node x participate in orbit o
 
 /** count graphlets on max 5 nodes */
 void count() {
@@ -529,18 +539,18 @@ void count() {
 
 fstream fin, fout;  // input and output files
 
-int init(char* afin, char* afout) {
+int init(char *afin, char *afout) {
     // open input, output files
     fin.open(afin, fstream::in);
     fout.open(afout, fstream::out | fstream::binary);
 
     if (fin.fail()) {
-        cerr << "Failed to open file " << afin << endl;  // R: may be incorrect arg
+        cerr << "Failed to open file " << afin << endl;
         return 0;
     }
 
     if (fout.fail()) {
-        cerr << "Failed to open file " << afout << endl;  // R: may be incorrect arg
+        cerr << "Failed to open file " << afout << endl;
         return 0;
     }
 
@@ -621,19 +631,16 @@ int init(char* afin, char* afout) {
 
     // initialize orbit counts
     orbit = (int64 **)malloc(n * sizeof(int64 *));
-    for (int i = 0; i < n; i++) orbit[i] = (int64 *)calloc(73, sizeof(int64));
-
-    // initialize edge orbit counts
-    eorbit = (int64 **)malloc(m * sizeof(int64 *));
-    for (int i = 0; i < m; i++) eorbit[i] = (int64 *)calloc(68, sizeof(int64));
+    for (int i = 0; i < n; i++) {
+        orbit[i] = (int64 *)calloc(73, sizeof(int64));
+    }
 
     return 1;
 }
 
 void writeResults() {
-    int no[] = {0, 0, 1, 4, 15, 73};
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < no[5]; j++) {
+        for (int j = 0; j < 73; j++) {
             if (j != 0) fout << " ";
             fout << orbit[i][j];
         }
@@ -642,16 +649,28 @@ void writeResults() {
     fout.close();
 }
 
-int orca(char* afin, char* afout) {
+/* [IMPLEMENTATION NEEDED]
+ * Reurn a name for the output file based on the input file
+ */
+char *fout_name(char *afin) {
+    return "orbit-counts.out";
+}
+
+/*
+ * Calculate the Graphlet Degree Vector (GDV) for the given graph
+ * Return the pointer to the array
+ */
+int64 **orca(char *afin) {
+    char *afout = fout_name(afin);
 
     if (!init(afin, afout)) {
         cerr << "Stopping!" << endl;
-        return 1;
+        return NULL;
     }
 
-	printf("Counting orbits of graphlets on 5 nodes.\n");
-	count();
-	writeResults();
+    printf("Counting orbits of graphlets on 5 nodes.\n");
+    count();
+    writeResults();
 
-    return 0;
+    return orbit;
 }
