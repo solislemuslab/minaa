@@ -15,7 +15,7 @@
 
 using namespace std;
 
-const int* O = {0, 0};  // Awaiting Milenkovic
+const double O[73] = {1, 2, 2, 2, 3, 4, 3, 3, 4, 3, 4, 4, 4, 4, 3, 4, 6, 5, 4, 5, 6, 6, 4, 4, 4, 5, 7, 4, 6, 6, 7, 4, 6, 6, 6, 5, 6, 7, 7, 5, 7, 6, 7, 6, 5, 5, 6, 8, 7, 6, 6, 8, 6, 9, 5, 6, 4, 6, 6, 7, 8, 6, 6, 8, 7, 6, 7, 7, 8, 5, 6, 6, 4};  // Awaiting Milenkovic
 const double alpha = 0.5;
 
 int64** G_gdvs;  // the GDVs for nodes in G
@@ -35,7 +35,7 @@ double weight(int i) {
 /*
  * The distance between the ith orbits of nodes v and u.
  */
-double distance(int vi, int ui) {
+double distance(int vi, int ui, int i) {
     double ret;
     ret = log10(vi + 1) - log10(ui + 1);
     ret = abs(ret);
@@ -51,7 +51,7 @@ double distance(int vi, int ui) {
 double similarity(int* v, int* u) {
     double dist = 0;
     for (int i = 0; i < 73; i++) {
-        dist += distance(v[i], u[i]);
+        dist += distance(v[i], u[i], i);
     }
 
     double wei = 0;
@@ -67,7 +67,7 @@ double similarity(int* v, int* u) {
  */
 double cost(int* v, int* u) {
     double node_degs;
-    node_degs = (v[0] + u[0]) / max_deg_G + max_deg_H);
+    node_degs = (v[0] + u[0]) / (G_max_deg + H_max_deg);
 
     return (1 - alpha) * node_degs + alpha * similarity(v, u);
 }
@@ -120,12 +120,12 @@ int** parse(char* filestr) {
  */
 void init() {
     // Calculate the number of nodes in G and H
-    G_order = G[0][0];  // need to figure out how to calculate this now. Could do in parse but that'd be ugly
-    H_order = H[0][0];
+    G_order = size(G_gdvs);  // need to figure out how to calculate this now. Could do in parse but that'd be ugly
+    H_order = size(H_gdvs);
 
     // Calculate the highest degree among all the nodes in G, H
-    G_max_deg = max_deg(sigs_G, order_G);
-    H_max_deg = max_deg(sigs_H, order_H);
+    G_max_deg = max_deg(G_gdvs, G_order);
+    H_max_deg = max_deg(G_gdvs, H_order);
 }
 
 /*
@@ -140,8 +140,8 @@ double** top_sim(char* gfin, char* hfin) {
 
     // Calculate the cost matrix for G and H
     double** cost_matrix;
-    for (int i = 0; i < order_G; i++) {
-        for (int j = 0; j < order_H; j++) {
+    for (int i = 0; i < G_order; i++) {
+        for (int j = 0; j < H_order; j++) {
             cost_matrix[i][j] = cost(G_gdvs[i], H_gdvs[j]);
         }
     }

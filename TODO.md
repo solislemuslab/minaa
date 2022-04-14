@@ -10,11 +10,8 @@
     - [ ] Implement a means of automatically generating an output file name from the input name
 - [ ] Generate the constant O vector needed for the GRAAL score function
 - [ ] Implement the GRAAL score function
-  - [ ] w_i
-  - [ ] D_i(v, u)
-  - [ ] D(v, u)
-  - [ ] S(v, u)
-  - [ ] C(v, u)
+  - [x] Write w_i, D_i(v, u), D(v, u), S(v, u), C(v, u) into code
+  - [ ] Get all data flowing in and out correctly
 - [ ] Implement the Alignment function
 - [ ] Glue distinct components together
   - [ ] Decide what file types / graph representations we want where
@@ -28,7 +25,9 @@
 - top_sim is a bad name, probably.
 - Clean up in other ways...throw out unnecessary includes...
 - Maybe change some char* to strings...
-- Change a bunch of things so top_sim looks like proper C++, not C (oops)
+- Change a bunch of things so top_sim looks like proper C++, not C (oops).
+- Figure out the cleanest means of calculating the order of the input networks.
+- Change from int64 somwhere along the way...doesn't playb well in top_sim, and no reason to be that big anyway (I think).
 
 Currently, ORCA is passing its heap allocated array of GDV's "int64** orbit" directly to top_sim.
 The alternative would be to store it in a file, and then read that file in top_sim.

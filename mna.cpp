@@ -11,8 +11,8 @@
 #include <fstream>
 #include <iostream>
 
-// #include "top_sim.h"
-#include "orca.h"  // debug
+#include "top_sim.h"
+// #include "orca.h"  // debug
 
 using namespace std;
 
@@ -31,10 +31,14 @@ int main(int argc, char* argv[]) {
     char* gfin = argv[1];  // graph G file input
     char* hfin = argv[2];  // graph H file input
 
-    orca(gfin);  // debug (circumvent top_sim)
+    // orca(gfin);  // debug (circumvent top_sim)
 
     // Calculate the topological similarity matrix
-    // top_sim(gfin, hfin);
+    top_sim(gfin, hfin);
+
+    // Calculate the biological similarity matrix
+
+    // Run the alignment algorithm
 
     return 0;
 }
