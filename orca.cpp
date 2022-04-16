@@ -22,6 +22,7 @@
 #include <iostream>
 #include <set>
 #include <unordered_map>
+#include <string>
 
 using namespace std;
 
@@ -539,10 +540,10 @@ void count() {
 
 fstream fin, fout;  // input and output files
 
-int init(char *afin, char *afout) {
+int init(string afin, string afout) {
     // open input, output files
-    fin.open(afin, fstream::in);
-    fout.open(afout, fstream::out | fstream::binary);
+    fin.open(afin.c_str(), fstream::in);
+    fout.open(afout.c_str(), fstream::out | fstream::binary);
 
     if (fin.fail()) {
         cerr << "Failed to open file " << afin << endl;
@@ -649,19 +650,28 @@ void writeResults() {
     fout.close();
 }
 
-/* [IMPLEMENTATION NEEDED]
+/*
  * Reurn a name for the output file based on the input file
+ * If the input file is "path/to/input.in", the output file should be "path/to/input.out"
  */
-char *fout_name(char *afin) {
-    return "orbit-counts.out";
+string fout_name(string afin) {
+
+    string st = afin.substr(0, afin.size() - 2);
+    st += "out";
+
+    return st;
 }
 
 /*
  * Calculate the Graphlet Degree Vector (GDV) for the given graph
  * Return the pointer to the array
  */
-int64 **orca(char *afin) {
-    char *afout = fout_name(afin);
+string orca(string afin) {
+    string  afout = fout_name(afin);
+    //std::string rfout = std::string(afout);
+
+    printf("afin:%s;\n", afin.c_str()); //debug
+    printf("afout:%s;\n", afout.c_str()); //debug
 
     if (!init(afin, afout)) {
         cerr << "Stopping!" << endl;
@@ -672,5 +682,5 @@ int64 **orca(char *afin) {
     count();
     writeResults();
 
-    return orbit;
+    return afout;
 }

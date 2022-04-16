@@ -10,6 +10,7 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 #include "top_sim.h"
 // #include "orca.h"  // debug
@@ -28,8 +29,8 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    char* gfin = argv[1];  // graph G file input
-    char* hfin = argv[2];  // graph H file input
+    string gfin = std::string(argv[1]);  // graph G file input
+    string hfin = std::string(argv[2]);  // graph H file input
 
     // orca(gfin);  // debug (circumvent top_sim)
 

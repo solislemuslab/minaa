@@ -1,8 +1,8 @@
 #ifndef ORCA_H  
 #define ORCA_H
 
-typedef long long int64;
+#include <string>
 
-int64** orca(char* afin);
+std::string orca(std::string afin);
 
 #endif
