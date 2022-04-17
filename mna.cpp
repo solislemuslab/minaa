@@ -13,14 +13,12 @@
 #include <string>
 
 #include "top_sim.h"
-// #include "orca.h"  // debug
 
 using namespace std;
 
 /*
  * char* input file 1
  * char* input file 2
- * char* output location
  */
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -31,8 +29,6 @@ int main(int argc, char* argv[]) {
 
     string gfin = std::string(argv[1]);  // graph G file input
     string hfin = std::string(argv[2]);  // graph H file input
-
-    // orca(gfin);  // debug (circumvent top_sim)
 
     // Calculate the topological similarity matrix
     top_sim(gfin, hfin);

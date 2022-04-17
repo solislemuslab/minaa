@@ -6,3 +6,6 @@
 
 # ignore all .in files
 *.in
+
+# ignore all .txt files
+*.txt

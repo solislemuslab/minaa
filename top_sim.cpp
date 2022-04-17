@@ -20,14 +20,14 @@ using namespace std;
 const double O[73] = {1, 2, 2, 2, 3, 4, 3, 3, 4, 3, 4, 4, 4, 4, 3, 4, 6, 5, 4, 5, 6, 6, 4, 4, 4, 5, 7, 4, 6, 6, 7, 4, 6, 6, 6, 5, 6, 7, 7, 5, 7, 6, 7, 6, 5, 5, 6, 8, 7, 6, 6, 8, 6, 9, 5, 6, 4, 6, 6, 7, 8, 6, 6, 8, 7, 6, 7, 7, 8, 5, 6, 6, 4};
 const double alpha = 0.5;
 
-string G_gdvs_f; // the file containing G's gdvs
-string H_gdvs_f; // the file containing H's gdvs
-std::vector<std::array<int, 73>> G_gdvs;  // the GDVs for nodes in G
-std::vector<std::array<int, 73>> H_gdvs;  // the GDVs for nodes in H
-int G_order;     // the number of nodes in G
-int H_order;     // the number of nodes in H
-int G_max_deg;   // the highest degree among all the nodes in G
-int H_max_deg;   // the highest degree among all the nodes in G
+string G_gdvs_f;                         // the file containing G's gdvs
+string H_gdvs_f;                         // the file containing H's gdvs
+std::vector<std::array<int, 73>> G_gdvs; // the GDVs for nodes in G
+std::vector<std::array<int, 73>> H_gdvs; // the GDVs for nodes in H
+int G_order;                             // the number of nodes in G
+int H_order;                             // the number of nodes in H
+int G_max_deg;                           // the highest degree among all the nodes in G
+int H_max_deg;                           // the highest degree among all the nodes in H
 
 /*
  * The weight of orbit i, accounting for dependencies between orbits.
@@ -40,6 +40,9 @@ double weight(int i) {
  * The distance between the ith orbits of nodes v and u.
  */
 double distance(int vi, int ui, int i) {
+
+    //printf("vi: %i; ui: %i;\n", vi, ui); // debug
+
     double ret;
     ret = log10(vi + 1) - log10(ui + 1);
     ret = abs(ret);
@@ -91,7 +94,7 @@ int max_deg(std::vector<std::array<int, 73>> gdvs, int graph_order) {
 }
 
 /*
- * Parse the file at the given path into a heap allocated integer matrix
+ * Parse the file at the given path into a vector of integer arrays.
  * https://www.cplusplus.com/reference/fstream/ifstream/
  * https://www.internalpointers.com/post/beginner-s-look-smart-pointers-modern-c
  */
@@ -103,19 +106,15 @@ std::vector<std::array<int, 73>> parse(string filestr) {
         return {};
     }
 
-    // int[][] ret = new int[G_order][]; // change to be one of them smart pointers
-    // for (int i = 0; i < G_order; i++) {
-    //     ret[i] = new int[73];
-    // }
-
     std::vector<std::array<int, 73>> ret;
 
-    for (int i = 0; i < G_order; i++) {
+    for (int i = 0; !fin.eof(); i++) {
         std::array<int, 73> gdv;
         for (int j = 0; j < 73; j++) {
-            // fin >> ret[i][j];
             fin >> gdv.at(j);
+            //printf("%i ", gdv.at(j)); //debug
         }
+        //printf("\n"); //debug
         ret.push_back(gdv);
     }
 
@@ -124,41 +123,15 @@ std::vector<std::array<int, 73>> parse(string filestr) {
     return ret;
 }
 
-// /*
-//  * Return the number of lines in the given file.
-//  */
-// int num_lines(string filestr) {
-
-//     ifstream fin(filestr);
-//     if (!fin.is_open()) {
-//         cerr << "Could not open file " << filestr << endl;
-//         return NULL;
-//     }
-
-//     // Get the number of lines in the file
-//     string line;
-//     int lines = 0;
-
-//     while(!fin.eof())
-//     {
-//         getline(myfile,line);
-//         lines++;
-//     }
-
-//     fin.close();
-
-//     return lines;
-// }
-
 /*
  * Initialize all uninitialized globals.
  */
-void init() {
-    // Get the number of nodes in G and H
-    // G_order = num_lines(G_gdvs_f); 
-    // H_order = num_lines(H_gdvs_f);
+void tinit(string gfin, string hfin) {
+    // Calculate the graphlet degree vectors for each node of each graph
+    G_gdvs_f = orca(gfin);
+    H_gdvs_f = orca(hfin);
 
-    // Get the 
+    // Get the GDVs for each node in G and H
     G_gdvs = parse(G_gdvs_f);
     H_gdvs = parse(H_gdvs_f);
 
@@ -168,19 +141,34 @@ void init() {
 
     // Calculate the highest degree among all the nodes in G, H
     G_max_deg = max_deg(G_gdvs, G_order);
-    H_max_deg = max_deg(G_gdvs, H_order);
+    H_max_deg = max_deg(H_gdvs, H_order);
 }
+
+// /*
+//  * Write the resulting topological similarity matrix to a file.
+//  */
+// void twriteResults(int cost_matrix[G_order][H_order]) {
+//     ofstream fout("top_sim_results.txt");
+//     if (!fout.is_open()) {
+//         cerr << "Could not open file results.txt" << endl;
+//         return;
+//     }
+
+//     for (int i = 0; i < G_order; i++) {
+//         for (int j = 0; j < H_order; j++) {
+//             fout << cost_matrix[i][j] << " ";
+//         }
+//         fout << endl;
+//     }
+
+//     fout.close();
+// }
 
 /*
  * Calculate the topological similarity between the graphs at the given paths.
  */
 string top_sim(string gfin, string hfin) {
-    // Calculate the graphlet degree vectors for each node of each graph
-    G_gdvs_f = orca(gfin);
-    //H_gdvs_f = orca(hfin);
-    H_gdvs_f = G_gdvs_f;
-
-    init();
+    tinit(gfin, hfin);
 
     // Calculate the cost matrix for G and H
     double cost_matrix[G_order][H_order];
@@ -190,7 +178,23 @@ string top_sim(string gfin, string hfin) {
         }
     }
 
-    // store the cost_matrix in a file
+    // Store the cost_matrix in a file
+    // twriteResults(cost_matrix);
 
-    return G_gdvs_f; // not this, of courses
+    // start temp file write solutuion
+    ofstream fout("top_sim_results.txt");
+    if (!fout.is_open()) {
+        cerr << "Could not open file results.txt" << endl;
+        return NULL;
+    }
+    for (int i = 0; i < G_order; i++) {
+        for (int j = 0; j < H_order; j++) {
+            fout << cost_matrix[i][j] << " ";
+        }
+        fout << endl;
+    }
+    fout.close();
+    // end temp file write solution
+
+    return G_gdvs_f; // not this, of course
 }

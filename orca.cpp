@@ -655,9 +655,8 @@ void writeResults() {
  * If the input file is "path/to/input.in", the output file should be "path/to/input.out"
  */
 string fout_name(string afin) {
-
-    string st = afin.substr(0, afin.size() - 2);
-    st += "out";
+    string st = afin.substr(0, afin.size() - 3);
+    st += "_gdvs.out";
 
     return st;
 }
@@ -668,7 +667,6 @@ string fout_name(string afin) {
  */
 string orca(string afin) {
     string  afout = fout_name(afin);
-    //std::string rfout = std::string(afout);
 
     printf("afin:%s;\n", afin.c_str()); //debug
     printf("afout:%s;\n", afout.c_str()); //debug

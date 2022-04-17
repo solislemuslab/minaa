@@ -7,7 +7,7 @@
   - [ ] Get all data flowing in and out correctly
 - [ ] Implement the Alignment function
 - [ ] Use SPIEC-EASI to generate graphs to run through MNA app
-- [ ] Verify the correctness/robustness of the complete implementation before 
+- [ ] Verify the correctness/robustness of the complete implementation before implementing biological scoring
 - [ ] Implement a biological score function
 
 ## Done
@@ -25,4 +25,6 @@
 - Clean up in other ways...throw out unnecessary includes...
 - Change a bunch of things so top_sim looks like proper C++, not C (oops).
 - Figure out the cleanest means of calculating the order of the input networks.
-- There's a bug with output file creation
+- There's a bug where, during compilation, a file "graph.out???" is created. I have no idea what that's about.
+- Possibly related: ORCA gives incorrect output on 2nd consecutive run...maybe caused by not freeing memory??
+- Define a different namespace for top_sim, and change tinit() name back to init().
