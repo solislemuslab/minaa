@@ -536,6 +536,16 @@ void count() {
 
     endTime_all = endTime;
     printf("total: %.2f sec\n", (double)(endTime_all - startTime_all) / CLOCKS_PER_SEC);
+
+    // Free all memory allocated in this function
+    free(tri);
+    free(C5);
+    free(neigh);
+    free(neigh2);
+    free(common_x);
+    free(common_x_list);
+    free(common_a);
+    free(common_a_list);
 }
 
 fstream fin, fout;  // input and output files
@@ -635,6 +645,9 @@ int init(string afin, string afout) {
     for (int i = 0; i < n; i++) {
         orbit[i] = (int64 *)calloc(73, sizeof(int64));
     }
+    
+    // Free d
+    free(d); 
 
     return 1;
 }
@@ -648,6 +661,27 @@ void writeResults() {
         fout << endl;
     }
     fout.close();
+}
+
+/*
+ * Free memory from all globally declared variables
+ */
+void deconstruct() {
+    for (int i = 0; i < n; i++) {
+        free(adj[i]);
+        free(inc[i]);
+    }
+    free(adj);
+    free(inc);
+    free(deg);
+    free(edges);
+    if (adjacent == adjacent_matrix) {
+        free(adj_matrix);
+    }
+    for (int i = 0; i < n; i++) {
+        free(orbit[i]);
+    }
+    free(orbit);
 }
 
 /*
@@ -668,8 +702,8 @@ string fout_name(string afin) {
 string orca(string afin) {
     string  afout = fout_name(afin);
 
-    printf("afin:%s;\n", afin.c_str()); //debug
-    printf("afout:%s;\n", afout.c_str()); //debug
+    // printf("afin:%s;\n", afin.c_str()); //debug
+    // printf("afout:%s;\n", afout.c_str()); //debug
 
     if (!init(afin, afout)) {
         cerr << "Stopping!" << endl;
@@ -679,6 +713,7 @@ string orca(string afin) {
     printf("Counting orbits of graphlets on 5 nodes.\n");
     count();
     writeResults();
+    deconstruct();
 
     return afout;
 }

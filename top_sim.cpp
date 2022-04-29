@@ -76,7 +76,7 @@ double cost(std::array<int, 73> v, std::array<int, 73> u) {
     double node_degs;
     node_degs = (v.at(0) + u.at(0)) / (G_max_deg + H_max_deg);
 
-    return (1 - alpha) * node_degs + alpha * similarity(v, u);
+    return 2 - ((1 - alpha) * node_degs + alpha * similarity(v, u));
 }
 
 /*
@@ -113,6 +113,7 @@ std::vector<std::array<int, 73>> parse(string filestr) {
         for (int j = 0; j < 73; j++) {
             fin >> gdv.at(j);
             //printf("%i ", gdv.at(j)); //debug
+            //gdv.at(j) = abs(gdv.at(j)); // debug
         }
         //printf("\n"); //debug
         ret.push_back(gdv);
