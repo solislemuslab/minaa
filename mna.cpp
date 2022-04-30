@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     string hfin = std::string(argv[2]);  // graph H file input
 
     // Calculate the topological similarity matrix
-    top_sim(gfin, hfin);
+    top::top_sim(gfin, hfin);
 
     // Calculate the biological similarity matrix
 

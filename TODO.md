@@ -24,4 +24,3 @@
 - top_sim is a bad name, probably.
 - There's a bug where, during compilation, a file "graph.out???" is created. I have no idea what that's about.
 - Possibly related: ORCA gives incorrect output on 2nd consecutive run.
-- Define a different namespace for top_sim, and change tinit() name back to init().

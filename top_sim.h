@@ -3,7 +3,9 @@
 
 #include <string>
 
-std::string top_sim(std::string gfin, std::string hfin);
+namespace top {
+    std::string top_sim(std::string gfin, std::string hfin); 
+}
 
 #endif
 
