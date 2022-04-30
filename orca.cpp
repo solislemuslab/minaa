@@ -331,7 +331,7 @@ void count() {
 
             // x = orbit-12 (diamond)
             for (int nx2 = nx1 + 1; nx2 < deg[x]; nx2++) {
-                int b = inc[x][nx2].first, xb = inc[x][nx2].second;
+                int b = inc[x][nx2].first;
                 if (!adjacent(a, b)) continue;
                 for (int na = 0; na < deg[a]; na++) {
                     int c = inc[a][na].first, ac = inc[a][na].second;
@@ -368,7 +368,7 @@ void count() {
 
             // x = orbit-11 (paw)
             for (int nx2 = nx1 + 1; nx2 < deg[x]; nx2++) {
-                int b = inc[x][nx2].first, xb = inc[x][nx2].second;
+                int b = inc[x][nx2].first;
                 if (!adjacent(a, b)) continue;
                 for (int nx3 = 0; nx3 < deg[x]; nx3++) {
                     int c = inc[x][nx3].first, xc = inc[x][nx3].second;
@@ -383,7 +383,7 @@ void count() {
 
             // x = orbit-10 (paw)
             for (int nx2 = 0; nx2 < deg[x]; nx2++) {
-                int b = inc[x][nx2].first, xb = inc[x][nx2].second;
+                int b = inc[x][nx2].first;
                 if (!adjacent(a, b)) continue;
                 for (int nb = 0; nb < deg[b]; nb++) {
                     int c = inc[b][nb].first, bc = inc[b][nb].second;
@@ -416,7 +416,7 @@ void count() {
 
             // x = orbit-4 (path)
             for (int na = 0; na < deg[a]; na++) {
-                int b = inc[a][na].first, ab = inc[a][na].second;
+                int b = inc[a][na].first;
                 if (b == x || adjacent(x, b)) continue;
                 for (int nb = 0; nb < deg[b]; nb++) {
                     int c = inc[b][nb].first, bc = inc[b][nb].second;
@@ -433,10 +433,10 @@ void count() {
 
             // x = orbit-5 (path)
             for (int nx2 = 0; nx2 < deg[x]; nx2++) {
-                int b = inc[x][nx2].first, xb = inc[x][nx2].second;
+                int b = inc[x][nx2].first;
                 if (b == a || adjacent(a, b)) continue;
                 for (int nb = 0; nb < deg[b]; nb++) {
-                    int c = inc[b][nb].first, bc = inc[b][nb].second;
+                    int c = inc[b][nb].first;
                     if (c == x || adjacent(a, c) || adjacent(x, c)) continue;
                     orbit[x][5]++;
                     f_17 += deg[a] - 1;
@@ -445,10 +445,10 @@ void count() {
 
             // x = orbit-6 (claw)
             for (int na1 = 0; na1 < deg[a]; na1++) {
-                int b = inc[a][na1].first, ab = inc[a][na1].second;
+                int b = inc[a][na1].first;
                 if (b == x || adjacent(x, b)) continue;
                 for (int na2 = na1 + 1; na2 < deg[a]; na2++) {
-                    int c = inc[a][na2].first, ac = inc[a][na2].second;
+                    int c = inc[a][na2].first;
                     if (c == x || adjacent(x, c) || adjacent(b, c)) continue;
                     orbit[x][6]++;
                     f_22 += deg[a] - 3;
@@ -459,10 +459,10 @@ void count() {
 
             // x = orbit-7 (claw)
             for (int nx2 = nx1 + 1; nx2 < deg[x]; nx2++) {
-                int b = inc[x][nx2].first, xb = inc[x][nx2].second;
+                int b = inc[x][nx2].first;
                 if (adjacent(a, b)) continue;
                 for (int nx3 = nx2 + 1; nx3 < deg[x]; nx3++) {
-                    int c = inc[x][nx3].first, xc = inc[x][nx3].second;
+                    int c = inc[x][nx3].first;
                     if (adjacent(a, c) || adjacent(b, c)) continue;
                     orbit[x][7]++;
                     f_23 += deg[x] - 3;
@@ -655,10 +655,12 @@ int init(string afin, string afout) {
 void writeResults() {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < 73; j++) {
+            //printf("%lld ", orbit[i][j]); //debug
             if (j != 0) fout << " ";
             fout << orbit[i][j];
         }
         fout << endl;
+        //printf("\n"); //debug
     }
     fout.close();
 }

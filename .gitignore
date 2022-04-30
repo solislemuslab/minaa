@@ -9,3 +9,6 @@
 
 # ignore all .txt files
 *.txt
+
+# ignore all .o files
+*.o
