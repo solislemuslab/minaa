@@ -124,9 +124,9 @@ namespace top {
                 //printf("%i ", gdv[j]); //debug
                 //gdv[j] = abs(gdv[j]); // debug
             }
-            //printf("\n"); //debug
             ret.push_back(gdv);
         }
+        ret.pop_back(); // sort of a hack to get rid of the last line, should probably solve more intelligently
 
         fin.close();
 

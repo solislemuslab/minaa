@@ -12,3 +12,6 @@
 
 # ignore all .o files
 *.o
+
+# ingore the weird graph.out?>y? file
+*>*
