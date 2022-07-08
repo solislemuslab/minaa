@@ -5,8 +5,9 @@
 - [ ] Implement the GRAAL score function
   - [x] Write w_i, D_i(v, u), D(v, u), S(v, u), C(v, u) into code
   - [ ] Get all data flowing in and out correctly
+  - [ ] Evaluate int64 usage in ORCA, remove if unimportant for us
 - [ ] Implement the Alignment function
-- [ ] Use SPIEC-EASI to generate graphs to run through MNA app
+- [ ] Use SPIEC-EASI (or NetCoMi?) to generate graphs to run through MNA app
 - [ ] Verify the correctness/robustness of the complete implementation before implementing biological scoring
 - [ ] Implement a biological score function
 
@@ -23,4 +24,4 @@
 
 - top_sim is a bad name, probably.
 - There's a bug where, during compilation, a file "graph.out???" is created. I have no idea what that's about.
-- Possibly related: ORCA gives incorrect output on 2nd consecutive run.
+- ORCA gives incorrect output on 2nd consecutive run.

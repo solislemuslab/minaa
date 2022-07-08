@@ -150,6 +150,9 @@ void count() {
     for (int i = 0; i < m; i++) {
         int x = edges[i].a, y = edges[i].b;
         for (int xi = 0, yi = 0; xi < deg[x] && yi < deg[y];) {
+            // // DEBUG
+            // if (xi < 100 && i == 23)
+            //     printf("%d %d", adj[x][xi], adj[y][yi]);
             if (adj[x][xi] == adj[y][yi]) {
                 tri[i]++;
                 xi++;
@@ -296,6 +299,9 @@ void count() {
                     if (!adjacent(a, c) || !adjacent(b, c)) continue;
                     orbit[x][14]++;
                     f_70 += common3_get(TRIPLE(a, b, c)) - 1;
+                    // // debug
+                    // if (nx2 == nx1 + 6)
+                    //     printf("%d %d %d\n", x, a, b);
                     f_71 += (tri[xa] > 2 && tri[xb] > 2) ? (common3_get(TRIPLE(x, a, b)) - 1) : 0;
                     f_71 += (tri[xa] > 2 && tri[xc] > 2) ? (common3_get(TRIPLE(x, a, c)) - 1) : 0;
                     f_71 += (tri[xb] > 2 && tri[xc] > 2) ? (common3_get(TRIPLE(x, b, c)) - 1) : 0;
@@ -471,6 +477,10 @@ void count() {
             }
         }
 
+        // debug
+        // printf("%d: %d \n", x, (int) C5[x]);
+        // printf("%d: %d \n", x, (int) f_71);
+
         // solve equations
         orbit[x][72] = C5[x];
         orbit[x][71] = (f_71 - 12 * orbit[x][72]) / 2;
@@ -530,12 +540,25 @@ void count() {
         orbit[x][17] = (f_17 - 1 * orbit[x][60] - 1 * orbit[x][53] - 1 * orbit[x][51] - 1 * orbit[x][48] - 1 * orbit[x][37] - 2 * orbit[x][34] - 2 * orbit[x][30]) / 2;
         orbit[x][16] = (f_16 - 1 * orbit[x][59] - 2 * orbit[x][52] - 1 * orbit[x][51] - 2 * orbit[x][46] - 2 * orbit[x][36] - 2 * orbit[x][34] - 1 * orbit[x][29]);
         orbit[x][15] = (f_15 - 1 * orbit[x][59] - 2 * orbit[x][52] - 1 * orbit[x][51] - 2 * orbit[x][45] - 2 * orbit[x][35] - 2 * orbit[x][34] - 2 * orbit[x][27]);
+    
+        // debug
+        // printf("%d: %d \n", x, (int) orbit[x][72]);
     }
     endTime = clock();
     printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
 
     endTime_all = endTime;
     printf("total: %.2f sec\n", (double)(endTime_all - startTime_all) / CLOCKS_PER_SEC);
+
+    // // debug
+    // for(int x = 0; x < 100; x++) {
+    //     printf("%d: ", x);
+    //     for(int i = 0; i < 73; i++) {
+    //         printf("%d ", (int) orbit[x][i]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
 
     // Free all memory allocated in this function
     free(tri);
@@ -703,9 +726,6 @@ string fout_name(string afin) {
  */
 string orca(string afin) {
     string  afout = fout_name(afin);
-
-    // printf("afin:%s;\n", afin.c_str()); //debug
-    // printf("afout:%s;\n", afout.c_str()); //debug
 
     if (!init(afin, afout)) {
         cerr << "Stopping!" << endl;

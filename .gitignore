@@ -1,11 +1,11 @@
 # ignore all .exe files
 *.exe
 
-# ignore all .out files
-*.out
+# # ignore all .out files
+# *.out
 
-# ignore all .in files
-*.in
+# # ignore all .in files
+# *.in
 
 # ignore all .txt files
 *.txt

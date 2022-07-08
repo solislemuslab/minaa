@@ -28,8 +28,8 @@ namespace top {
     6, 6, 4};
     const double alpha = 0.5;
 
-    std::string G_gdvs_f;                         // the file containing G's gdvs
-    std::string H_gdvs_f;                         // the file containing H's gdvs
+    std::string G_gdvs_f;                    // the file containing G's gdvs
+    std::string H_gdvs_f;                    // the file containing H's gdvs
     std::vector<std::array<int, 73>> G_gdvs; // the GDVs for nodes in G
     std::vector<std::array<int, 73>> H_gdvs; // the GDVs for nodes in H
     int G_order;                             // the number of nodes in G
@@ -122,7 +122,7 @@ namespace top {
             for (int j = 0; j < 73; j++) {
                 fin >> gdv[j];
                 //printf("%i ", gdv[j]); //debug
-                //gdv[j] = abs(gdv[j]); // debug
+                gdv[j] = abs(gdv[j]); // debug
             }
             ret.push_back(gdv);
         }
