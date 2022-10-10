@@ -120,12 +120,12 @@ void count() {
     int frac, frac_prev;
 
     // precompute common nodes
-    printf("stage 1 - precomputing common nodes\n");
+    //printf("stage 1 - precomputing common nodes\n");
     frac_prev = -1;
     for (int x = 0; x < n; x++) {
         frac = 100LL * x / n;
         if (frac != frac_prev) {
-            printf("%d%%\r", frac);
+            //printf("%d%%\r", frac);
             frac_prev = frac;
         }
         for (int n1 = 0; n1 < deg[x]; n1++) {
@@ -166,11 +166,11 @@ void count() {
     }
 
     endTime = clock();
-    printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+    //printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
     startTime = endTime;
 
     // count full graphlets
-    printf("stage 2 - counting full graphlets\n");
+    //printf("stage 2 - counting full graphlets\n");
     int64 *C5 = (int64 *)calloc(n, sizeof(int64));
     int *neigh = (int *)malloc(n * sizeof(int)), nn;
     int *neigh2 = (int *)malloc(n * sizeof(int)), nn2;
@@ -179,7 +179,7 @@ void count() {
     for (int x = 0; x < n; x++) {
         frac = 100LL * x / n;
         if (frac != frac_prev) {
-            printf("%d%%\r", frac);
+            //printf("%d%%\r", frac);
             frac_prev = frac;
         }
         for (int nx = 0; nx < deg[x]; nx++) {
@@ -220,7 +220,7 @@ void count() {
     }
 
     endTime = clock();
-    printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+    //printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
     startTime = endTime;
 
     int *common_x = (int *)calloc(n, sizeof(int));
@@ -229,13 +229,13 @@ void count() {
     int *common_a_list = (int *)malloc(n * sizeof(int)), nca = 0;
 
     // set up a system of equations relating orbit counts
-    printf("stage 3 - building systems of equations\n");
+    //printf("stage 3 - building systems of equations\n");
     frac_prev = -1;
 
     for (int x = 0; x < n; x++) {
         frac = 100LL * x / n;
         if (frac != frac_prev) {
-            printf("%d%%\r", frac);
+            //printf("%d%%\r", frac);
             frac_prev = frac;
         }
 
@@ -545,10 +545,10 @@ void count() {
         // printf("%d: %d \n", x, (int) orbit[x][72]);
     }
     endTime = clock();
-    printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+    //printf("%.2f sec\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
 
     endTime_all = endTime;
-    printf("total: %.2f sec\n", (double)(endTime_all - startTime_all) / CLOCKS_PER_SEC);
+    //printf("total: %.2f sec\n", (double)(endTime_all - startTime_all) / CLOCKS_PER_SEC);
 
     // // debug
     // for(int x = 0; x < 100; x++) {
@@ -613,9 +613,9 @@ int init(string afin, string afout) {
         d_max = max(d_max, deg[i]);
     }
 
-    printf("nodes: %d\n", n);
-    printf("edges: %d\n", m);
-    printf("max degree: %d\n", d_max);
+    //printf("nodes: %d\n", n);
+    //printf("edges: %d\n", m);
+    //printf("max degree: %d\n", d_max);
     fin.close();
 
     if ((int)(set<PAIR>(edges, edges + m).size()) != m) {
@@ -711,13 +711,14 @@ void deconstruct() {
 
 /*
  * Reurn a name for the output file based on the input file
- * If the input file is "path/to/input.in", the output file should be "path/to/input.out"
+ * If the input file is "path/to/input.in", the output file should be "path/to/input_gdvs.out"
  */
 string fout_name(string afin) {
-    string st = afin.substr(0, afin.size() - 3);
-    st += "_gdvs.out";
+    // ! check validity of input file name
+    // string st = afin.substr(0, afin.size() - 3);
+    //st += "_gdvs.out";
 
-    return st;
+    return afin + "_gdvs.out";
 }
 
 /*
@@ -725,14 +726,14 @@ string fout_name(string afin) {
  * Return the pointer to the array
  */
 string orca(string afin) {
-    string  afout = fout_name(afin);
+    string  afout = "outputs/graph0-graph1/" + fout_name(afin);
 
-    if (!init(afin, afout)) {
+    if (!init("inputs/" + afin + ".in", afout)) {
         cerr << "Stopping!" << endl;
         return NULL;
     }
 
-    printf("Counting orbits of graphlets on 5 nodes.\n");
+    //printf("Counting orbits of graphlets on 5 nodes.\n");
     count();
     writeResults();
     deconstruct();

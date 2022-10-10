@@ -1,14 +1,21 @@
+# ignore I/O folders
+inputs
+outputs
+
 # ignore all .exe files
 *.exe
-
-# # ignore all .out files
-# *.out
 
 # # ignore all .in files
 # *.in
 
+# # ignore all .out files
+*.out
+
 # ignore all .txt files
 *.txt
+
+# ignore all .csv files
+*.csv
 
 # ignore all .o files
 *.o
