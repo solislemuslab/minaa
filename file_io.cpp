@@ -55,6 +55,7 @@ namespace FileIO
 
     /*
      * Parse the file at the given path into a graph object
+     * Require that the file is a CSV
      */
     std::vector<std::vector<unsigned>> file_to_graph(std::string) {
         std::vector<std::vector<unsigned>> graph;

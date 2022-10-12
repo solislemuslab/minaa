@@ -17,7 +17,7 @@ namespace GDVs_Dist
     6, 8, 6, 9, 5, 6, 4, 6, 6, 7, 
     8, 6, 6, 8, 7, 6, 7, 7, 8, 5, 
     6, 6, 4};
-    const double alpha = 0.5;
+    double alpha;
 
     /*
     * The weight of orbit i, accounting for dependencies between orbits.
@@ -95,8 +95,11 @@ namespace GDVs_Dist
     /*
      * Calculate the topological similarity between the graphs at the given paths.
      */
-    std::vector<std::vector<double>> gdvs_dist(std::vector<std::array<unsigned, 73>> g_gdvs, std::vector<std::array<unsigned, 73>> h_gdvs)
+    std::vector<std::vector<double>> gdvs_dist(
+        std::vector<std::array<unsigned, 73>> g_gdvs, std::vector<std::array<unsigned, 73>> h_gdvs, double alpha)
     {
+        GDVs_Dist::alpha = alpha;
+        
         // Calculate the highest degree among all the nodes in G, H
         unsigned g_max_deg = max_deg(g_gdvs);
         unsigned h_max_deg = max_deg(h_gdvs); 
@@ -110,7 +113,7 @@ namespace GDVs_Dist
             for (unsigned j = 0; j < h_gdvs.size(); ++j)
             {
                 costs[i][j] = cost(g_gdvs[i], h_gdvs[j], g_max_deg, h_max_deg);
-            }
+            } 
         }
 
         return costs;

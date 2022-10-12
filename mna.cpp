@@ -19,25 +19,22 @@
  */
 int main(int argc, char* argv[])
 {
-    if (argc < 3 || argc > 4)
+    // Parse command line arguments
+    auto args = Util::parse_args(argc, argv);
+
+    if (args[0] == "-1")
     {
-        std::cerr << "Usage: mna.exe <graph G> <graph H> [biological data]" << std::endl;
+        std::cerr << "Usage: mna.exe <G.csv> <H.csv> [-a=alpha] [-B=bio_costs.csv] [-b=beta]" << std::endl;
         return 0;
     }
 
-    auto g_f = std::string(argv[1]);  // graph G file
-    auto h_f = std::string(argv[2]);  // graph H file
-
-    bool bio = false;
-    std::string bio_f = "";
-    double alpha = -1;
-
-    if (argc == 4)
-    {
-        bio = true;
-        bio_f = std::string(argv[3]);  // biological data file
-        alpha = 0.5;
-    }
+    auto g_f = args[1];              // graph G file
+    auto h_f = args[2];              // graph H file
+    auto alpha = std::stod(args[3]); // GDV - edge weight balancer
+    auto bio_f = args[4];            // biological data file
+    auto beta = std::stod(args[5]);  // topological - biological balancer
+    
+    bool bio = (bio_f != "");        // biological data file provided
 
     // Generate output names
     auto g_name = FileIO::name_file(g_f);
@@ -99,7 +96,7 @@ int main(int argc, char* argv[])
     // Calculate the topological similarity matrix
     auto s20 = std::chrono::high_resolution_clock::now();
     std::cout << "[2.0] Calculating the topological cost matrix........";
-    auto topological_costs = GDVs_Dist::gdvs_dist(g_gdvs, h_gdvs);
+    auto topological_costs = GDVs_Dist::gdvs_dist(g_gdvs, h_gdvs, alpha);
     auto f20 = std::chrono::high_resolution_clock::now();
     auto d20 = std::chrono::duration_cast<std::chrono::milliseconds>(f20-s20).count();
     std::cout << "done. (" << d20 << "ms)" <<  std::endl;
@@ -133,7 +130,7 @@ int main(int argc, char* argv[])
         // Calculate the overall cost matrix
         auto s40 = std::chrono::high_resolution_clock::now();
         std::cout << "[4.0] Calculating the overall cost matrix............";
-        auto overall_costs = Util::merge(topological_costs, biological_costs, alpha);
+        auto overall_costs = Util::merge(topological_costs, biological_costs, beta);
         auto f40 = std::chrono::high_resolution_clock::now();
         auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
         std::cout << "done. (" << d40 << "ms)" <<  std::endl;
