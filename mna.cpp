@@ -19,10 +19,10 @@
  */
 int main(int argc, char* argv[])
 {
-    // GRAPHCRUNCHIFY
+    // Run through orca_in
     if (argc == 2)
     {
-        FileIO::graphcrunchify(argv[1]);
+        FileIO::orca_in(argv[1]);
         return 0;
     }
 
