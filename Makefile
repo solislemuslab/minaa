@@ -9,26 +9,26 @@ all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT)
 
 mna.o: mna.cpp
-	$(CC) $(FLAGS) mna.cpp -std=c++11
+	$(CC) $(FLAGS) mna.cpp -std=c++20
 
 hungarian.o: hungarian.cpp
-	$(CC) $(FLAGS) hungarian.cpp -std=c++11
+	$(CC) $(FLAGS) hungarian.cpp -std=c++20
 
 gdvs_dist.o: gdvs_dist.cpp
-	$(CC) $(FLAGS) gdvs_dist.cpp -std=c++11
+	$(CC) $(FLAGS) gdvs_dist.cpp -std=c++20
 
 orca.o: orca.cpp
-	$(CC) $(FLAGS) orca.cpp -std=c++11
+	$(CC) $(FLAGS) orca.cpp -std=c++20
 
 file_io.o: file_io.cpp
-	$(CC) $(FLAGS) file_io.cpp -std=c++11
+	$(CC) $(FLAGS) file_io.cpp -std=c++20
 
 util.o: util.cpp
-	$(CC) $(FLAGS) util.cpp -std=c++11
+	$(CC) $(FLAGS) util.cpp -std=c++20
 
 clean:
 	$(CC) -g $(OBJS) -o $(OUT)
 	rm -f $(OBJS)
 
 # Alternate to make
-# g++ -O2 -std=c++11 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp
+# g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp

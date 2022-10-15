@@ -6,7 +6,7 @@ The Microbiome Network Alignment algorithm aligns two networks based their topol
 
 ## Compilation
 
-Compile with `make` or `g++ -O2 -std=c++11 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp`
+Compile with `make` or `g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp`
 
 ## Usage
 

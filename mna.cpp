@@ -19,6 +19,13 @@
  */
 int main(int argc, char* argv[])
 {
+    // GRAPHCRUNCHIFY
+    if (argc == 2)
+    {
+        FileIO::graphcrunchify(argv[1]);
+        return 0;
+    }
+
     // Parse command line arguments
     auto args = Util::parse_args(argc, argv);
 
@@ -111,10 +118,11 @@ int main(int argc, char* argv[])
     
     if (bio) // incorporate biological data
     {
-        // Incorporate a biological cost matrix
+        // Parse and normalize the biological cost matrix
         auto s30 = std::chrono::high_resolution_clock::now();
         std::cout << "[3.0] Processing biological data.....................";
         auto biological_costs = FileIO::file_to_cost(bio_f);
+        biological_costs = Util::normalize(biological_costs);
         auto f30 = std::chrono::high_resolution_clock::now();
         auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
         std::cout << "done. (" << d30 << "ms)" <<  std::endl;

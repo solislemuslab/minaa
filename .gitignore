@@ -1,6 +1,7 @@
 # ignore I/O folders
 inputs
 outputs
+testdata
 
 # ignore all .exe files
 *.exe

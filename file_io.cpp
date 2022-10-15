@@ -54,6 +54,62 @@ namespace FileIO
     }
 
     /*
+     * Parse the given csv adjacency matrix file into a list
+     * FOR GRAPHCRUNCH
+     */
+    std::string orca_in(std::string file)
+    {
+        // Parse the file into a matrix
+        std::ifstream infile(file);
+        std::vector<std::vector<double>> matrix;
+        std::string line;
+        while (std::getline(infile, line))
+        {
+            std::stringstream ss(line);
+            std::string cell;
+            std::vector<double> row;
+            while (std::getline(ss, cell, ','))
+            {
+                try
+                {
+                    row.push_back(std::stod(cell));
+                }
+                catch (std::invalid_argument)
+                {
+                    row.push_back(0);
+                }
+                // std::cout << cell << " "; // DEBUG
+            }
+            matrix.push_back(row);
+            // std::cout << std::endl; // DEBUG
+        }
+
+        // Convert the matrix into a list
+        std::vector<std::array<unsigned, 2>> list;
+        for (unsigned i = 1; i < matrix.size(); ++i)
+        {
+            for (unsigned j = i; j < matrix[i].size(); ++j)
+            {
+                if (i != j && matrix[i][j] != 0)
+                {
+                    list.push_back({i, j});
+                }
+            }
+        }
+
+        // Write the list to a file
+        std::string out_file = "testdata/orca_in/" + name_file(file) + ".txt";
+        std::ofstream outfile(out_file);
+        for (auto &row : list)
+        {
+            outfile << row[0] << " " << row[1] << std::endl;
+        }
+        outfile.close();
+
+        return out_file;
+    }
+
+    /*
      * Parse the file at the given path into a graph object
      * Require that the file is a CSV
      */

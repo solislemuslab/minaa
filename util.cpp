@@ -1,9 +1,9 @@
-#include <vector>
 #include <iostream>
+#include <limits>
+#include <vector>
 
 namespace Util
 {
-
     /*
      * Parse command line arguments.
      * args[0]: error code
@@ -44,6 +44,60 @@ namespace Util
 
         args[0] = "0"; // No errors
         return args;
+    }
+
+    /*
+     * Normalize a matrix.
+     */
+    std::vector<std::vector<double>> normalize(std::vector<std::vector<double>> matrix)
+    {
+        // Find the max and min values in the matrix
+        double min = std::numeric_limits<double>::max();
+        double max = std::numeric_limits<double>::min();
+        for (unsigned i = 0; i < matrix.size(); ++i)
+        {
+            std::vector<double> row;
+            for (unsigned j = 0; j < matrix[i].size(); ++j)
+            {
+                if (matrix[i][j] < min)
+                {
+                    min = matrix[i][j];
+                }
+                if (matrix[i][j] > max)
+                {
+                    max = matrix[i][j];
+                }
+            }
+        }
+
+        // Make nonnegative
+        if (min < 0)
+        {
+            // Shift all values up by the min value
+            for (unsigned i = 0; i < matrix.size(); ++i)
+            {
+                for (unsigned j = 0; j < matrix[i].size(); ++j)
+                {
+                    matrix[i][j] += std::abs(min);
+                }
+            }
+            max += std::abs(min);
+            min = 0;
+        }
+
+        // Normalize
+        std::vector<std::vector<double>> norm_matrix;
+        for (unsigned i = 0; i < matrix.size(); ++i)
+        {
+            std::vector<double> row;
+            for (unsigned j = 0; j < matrix[i].size(); ++j)
+            {
+                row.push_back(matrix[i][j] / max);
+            }
+            norm_matrix.push_back(row);
+        }
+
+        return norm_matrix;
     }
 
     /*
