@@ -1,23 +1,41 @@
+#include <ctime>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <vector>
 
 namespace Util
 {
     /*
+     * Gets the current date and time, formatted as a string.
+     */
+    std::string now()
+    {
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%d_%m_%Y-%H_%M_%S");
+        std::string str = oss.str();
+
+        return str;
+    }
+
+    /*
      * Parse command line arguments.
      * args[0]: error code
      * args[1]: graph G file
      * args[2]: graph H file
-     * args[3]: GDV - edge weight balancer
-     * args[4]: biological data file
+     * args[3]: biological data file
+     * args[4]: GDV - edge weight balancer
      * args[5]: topological - biological balancer
+     * args[6]: alignment cost threshold
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"-1", "", "", "0.5", "", "0.5", "1"};
+        std::vector<std::string> args = {"-1", "", "", "", "0.5", "0.5", "1"};
 
-        if (argc < 3 || argc > 6)
+        if (argc < 3 || argc > 7)
         {
             return args;
         }
@@ -28,11 +46,11 @@ namespace Util
         for (auto i = 3; i < argc; ++i)
         {
             std::string arg = std::string(argv[i]);
-            if (arg.find("-a=") != std::string::npos)
+            if (arg.find("-B=") != std::string::npos)
             {
                 args[3] = arg.substr(3);
             }
-            else if (arg.find("-B=") != std::string::npos)
+            else if (arg.find("-a=") != std::string::npos)
             {
                 args[4] = arg.substr(3);
             }

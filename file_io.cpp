@@ -26,7 +26,7 @@ namespace FileIO
     /*
      * Returns the name of the folder to store the output files in.
      */
-    std::string name_folder(std::string g_name, std::string h_name)
+    std::string name_folder(std::string g_name, std::string h_name, std::string datetime)
     {
         const std::string OUTPUT_FOLDER = "outputs/";
 
@@ -41,7 +41,7 @@ namespace FileIO
         }
         
         // Make directory "outputs/g_name-h_name/ if it doesn't exist
-        auto folder = OUTPUT_FOLDER + g_name + "-" + h_name + "/";
+        auto folder = OUTPUT_FOLDER + g_name + "-" + h_name + "_" + datetime + "/";
         if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
         {
             if(errno != EEXIST)
@@ -51,7 +51,23 @@ namespace FileIO
             }
         }
 
+        // Create log file
+        auto log_file = folder + "log.txt";
+        std::ofstream log(log_file);
+        log.close();
+
         return folder;
+    }
+
+    /*
+     * Outputs the fiven string to the given file and std::cout.
+     */
+    void out(std::string file, std::string str)
+    {
+        std::cout << str;
+        std::ofstream out(file, std::ios_base::app);
+        out << str;
+        out.close();
     }
 
     /*

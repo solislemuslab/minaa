@@ -2,7 +2,7 @@
 
 ## Description
 
-The Microbiome Network Alignment algorithm aligns two networks based their topologies and biologies.
+The **Microbiome Network Alignment** algorithm aligns two networks based their topologies and biologies.
 
 ## Compilation
 
@@ -10,35 +10,35 @@ Compile with `make` or `g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs
 
 ## Usage
 
-This utility takes five command-line arguments: `./mna.exe <G> <H> [-a=alpha] [-B=bio] [-b=beta] [-g=gamma]`
+This utility takes six command-line arguments: `./mna.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta] [-g=gamma]`
 
 ### Required arguments (ordered)
 
-1. G: A graph to align
+1. **G**: A graph to align
    - Require: the graph is represented by an adjacency list or matrix in CSV format
-2. H: A graph to align
+2. **H**: A graph to align
    - Require: the graph is represented by an adjacency list or matrix in CSV format
 
 ### Optional arguments (unordered)
 
-- alpha: GDV-edge weight balancer
-  - Require: a real number in range [0, 1]
-  - Default: 0.5
-- bio: The path to the biological cost matrix file
+- **bio**: The path to the biological cost matrix file
   - Require: CSV file type
   - Default: the algorithm will run using only topological calculations
-- beta: topological-biological cost matrix balancer
+- **alpha**: GDV-edge weight balancer
   - Require: a real number in range [0, 1]
   - Default: 0.5
-- gamma: any alignment cost equal or greater than this will not be recorded as an alignment
+- **beta**: topological-biological cost matrix balancer
+  - Require: a real number in range [0, 1]
+  - Default: 0.5
+- **gamma**: any alignment cost equal or greater than this will not be recorded as an alignment
   - Require: a real number in range [0, 1]
   - Default: 1
 
 ### Examples
 
-`./mna.exe graph0.csv graph1.csv -a=1`
+`./mna.exe graph0.csv graph1.csv -a=1 -g=0.6`
 
-Here we align graph0 with graph1 using no biological data. '-a=1' sets alpha equal to 1, meaning 100% of the topological cost function comes from similarity calculated by GDVs, and none from simpler node degree data.'g=0.6' sets gamma equal to 0.6, meaning that after alignment, any aligned pair whose cost of alignment was greater than or equal to 0.6 will not be written to the output file as an aligned pair.
+Here we align graph0 with graph1 using no biological data. '-a=1' sets alpha equal to 1, meaning 100% of the topological cost function comes from similarity calculated by GDVs, and none from simpler node degree data. 'g=0.6' sets gamma equal to 0.6, meaning that after alignment, only aligned pairs whose cost of alignment was less than 0.6 will be written to the output file as an aligned pair.
 
 `./mna.exe graph0.csv graph1.csv bio_costs.csv -b=0.85`
 

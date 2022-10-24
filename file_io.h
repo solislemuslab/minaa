@@ -4,7 +4,8 @@
 namespace FileIO
 {
     std::string name_file(std::string);
-    std::string name_folder(std::string, std::string);
+    std::string name_folder(std::string, std::string, std::string);
+    void out(std::string, std::string);
     char detect_delimiter(std::string);
 
     std::string orca_in(std::string);
