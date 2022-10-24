@@ -1,25 +1,11 @@
-# ignore I/O folders
+# ignore folders
 inputs
 outputs
 testdata
 
-# ignore all .exe files
+# ignore files
 *.exe
-
-# # ignore all .in files
-# *.in
-
-# # ignore all .out files
-*.out
-
-# ignore all .txt files
 *.txt
-
-# ignore all .csv files
 *.csv
-
-# ignore all .o files
 *.o
-
-# ingore the weird graph.out?>y? file
 *>*

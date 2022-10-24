@@ -3,6 +3,6 @@
 
 #include <string>
 
-std::string orca(std::string afin);
+std::string orca(std::string fin, std::string folder, std::string fname);
 
 #endif

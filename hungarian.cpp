@@ -456,40 +456,38 @@ namespace Hungarian
 
         step = 4;
     }
-
+    
     /*
      * Calculates the optimal cost from mask matrix.
      */
-    std::vector<std::array<unsigned, 2>> output_solution(const std::vector<std::vector<double>> &original, const std::vector<std::vector<unsigned char>> &mask)
+    std::vector<std::vector<double>> output_solution(const std::vector<std::vector<double>> &original,
+        const std::vector<std::vector<unsigned char>> &mask)
     {
-        double res = 0;
-        std::vector<std::array<unsigned, 2>> alignment;
+        std::vector<std::vector<double>> alignment;
 
-        for (unsigned j = 0; j < original.begin()->size(); ++j)
+        for (unsigned r = 0; r < original.size(); ++r)
         {
-            for (unsigned i = 0; i < original.size(); ++i)
+            std::vector<double> row;
+            for (unsigned c = 0; c < original[r].size(); ++c)
             {
-                if (mask[i][j])
+                if (mask[r][c] != 0)
                 {
-                    auto it1 = original.begin();
-                    std::advance(it1, i);
-                    auto it2 = it1->begin();
-                    std::advance(it2, j);
-                    res += *it2;
-
-                    alignment.push_back({i, j});
-                    continue;
+                    row.push_back(original[r][c]);
+                }
+                else
+                {
+                    row.push_back(0);
                 }
             }
+            alignment.push_back(row);
         }
-        // std::cout << "net cost: " << res << std::endl; // FIT ELSEWHERE
         return alignment;
     }
 
     /*
      * Driver code.
      */
-    std::vector<std::array<unsigned, 2>> hungarian(std::vector<std::vector<double>> original)
+    std::vector<std::vector<double>> hungarian(std::vector<std::vector<double>> original)
     {
         // Validate input values
         for (auto vec : original)

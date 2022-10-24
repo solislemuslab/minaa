@@ -710,25 +710,13 @@ void deconstruct() {
 }
 
 /*
- * Reurn a name for the output file based on the input file
- * If the input file is "path/to/input.in", the output file should be "path/to/input_gdvs.out"
- */
-string fout_name(string afin) {
-    // ! check validity of input file name
-    // string st = afin.substr(0, afin.size() - 3);
-    //st += "_gdvs.out";
-
-    return afin + "_gdvs.out";
-}
-
-/*
  * Calculate the Graphlet Degree Vector (GDV) for the given graph
  * Return the pointer to the array
  */
-string orca(string afin) {
-    string  afout = "outputs/graph0-graph1/" + fout_name(afin);
+string orca(string fin, string folder, string fname) {
+    string  fout = folder + fname + "_gdvs.out";
 
-    if (!init("inputs/" + afin + ".in", afout)) {
+    if (!init(fin, fout)) {
         cerr << "Stopping!" << endl;
         return NULL;
     }
@@ -738,5 +726,5 @@ string orca(string afin) {
     writeResults();
     deconstruct();
 
-    return afout;
+    return fout;
 }

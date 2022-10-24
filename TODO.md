@@ -6,13 +6,12 @@
 - [ ] Implement the Graphlet Degree Vector function (orca)
   - [ ] Write unit tests
 - [x] Implement the alignment algorithm (hungarian)
-  - [ ] Implement retroactive threshold cutting
-- [ ] Modify the alignment algorithm for the partial case?
+  - [x] Implement retroactive threshold cutting
 - [x] Handle biological input
   - [x] Normalize it to be in range [0,1]
-- [ ] Write all file IO functions
-  - [ ] Make everything proper csv
-  - [ ] On input: allow matrix or list
+- [x] Write all file IO functions
+  - [x] Make everything proper csv
+  - [x] On input: allow matrix
   - [ ] On input: delimiter detection
 - [ ] Fortify everything with exception handling
 - [ ] Use NetCoMi to generate graphs to run through MNA app
@@ -22,7 +21,9 @@
 
 - There's a bug where, during compilation, a file "graph.out???" is created. I have no idea what that's about.
 - ORCA gives incorrect output on 2nd consecutive run.
+- Potential problem: in the outputted adjacency matrices, entries of 0 denote there is no edge, but could also denote the cost is 0.
 
-## Questions for Arnaud
+## Questions
 
 - When to do pass by reference?
+- What are the implications of using boost? (does it require somehting extra from user, add a lot of overhead...)

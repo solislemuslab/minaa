@@ -19,19 +19,25 @@
  */
 int main(int argc, char* argv[])
 {
-    // Run through orca_in
-    if (argc == 2)
-    {
-        FileIO::orca_in(argv[1]);
-        return 0;
-    }
+    // // Tests
+    // if (argc == 2)
+    // {
+    //     // // Run through graphcrunch
+    //     // FileIO::graphcrunch_in(argv[1]);
+    //     // FileIO::parse_labels(argv[1]);
+
+    //     // // Run through detect_delimiter()
+    //     // FileIO::detect_delimiter(argv[1]);
+
+    //     return 0;
+    // }
 
     // Parse command line arguments
     auto args = Util::parse_args(argc, argv);
 
     if (args[0] == "-1")
     {
-        std::cerr << "Usage: mna.exe <G.csv> <H.csv> [-a=alpha] [-B=bio_costs.csv] [-b=beta]" << std::endl;
+        std::cerr << "Usage: mna.exe <G.csv> <H.csv> [-a=alpha] [-B=bio_costs.csv] [-b=beta] [-g=gamma]" << std::endl;
         return 0;
     }
 
@@ -40,6 +46,7 @@ int main(int argc, char* argv[])
     auto alpha = std::stod(args[3]); // GDV - edge weight balancer
     auto bio_f = args[4];            // biological data file
     auto beta = std::stod(args[5]);  // topological - biological balancer
+    auto gamma = std::stod(args[6]); // alignment cost threshold
     
     bool bio = (bio_f != "");        // biological data file provided
 
@@ -48,11 +55,9 @@ int main(int argc, char* argv[])
     auto h_name = FileIO::name_file(h_f);
     auto folder = FileIO::name_folder(g_name, h_name);
 
-    std::cout << "G: " << g_name << "; H: " << h_name << "; Folder: " << folder << ";" << std::endl; // DEBUG
+    // std::cout << "G: " << g_name << "; H: " << h_name << "; Folder: " << folder << ";" << std::endl; // DEBUG
 
-    // s = start time
-    // f = finish time
-    // d = duration
+    std::cout << "BEGINNING ALIGNMENT" <<  std::endl;
     auto s = std::chrono::high_resolution_clock::now();
 
     // // Read graph files into graph objects [UNCOMMENT WHEN ORCA IS FIXED]
@@ -60,6 +65,8 @@ int main(int argc, char* argv[])
     // std::cout << "[0.0] Reading graph files.........................";
     // auto g_graph = FileIO::file_to_graph(g_f);
     // auto h_graph = FileIO::file_to_graph(h_f);
+    // auto g_labels = FileIO::parse_labels(g_f);
+    // auto h_labels = FileIO::parse_labels(h_f);
     // auto f00 = std::chrono::high_resolution_clock::now();
     // auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
     // std::cout << "done. (" << d00 << "ms)" <<  std::endl;
@@ -76,8 +83,8 @@ int main(int argc, char* argv[])
     // // Writing GDVs to files [UNCOMMENT WHEN ORCA IS FIXED]
     // auto s11 = std::chrono::high_resolution_clock::now();
     // std::cout << "[1.1] Writing GDVs to files.......................";
-    // auto g_gdvs_f = FileIO::gdvs_to_file(folder, g_name, g_gdvs);
-    // auto h_gdvs_f = FileIO::gdvs_to_file(folder, h_name, h_gdvs);
+    // auto g_gdvs_f = FileIO::gdvs_to_file(folder, g_name, g_labels, g_gdvs);
+    // auto h_gdvs_f = FileIO::gdvs_to_file(folder, h_name, h_labels, h_gdvs);
     // auto f11 = std::chrono::high_resolution_clock::now();
     // auto d11 = std::chrono::duration_cast<std::chrono::milliseconds>(f11-s11).count();
     // std::cout << "done. (" << d11 << "ms)" <<  std::endl;
@@ -85,15 +92,19 @@ int main(int argc, char* argv[])
     // Calculate the GDVs for G and H [DELETE WHEN ORCA IS FIXED]
     std::cout << "[1.0] Calculating GDVs...............................";
     auto s10 = std::chrono::high_resolution_clock::now();
-    auto g_gdvs_f = orca(g_name);
-    auto h_gdvs_f = orca(h_name);
+    auto g_labels = FileIO::parse_labels(g_f);
+    auto h_labels = FileIO::parse_labels(h_f);
+    auto g_orca_in = FileIO::orca_in(g_f);
+    auto h_orca_in = FileIO::orca_in(h_f);
+    auto g_gdvs_f = orca(g_orca_in, folder, g_name);
+    auto h_gdvs_f = orca(h_orca_in, folder, h_name);
     auto f10 = std::chrono::high_resolution_clock::now();
     auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
     std::cout << "done. (" << d10 << "ms)" <<  std::endl;
 
     // Get the GDVs for each node in G and H [DELETE WHEN ORCA IS FIXED]
     auto s11 = std::chrono::high_resolution_clock::now();
-    std::cout << "[1.1] Read GDVs from files...........................";
+    std::cout << "[1.1] Reading GDVs from files........................";
     auto g_gdvs = FileIO::file_to_gdvs(g_gdvs_f);
     auto h_gdvs = FileIO::file_to_gdvs(h_gdvs_f);
     auto f11 = std::chrono::high_resolution_clock::now();
@@ -111,7 +122,7 @@ int main(int argc, char* argv[])
     // Store the topological cost matrix in a file
     auto s21 = std::chrono::high_resolution_clock::now();
     std::cout << "[2.1] Writing the topological cost matrix to file....";
-    auto topological_costs_f = FileIO::cost_to_file(folder, topological_costs);
+    auto topological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, topological_costs);
     auto f21 = std::chrono::high_resolution_clock::now();
     auto d21 = std::chrono::duration_cast<std::chrono::milliseconds>(f21-s21).count();
     std::cout << "done. (" << d21 << "ms)" <<  std::endl;
@@ -130,7 +141,7 @@ int main(int argc, char* argv[])
         // Store the biological cost matrix in a file
         auto s31 = std::chrono::high_resolution_clock::now();
         std::cout << "[3.1] Writing the biological cost matrix to file...";
-        auto biological_costs_f = FileIO::cost_to_file(folder, biological_costs);
+        auto biological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, biological_costs);
         auto f31 = std::chrono::high_resolution_clock::now();
         auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
         std::cout << "done. (" << d31 << "ms)" <<  std::endl;
@@ -146,7 +157,7 @@ int main(int argc, char* argv[])
         // Store the overall cost matrix in a file
         auto s41 = std::chrono::high_resolution_clock::now();
         std::cout << "[4.1] Writing the overall cost matrix to file........";
-        auto overall_costs_f = FileIO::cost_to_file(folder, overall_costs);
+        auto overall_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, overall_costs);
         auto f41 = std::chrono::high_resolution_clock::now();
         auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
         std::cout << "done. (" << d41 << "ms)" <<  std::endl;
@@ -162,7 +173,8 @@ int main(int argc, char* argv[])
         // Write the results to a csv file
         auto s51 = std::chrono::high_resolution_clock::now();
         std::cout << "[5.1] Writing the alignment to file..................";
-        auto alignment_f = FileIO::alignment_to_file(folder, alignment);
+        auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
+        auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment, gamma);
         auto f51 = std::chrono::high_resolution_clock::now();
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         std::cout << "done. (" << d51 << "ms)" <<  std::endl;
@@ -180,7 +192,8 @@ int main(int argc, char* argv[])
         // Write the results to a csv file
         auto s31 = std::chrono::high_resolution_clock::now();
         std::cout << "[3.1] Writing the alignment to file..................";
-        auto alignment_f = FileIO::alignment_to_file(folder, alignment);
+        auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
+        auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment, gamma);
         auto f31 = std::chrono::high_resolution_clock::now();
         auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
         std::cout << "done. (" << d31 << "ms)" <<  std::endl;

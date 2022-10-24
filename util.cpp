@@ -15,9 +15,9 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"-1", "", "", "0.5", "", "0.5"};
+        std::vector<std::string> args = {"-1", "", "", "0.5", "", "0.5", "1"};
 
-        if (argc < 3 || argc > 5)
+        if (argc < 3 || argc > 6)
         {
             return args;
         }
@@ -39,6 +39,10 @@ namespace Util
             else if (arg.find("-b=") != std::string::npos)
             {
                 args[5] = arg.substr(3);
+            }
+            else if (arg.find("-g=") != std::string::npos)
+            {
+                args[6] = arg.substr(3);
             }
         }
 
