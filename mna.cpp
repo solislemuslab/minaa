@@ -80,16 +80,16 @@ int main(int argc, char* argv[])
     FileIO::out(log, "BEGINNING ALIGNMENT\n");
     auto s = std::chrono::high_resolution_clock::now();
 
-    // // Read graph files into graph objects [UNCOMMENT WHEN ORCA IS FIXED]
-    // auto s00 = std::chrono::high_resolution_clock::now();
-    // FileIO::out(log, "[0.0] Reading graph files.........................");
-    // auto g_graph = FileIO::file_to_graph(g_f);
-    // auto h_graph = FileIO::file_to_graph(h_f);
-    // auto g_labels = FileIO::parse_labels(g_f);
-    // auto h_labels = FileIO::parse_labels(h_f);
-    // auto f00 = std::chrono::high_resolution_clock::now();
-    // auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
-    // FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
+    // Read graph files into graph objects
+    auto s00 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "[0.0] Reading graph files.........................");
+    auto g_graph = FileIO::file_to_graph(g_f);
+    auto h_graph = FileIO::file_to_graph(h_f);
+    auto g_labels = FileIO::parse_labels(g_f);
+    auto h_labels = FileIO::parse_labels(h_f);
+    auto f00 = std::chrono::high_resolution_clock::now();
+    auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
+    FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
 
     // // Calculate the GDVs for G and H [UNCOMMENT WHEN ORCA IS FIXED]
     // auto s10 = std::chrono::high_resolution_clock::now();
@@ -112,8 +112,6 @@ int main(int argc, char* argv[])
     // Calculate the GDVs for G and H [DELETE WHEN ORCA IS FIXED]
     FileIO::out(log, "[1.0] Calculating GDVs...............................");
     auto s10 = std::chrono::high_resolution_clock::now();
-    auto g_labels = FileIO::parse_labels(g_f);
-    auto h_labels = FileIO::parse_labels(h_f);
     auto g_orca_in = FileIO::orca_in(g_f);
     auto h_orca_in = FileIO::orca_in(h_f);
     auto g_gdvs_f = orca(g_orca_in, folder, g_name);
@@ -198,6 +196,8 @@ int main(int argc, char* argv[])
         auto f51 = std::chrono::high_resolution_clock::now();
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
+
+        // ADD COLLAPSE CODE
     }
     else // topopogical data only
     {
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
         auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
         FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
 
-        // Write the results to a csv file
+        // Write the alignment to csv files
         auto s31 = std::chrono::high_resolution_clock::now();
         FileIO::out(log, "[3.1] Writing the alignment to file..................");
         auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
@@ -217,6 +217,22 @@ int main(int argc, char* argv[])
         auto f31 = std::chrono::high_resolution_clock::now();
         auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
         FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
+
+        // // Use the alignment to collapse H down onto G
+        // auto s40 = std::chrono::high_resolution_clock::now();
+        // FileIO::out(log, "[4.0] Collapsing G and H.............................");
+        // auto gh_graph = Util::collapse(g_graph, h_graph, alignment);
+        // auto f40 = std::chrono::high_resolution_clock::now();
+        // auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
+        // FileIO::out(log, "done. (" + std::to_string(d40) + "ms)\n");
+
+        // // Write GH to file
+        // auto s41 = std::chrono::high_resolution_clock::now();
+        // FileIO::out(log, "[4.1] Writing the collapse to file..................");
+        // auto gh_graph_f = FileIO::cost_to_file(folder, g_labels, h_labels, gh_graph);
+        // auto f41 = std::chrono::high_resolution_clock::now();
+        // auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
+        // FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");
     }
 
     auto f = std::chrono::high_resolution_clock::now();

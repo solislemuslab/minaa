@@ -10,9 +10,11 @@
 - [x] Handle biological input
   - [x] Normalize it to be in range [0,1]
 - [x] Write all file IO functions
-  - [x] Make everything proper csv
-  - [x] On input: allow matrix
-  - [ ] On input: delimiter detection
+  - [x] Make alL IO csv
+  - [x] Take adj matrix on input
+  - [x] Delimiter detection on input
+  - [x] Write output to console and log file
+  - [x] Generate new folder for each execution
 - [ ] Fortify everything with exception handling
 - [ ] Use NetCoMi to generate graphs to run through MNA app
 - [ ] Verify the correctness/robustness of the complete implementation

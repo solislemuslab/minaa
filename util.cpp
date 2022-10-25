@@ -152,4 +152,71 @@ namespace Util
 
         return overall_costs;
     }
+
+    /*
+     * Collapse graph H onto graph G, with respect to the alignment.
+     */
+    std::vector<std::vector<double>> collapse(std::vector<std::vector<unsigned>> g_graph,
+        std::vector<std::vector<unsigned>> h_graph, std::vector<std::vector<double>> alignment)
+    {
+        // Denote the union (wrt the alignment) of the nodes in G and H as GH
+        // GOAL: an adj matrix GH x GH in which...
+        // - GH_i,j = 0 if there is no edge between nodes i and j
+        // - GH_i,j = 1 if only G draws an edge between nodes i and j
+        // - GH_i,j = 2 if only H draws an edge between nodes i and j
+        // - GH_i,j = 3 if both G and H draw an edge between nodes i and j
+
+        // Layout
+        // Break GH into 2 disjoint sets: G and H - alignment(G, H), and operate separately
+        // For each possible edge in the G adjacency matrix, 
+
+        // Get |GH|
+        unsigned gh_size = g_graph.size() + h_graph.size() - alignment.size();
+        // Initialize collapsed with 0s
+        std::vector<std::vector<double>> collapsed(gh_size, std::vector<double>(gh_size, 0));
+
+        // Iterate through the possible edges in G
+        for (unsigned i = 0; i < g_graph.size(); ++i)
+        {
+            for (unsigned j = 0; j < g_graph.size(); ++j)
+            {
+                // Check if G has an edge here
+                if (g_graph[i][j] > 0)
+                {
+                    collapsed[i][j] += 1;
+                }
+
+                // Check if H has an edge here
+                // Check if G_i corresponds to some H_k
+                unsigned k;
+                for (k = 0; k < alignment[i].size(); ++k)
+                {
+                    if (alignment[i][k] > 0)
+                    {
+                        break;
+                    }
+                }
+                
+                if (k < alignment[i].size()) // if G_i is aligned to H_k...
+                {
+                    // Check if H_k shares an edge with an H_l who is aligned to G_j
+                    for (unsigned l = 0; l < h_graph[k].size(); ++l)
+                    {
+                        if (h_graph[k][l] > 0)
+                        {
+                            if (alignment[j][l] > 0)
+                            {
+                                collapsed[i][j] += 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Iterate through the nodes only in H
+        // [do that]
+
+        return collapsed;
+    }
 }
