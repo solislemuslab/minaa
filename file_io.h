@@ -20,6 +20,7 @@ namespace FileIO
     std::string cost_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
     std::string alignment_to_matrix_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
     std::string alignment_to_list_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
+    std::string bridge_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
 }
 
 #endif

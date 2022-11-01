@@ -13,6 +13,8 @@
 #include "file_io.h"
 #include "util.h"
 
+// #include <matplot/matplot.h>
+
 /*
  * char* input file 1
  * char* input file 2
@@ -21,18 +23,18 @@ int main(int argc, char* argv[])
 {
     auto datetime = Util::now();
 
-    // // Tests
-    // if (argc == 2)
-    // {
-    //     // // Run through graphcrunch
-    //     // FileIO::graphcrunch_in(argv[1]);
-    //     // FileIO::parse_labels(argv[1]);
+    // Tests
+    if (argc == 2)
+    {
+        // // Run through graphcrunch
+        // FileIO::graphcrunch_in(argv[1]);
+        // FileIO::parse_labels(argv[1]);
 
-    //     // // Run through detect_delimiter()
-    //     // FileIO::detect_delimiter(argv[1]);
+        // // Run through detect_delimiter()
+        // FileIO::detect_delimiter(argv[1]);
 
-    //     return 0;
-    // }
+        return 0;
+    }
 
     // Parse command line arguments
     auto args = Util::parse_args(argc, argv);
@@ -66,7 +68,7 @@ int main(int argc, char* argv[])
         FileIO::out(log, " ");
     }
     FileIO::out(log, "\n");
-    FileIO::out(log, "D_M_Y-H_M_S: " + datetime + "\n");
+    FileIO::out(log, "Y_M_D-H_M_S: " + datetime + "\n");
     FileIO::out(log, "\n");
     FileIO::out(log, "ARGUMENTS\n");
     FileIO::out(log, "G File:   " + g_name + "\n");
@@ -218,6 +220,22 @@ int main(int argc, char* argv[])
         auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
         FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
 
+        // Use the alignment to bridge G and H
+        auto s40 = std::chrono::high_resolution_clock::now();
+        FileIO::out(log, "[4.0] Bridging G and H...............................");
+        auto bridge_graph = Util::bridge(g_graph, h_graph, alignment);
+        auto f40 = std::chrono::high_resolution_clock::now();
+        auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
+        FileIO::out(log, "done. (" + std::to_string(d40) + "ms)\n");
+
+        // Write bridge to file
+        auto s41 = std::chrono::high_resolution_clock::now();
+        FileIO::out(log, "[4.1] Writing the bridge to file.....................");
+        auto bridge_graph_f = FileIO::bridge_to_file(folder, g_labels, h_labels, bridge_graph);
+        auto f41 = std::chrono::high_resolution_clock::now();
+        auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
+        FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");
+
         // // Use the alignment to collapse H down onto G
         // auto s40 = std::chrono::high_resolution_clock::now();
         // FileIO::out(log, "[4.0] Collapsing G and H.............................");
@@ -238,6 +256,8 @@ int main(int argc, char* argv[])
     auto f = std::chrono::high_resolution_clock::now();
     auto d = std::chrono::duration_cast<std::chrono::milliseconds>(f-s).count();
     FileIO::out(log, "ALIGNMENT COMPLETED (" + std::to_string(d) + "ms)\n");
+
+    // Get a visual representation of the alignment using R
 
     return 0;
 }

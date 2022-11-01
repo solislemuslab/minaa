@@ -483,4 +483,55 @@ namespace FileIO
         return path;
     }
 
+    /*
+     * Write the bridge graph to a file.
+     */
+    std::string bridge_to_file(std::string folder, std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> bridge_graph)
+    {
+        std::string filestr = "bridge.csv";
+
+        std::ofstream fout(folder + filestr);
+        if (!fout.is_open())
+        {
+            std::cerr << "Could not open file " << filestr << std::endl;
+            return "";
+        }
+
+        // Write the first row
+        fout << "\"\"";
+        for (unsigned i = 0; i < g_labels.size(); ++i)
+        {
+            fout << "," << g_labels[i];
+        }
+        for (unsigned i = 0; i < h_labels.size(); ++i)
+        {
+            fout << "," << h_labels[i];
+        }
+
+        // Write the rows with G labels
+        for (unsigned i = 0; i < g_labels.size(); ++i)
+        {
+            fout << std::endl << g_labels[i];
+            for (unsigned j = 0; j < bridge_graph.size(); ++j)
+            {
+                fout << "," << bridge_graph[i][j];
+            }
+        }
+
+        // Write the rows with H labels
+        for (unsigned i = 0; i < h_labels.size(); ++i)
+        {
+            fout << std::endl << h_labels[i];
+            for (unsigned j = 0; j < bridge_graph.size(); ++j)
+            {
+                fout << "," << bridge_graph[g_labels.size() + i][j];
+            }
+        }
+        
+        fout.close();
+
+        return filestr;
+    }
+
 }

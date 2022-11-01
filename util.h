@@ -8,6 +8,7 @@ namespace Util
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> merge(std::vector<std::vector<double>>, std::vector<std::vector<double>>, double);
     std::vector<std::vector<double>> collapse(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>);
+    std::vector<std::vector<double>> bridge(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>);
 }
 
 #endif

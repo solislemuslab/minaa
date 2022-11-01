@@ -15,7 +15,7 @@ namespace Util
         auto tm = *std::localtime(&t);
 
         std::ostringstream oss;
-        oss << std::put_time(&tm, "%d_%m_%Y-%H_%M_%S");
+        oss << std::put_time(&tm, "%Y_%m_%d-%H_%M_%S");
         std::string str = oss.str();
 
         return str;
@@ -214,9 +214,85 @@ namespace Util
             }
         }
 
+        // Identify the nodes only in H
+        std::vector<unsigned> h_only;
+        for (unsigned i = 0; i < h_graph.size(); ++i)
+        {
+            bool is_aligned = false;
+            for (unsigned j = 0; j < h_graph.size(); ++j)
+            {
+                // Check if H has an edge here
+                if (h_graph[i][j] > 0)
+                {
+                    is_aligned = true;
+                    break;
+                }
+            }
+            if (!is_aligned)
+            {
+                h_only.push_back(i);
+            }
+        }
+
         // Iterate through the nodes only in H
-        // [do that]
 
         return collapsed;
+    }
+
+    /*
+     * Bridge graphs G and H, with respect to the alignment.
+     * Returns simply:
+     * [    G    ][A(G, H)]
+     * [A(G, H)^T][   H   ]
+     */
+    std::vector<std::vector<double>> bridge(std::vector<std::vector<unsigned>> g_graph,
+        std::vector<std::vector<unsigned>> h_graph, std::vector<std::vector<double>> alignment)
+    {
+        // Initialize bridged with 0s
+        std::vector<std::vector<double>> bridged(g_graph.size() + h_graph.size(), std::vector<double>(g_graph.size() + h_graph.size(), 0));
+
+        // Iterate through the first G rows
+        for (unsigned i = 0; i < g_graph.size(); ++i)
+        {
+            // Iterate through the first G columns
+            for (unsigned j = 0; j < g_graph.size(); ++j)
+            {
+                if (g_graph[i][j] > 0)
+                {
+                    bridged[i][j] = 1;
+                }
+            }
+            // Iterate through the last H columns
+            for (unsigned j = 0; j < h_graph.size(); ++j)
+            {
+                if (alignment[i][j] > 0)
+                {
+                    bridged[i][g_graph.size() + j] = 1;
+                }
+            }
+        }
+        
+        // Iterate through the last H rows
+        for (unsigned i = 0; i < h_graph.size(); ++i)
+        {
+            // Iterate through the first G columns
+            for (unsigned j = 0; j < g_graph.size(); ++j)
+            {
+                if (alignment[j][i] > 0)
+                {
+                    bridged[g_graph.size() + i][j] = 1;
+                }
+            }
+            // Iterate through the last H columns
+            for (unsigned j = 0; j < h_graph.size(); ++j)
+            {
+                if (h_graph[i][j] > 0)
+                {
+                    bridged[g_graph.size() + i][g_graph.size() + j] = 1;
+                }
+            }
+        }
+
+        return bridged;
     }
 }
