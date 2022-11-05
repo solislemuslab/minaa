@@ -1,6 +1,6 @@
-OBJS	= mna.o hungarian.o gdvs_dist.o orca.o file_io.o util.o
-SOURCE	= mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp
-HEADER	= hungarian.h gdvs_dist.h orca.h file_io.h util.h
+OBJS	= mna.o hungarian.o gdvs_dist.o orca.o graphcrunch.o file_io.o util.o
+SOURCE	= mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp graphcrunch.cpp file_io.cpp util.cpp
+HEADER	= hungarian.h gdvs_dist.h orca.h graphcrunch.h file_io.h util.h
 OUT	    = mna.exe
 CC      = g++
 FLAGS   = -O2 -g -c -Wall -Wextra -ansi -pedantic
@@ -20,6 +20,9 @@ gdvs_dist.o: gdvs_dist.cpp
 orca.o: orca.cpp
 	$(CC) $(FLAGS) orca.cpp -std=c++20
 
+graphcrunch.o: graphcrunch.cpp
+	$(CC) $(FLAGS) graphcrunch.cpp -std=c++20
+
 file_io.o: file_io.cpp
 	$(CC) $(FLAGS) file_io.cpp -std=c++20
 
@@ -31,4 +34,4 @@ clean:
 	rm -f $(OBJS)
 
 # Alternate to make
-# g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp file_io.cpp util.cpp
+# g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp orca.cpp graphcrunch.cpp file_io.cpp util.cpp

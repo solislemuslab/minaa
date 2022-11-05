@@ -26,10 +26,10 @@ This utility takes six command-line arguments: `./mna.exe <G> <H> [-B=bio] [-a=a
   - Default: the algorithm will run using only topological calculations
 - **alpha**: GDV-edge weight balancer
   - Require: a real number in range [0, 1]
-  - Default: 0.5
+  - Default: 1
 - **beta**: topological-biological cost matrix balancer
   - Require: a real number in range [0, 1]
-  - Default: 0.5
+  - Default: 1
 - **gamma**: any alignment cost equal or greater than this will not be recorded as an alignment
   - Require: a real number in range [0, 1]
   - Default: 1

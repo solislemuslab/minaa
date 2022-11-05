@@ -15,6 +15,9 @@
   - [x] Delimiter detection on input
   - [x] Write output to console and log file
   - [x] Generate new folder for each execution
+- [x] Replace ORCA with GraphCrunch for now
+- [ ] Implement Bridge method
+- [ ] Implement Colapse method
 - [ ] Fortify everything with exception handling
 - [ ] Use NetCoMi to generate graphs to run through MNA app
 - [ ] Verify the correctness/robustness of the complete implementation

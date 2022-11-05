@@ -2,9 +2,9 @@
 // Topological Similarity Calculator (from GRAAL)
 // Reed Nelson
 
-#include <array>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 namespace GDVs_Dist
 {
@@ -32,7 +32,7 @@ namespace GDVs_Dist
      */
     double weight(unsigned i)
     {
-        return 1 - log10(O[i]) / log10(73);
+        return 1 - (log10(O[i]) / log10(73));
     }
 
     /*
@@ -52,7 +52,7 @@ namespace GDVs_Dist
     /*
      * The signature similarity between nodes v and u. (1 - the distance between v and u).
      */
-    double similarity(std::array<unsigned, 73> v, std::array<unsigned, 73> u)
+    double similarity(std::vector<unsigned> v, std::vector<unsigned> u)
     {
         double dist = 0;
         for (unsigned i = 0; i < 73; ++i)
@@ -60,13 +60,13 @@ namespace GDVs_Dist
             dist += distance(v[i], u[i], i);
         }
 
-        return 1 - dist / WEIGHT_SUM;
+        return 1 - (dist / WEIGHT_SUM);
     }
 
     /*
      * The cost of aligning nodes v and u.
      */
-    double cost(std::array<unsigned, 73> v, std::array<unsigned, 73> u, unsigned g_max_deg, unsigned h_max_deg)
+    double cost(std::vector<unsigned> v, std::vector<unsigned> u, unsigned g_max_deg, unsigned h_max_deg)
     {
         // Return maximal cost if either node is a loner
         if (v[0] == 0 || u[0] == 0)
@@ -74,8 +74,7 @@ namespace GDVs_Dist
             return 1;
         }
 
-        double node_degs;
-        node_degs = (v[0] + u[0]) / (g_max_deg + h_max_deg);
+        double node_degs = (v[0] + u[0]) / (g_max_deg + h_max_deg);
 
         return 1 - ((1 - alpha) * node_degs + alpha * similarity(v, u)); // originally 2 - ...
     }
@@ -83,7 +82,7 @@ namespace GDVs_Dist
     /*
      * The maximum degree of all the nodes in the given graph.
      */
-    unsigned max_deg(std::vector<std::array<unsigned, 73>> gdvs)
+    unsigned max_deg(std::vector<std::vector<unsigned>> gdvs)
     {
         unsigned max = 0;
         for (unsigned i = 0; i < gdvs.size(); ++i)
@@ -101,7 +100,7 @@ namespace GDVs_Dist
      * Calculate the topological similarity between the graphs at the given paths.
      */
     std::vector<std::vector<double>> gdvs_dist(
-        std::vector<std::array<unsigned, 73>> g_gdvs, std::vector<std::array<unsigned, 73>> h_gdvs, double alpha)
+        std::vector<std::vector<unsigned>> g_gdvs, std::vector<std::vector<unsigned>> h_gdvs, double alpha)
     {
         GDVs_Dist::alpha = alpha;
         

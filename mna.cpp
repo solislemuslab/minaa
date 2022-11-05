@@ -2,22 +2,19 @@
 // Microbial Network Alignment
 // Reed Nelson
 
-#include <array>
 #include <chrono>
 #include <vector>
 #include <iostream>
 
 #include "hungarian.h"
 #include "gdvs_dist.h"
+#include "graphcrunch.h"
 #include "orca.h"
 #include "file_io.h"
 #include "util.h"
 
-// #include <matplot/matplot.h>
-
 /*
- * char* input file 1
- * char* input file 2
+ * Main function
  */
 int main(int argc, char* argv[])
 {
@@ -26,13 +23,8 @@ int main(int argc, char* argv[])
     // Tests
     if (argc == 2)
     {
-        // // Run through graphcrunch
-        // FileIO::graphcrunch_in(argv[1]);
-        // FileIO::parse_labels(argv[1]);
-
-        // // Run through detect_delimiter()
-        // FileIO::detect_delimiter(argv[1]);
-
+        // Rscript visualize.R bridge.csv
+        // ./mna.exe testdata/no_tuber_scab_adj/no_tuber_scab_Net1_1.csv testdata/no_tuber_scab_adj/no_tuber_scab_Net1_2.csv
         return 0;
     }
 
@@ -84,7 +76,7 @@ int main(int argc, char* argv[])
 
     // Read graph files into graph objects
     auto s00 = std::chrono::high_resolution_clock::now();
-    FileIO::out(log, "[0.0] Reading graph files.........................");
+    FileIO::out(log, "Reading graph files............................");
     auto g_graph = FileIO::file_to_graph(g_f);
     auto h_graph = FileIO::file_to_graph(h_f);
     auto g_labels = FileIO::parse_labels(g_f);
@@ -93,47 +85,31 @@ int main(int argc, char* argv[])
     auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
     FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
 
-    // // Calculate the GDVs for G and H [UNCOMMENT WHEN ORCA IS FIXED]
-    // auto s10 = std::chrono::high_resolution_clock::now();
-    // FileIO::out(log, "[1.0] Calculating GDVs............................");
+    // Calculate the GDVs for G and H
+    auto s10 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Calculating GDVs...............................");
+    auto g_gc_f = FileIO::graphcrunch_in(g_f, folder + g_name);
+    auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name);
+    auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);
+    auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);
     // auto g_gdvs = ORCA::orca(g_graph);
     // auto h_gdvs = ORCA::orca(h_graph);
-    // auto f10 = std::chrono::high_resolution_clock::now();
-    // auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
-    // FileIO::out(log, "done. (" + std::to_string(d10) + "ms)\n");
-
-    // // Writing GDVs to files [UNCOMMENT WHEN ORCA IS FIXED]
-    // auto s11 = std::chrono::high_resolution_clock::now();
-    // FileIO::out(log, "[1.1] Writing GDVs to files.......................");
-    // auto g_gdvs_f = FileIO::gdvs_to_file(folder, g_name, g_labels, g_gdvs);
-    // auto h_gdvs_f = FileIO::gdvs_to_file(folder, h_name, h_labels, h_gdvs);
-    // auto f11 = std::chrono::high_resolution_clock::now();
-    // auto d11 = std::chrono::duration_cast<std::chrono::milliseconds>(f11-s11).count();
-    // FileIO::out(log, "done. (" + std::to_string(d11) + "ms)\n");
-
-    // Calculate the GDVs for G and H [DELETE WHEN ORCA IS FIXED]
-    FileIO::out(log, "[1.0] Calculating GDVs...............................");
-    auto s10 = std::chrono::high_resolution_clock::now();
-    auto g_orca_in = FileIO::orca_in(g_f);
-    auto h_orca_in = FileIO::orca_in(h_f);
-    auto g_gdvs_f = orca(g_orca_in, folder, g_name);
-    auto h_gdvs_f = orca(h_orca_in, folder, h_name);
     auto f10 = std::chrono::high_resolution_clock::now();
     auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
     FileIO::out(log, "done. (" + std::to_string(d10) + "ms)\n");
 
-    // Get the GDVs for each node in G and H [DELETE WHEN ORCA IS FIXED]
+    // Writing GDVs to files
     auto s11 = std::chrono::high_resolution_clock::now();
-    FileIO::out(log, "[1.1] Reading GDVs from files........................");
-    auto g_gdvs = FileIO::file_to_gdvs(g_gdvs_f);
-    auto h_gdvs = FileIO::file_to_gdvs(h_gdvs_f);
+    FileIO::out(log, "Writing GDVs to files..........................");
+    auto g_gdvs_f = FileIO::gdvs_to_file(folder, g_name, g_labels, g_gdvs);
+    auto h_gdvs_f = FileIO::gdvs_to_file(folder, h_name, h_labels, h_gdvs);
     auto f11 = std::chrono::high_resolution_clock::now();
     auto d11 = std::chrono::duration_cast<std::chrono::milliseconds>(f11-s11).count();
     FileIO::out(log, "done. (" + std::to_string(d11) + "ms)\n");
 
     // Calculate the topological similarity matrix
     auto s20 = std::chrono::high_resolution_clock::now();
-    FileIO::out(log, "[2.0] Calculating the topological cost matrix........");
+    FileIO::out(log, "Calculating the topological cost matrix........");
     auto topological_costs = GDVs_Dist::gdvs_dist(g_gdvs, h_gdvs, alpha);
     auto f20 = std::chrono::high_resolution_clock::now();
     auto d20 = std::chrono::duration_cast<std::chrono::milliseconds>(f20-s20).count();
@@ -141,17 +117,19 @@ int main(int argc, char* argv[])
     
     // Store the topological cost matrix in a file
     auto s21 = std::chrono::high_resolution_clock::now();
-    FileIO::out(log, "[2.1] Writing the topological cost matrix to file....");
+    FileIO::out(log, "Writing the topological cost matrix to file....");
     auto topological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, topological_costs);
     auto f21 = std::chrono::high_resolution_clock::now();
     auto d21 = std::chrono::duration_cast<std::chrono::milliseconds>(f21-s21).count();
     FileIO::out(log, "done. (" + std::to_string(d21) + "ms)\n");
     
+    std::vector<std::vector<double>> alignment;
+
     if (bio) // incorporate biological data
     {
         // Parse and normalize the biological cost matrix
         auto s30 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[3.0] Processing biological data.....................");
+        FileIO::out(log, "Processing biological data.....................");
         auto biological_costs = FileIO::file_to_cost(bio_f);
         biological_costs = Util::normalize(biological_costs);
         auto f30 = std::chrono::high_resolution_clock::now();
@@ -160,7 +138,7 @@ int main(int argc, char* argv[])
         
         // Store the biological cost matrix in a file
         auto s31 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[3.1] Writing the biological cost matrix to file.....");
+        FileIO::out(log, "Writing the biological cost matrix to file.....");
         auto biological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, biological_costs);
         auto f31 = std::chrono::high_resolution_clock::now();
         auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
@@ -168,7 +146,7 @@ int main(int argc, char* argv[])
 
         // Calculate the overall cost matrix
         auto s40 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[4.0] Calculating the overall cost matrix............");
+        FileIO::out(log, "Calculating the overall cost matrix............");
         auto overall_costs = Util::merge(topological_costs, biological_costs, beta);
         auto f40 = std::chrono::high_resolution_clock::now();
         auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
@@ -176,7 +154,7 @@ int main(int argc, char* argv[])
 
         // Store the overall cost matrix in a file
         auto s41 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[4.1] Writing the overall cost matrix to file........");
+        FileIO::out(log, "Writing the overall cost matrix to file........");
         auto overall_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, overall_costs);
         auto f41 = std::chrono::high_resolution_clock::now();
         auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
@@ -184,80 +162,72 @@ int main(int argc, char* argv[])
 
         // Run the alignment algorithm
         auto s50 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[5.0] Aligning the graphs............................");
-        auto alignment = Hungarian::hungarian(overall_costs);
+        FileIO::out(log, "Aligning the graphs............................");
+        alignment = Hungarian::hungarian(overall_costs);
         auto f50 = std::chrono::high_resolution_clock::now();
         auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
         FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
-
-        // Write the results to a csv file
-        auto s51 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[5.1] Writing the alignment to file..................");
-        auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
-        auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment, gamma);
-        auto f51 = std::chrono::high_resolution_clock::now();
-        auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
-        FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
-
-        // ADD COLLAPSE CODE
     }
     else // topopogical data only
     {
         // Run the alignment algorithm
-        auto s30 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[3.0] Aligning the graphs............................");
-        auto alignment = Hungarian::hungarian(topological_costs);
-        auto f30 = std::chrono::high_resolution_clock::now();
-        auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
-        FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
-
-        // Write the alignment to csv files
-        auto s31 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[3.1] Writing the alignment to file..................");
-        auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
-        auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment, gamma);
-        auto f31 = std::chrono::high_resolution_clock::now();
-        auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
-        FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
-
-        // Use the alignment to bridge G and H
-        auto s40 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[4.0] Bridging G and H...............................");
-        auto bridge_graph = Util::bridge(g_graph, h_graph, alignment);
-        auto f40 = std::chrono::high_resolution_clock::now();
-        auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
-        FileIO::out(log, "done. (" + std::to_string(d40) + "ms)\n");
-
-        // Write bridge to file
-        auto s41 = std::chrono::high_resolution_clock::now();
-        FileIO::out(log, "[4.1] Writing the bridge to file.....................");
-        auto bridge_graph_f = FileIO::bridge_to_file(folder, g_labels, h_labels, bridge_graph);
-        auto f41 = std::chrono::high_resolution_clock::now();
-        auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
-        FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");
-
-        // // Use the alignment to collapse H down onto G
-        // auto s40 = std::chrono::high_resolution_clock::now();
-        // FileIO::out(log, "[4.0] Collapsing G and H.............................");
-        // auto gh_graph = Util::collapse(g_graph, h_graph, alignment);
-        // auto f40 = std::chrono::high_resolution_clock::now();
-        // auto d40 = std::chrono::duration_cast<std::chrono::milliseconds>(f40-s40).count();
-        // FileIO::out(log, "done. (" + std::to_string(d40) + "ms)\n");
-
-        // // Write GH to file
-        // auto s41 = std::chrono::high_resolution_clock::now();
-        // FileIO::out(log, "[4.1] Writing the collapse to file..................");
-        // auto gh_graph_f = FileIO::cost_to_file(folder, g_labels, h_labels, gh_graph);
-        // auto f41 = std::chrono::high_resolution_clock::now();
-        // auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
-        // FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");
+        auto s50 = std::chrono::high_resolution_clock::now();
+        FileIO::out(log, "Aligning the graphs............................");
+        alignment = Hungarian::hungarian(topological_costs);
+        auto f50 = std::chrono::high_resolution_clock::now();
+        auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
+        FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
     }
+
+    // Write the alignment to csv files
+    auto s51 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Writing the alignment to file..................");
+    auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment, gamma);
+    auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment, gamma);
+    auto f51 = std::chrono::high_resolution_clock::now();
+    auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
+    FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
+
+    // Use the alignment to bridge G and H
+    auto s60 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Bridging G and H...............................");
+    auto bridge_graph = Util::bridge(g_graph, h_graph, alignment);
+    auto f60 = std::chrono::high_resolution_clock::now();
+    auto d60 = std::chrono::duration_cast<std::chrono::milliseconds>(f60-s60).count();
+    FileIO::out(log, "done. (" + std::to_string(d60) + "ms)\n");
+
+    // Write bridge to file
+    auto s61 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Writing the bridge to file.....................");
+    auto bridge_graph_f = FileIO::bridge_to_file(folder, g_labels, h_labels, bridge_graph);
+    auto f61 = std::chrono::high_resolution_clock::now();
+    auto d61 = std::chrono::duration_cast<std::chrono::milliseconds>(f61-s61).count();
+    FileIO::out(log, "done. (" + std::to_string(d61) + "ms)\n");
+
+    // Use the alignment to collapse H down onto G
+    auto s70 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Collapsing G and H.............................");
+    auto gh_labels = Util::collapse_labels(alignment, g_labels, h_labels);
+    auto collapse_graph = Util::collapse(g_graph, h_graph, alignment, g_labels, h_labels, gh_labels);
+    auto f70 = std::chrono::high_resolution_clock::now();
+    auto d70 = std::chrono::duration_cast<std::chrono::milliseconds>(f70-s70).count();
+    FileIO::out(log, "done. (" + std::to_string(d70) + "ms)\n");
+
+    // Write collapse to file
+    auto s71 = std::chrono::high_resolution_clock::now();
+    FileIO::out(log, "Writing the collapse to file...................");
+    auto collapse_graph_f = FileIO::collapse_to_file(folder, gh_labels, collapse_graph);
+    auto f71 = std::chrono::high_resolution_clock::now();
+    auto d71 = std::chrono::duration_cast<std::chrono::milliseconds>(f71-s71).count();
+    FileIO::out(log, "done. (" + std::to_string(d71) + "ms)\n");
 
     auto f = std::chrono::high_resolution_clock::now();
     auto d = std::chrono::duration_cast<std::chrono::milliseconds>(f-s).count();
     FileIO::out(log, "ALIGNMENT COMPLETED (" + std::to_string(d) + "ms)\n");
 
-    // Get a visual representation of the alignment using R
+    // // Get a visual representation of the alignment using R
+    // std::string cmd = "Rscript ./visualize.R " + folder + "bridge.csv";
+    // system(cmd.c_str());
 
     return 0;
 }

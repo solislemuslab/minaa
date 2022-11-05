@@ -176,13 +176,13 @@ namespace FileIO
      * FOR GRAPHCRUNCH
      * TEMPORARY
      */
-    std::string graphcrunch_in(std::string file)
+    std::string graphcrunch_in(std::string file_in, std::string file_out)
     {
         // Identify the delimiter for this csv
-        char delim = detect_delimiter(file);
+        char delim = detect_delimiter(file_in);
         
         // Parse the file into a matrix
-        std::ifstream infile(file);
+        std::ifstream infile(file_in);
         std::vector<std::vector<double>> matrix;
         std::string line;
         while (std::getline(infile, line))
@@ -210,7 +210,7 @@ namespace FileIO
         {
             for (unsigned j = i; j < matrix[i].size(); ++j)
             {
-                if (i != j && matrix[i][j] != 0)
+                if (matrix[i][j] != 0) // i != j && 
                 {
                     list.push_back({i, j});
                 }
@@ -218,8 +218,10 @@ namespace FileIO
         }
 
         // Write the list to a file
-        std::string out_file = "testdata/graphcrunch_in/" + name_file(file) + ".txt";
+        std::string out_file = file_out + ".csv";
         std::ofstream outfile(out_file);
+        outfile << (matrix.size() - 1) << std::endl;
+        outfile << list.size() << std::endl;
         for (auto &row : list)
         {
             outfile << row[0] << " " << row[1] << std::endl;
@@ -293,14 +295,13 @@ namespace FileIO
         std::vector<std::string> labels;
         std::string line;
         std::getline(infile, line);
-        //int i = 0; // DEBUG
+
         while (std::getline(infile, line))
         {
             std::stringstream ss(line);
             std::string cell;
             std::getline(ss, cell, ',');
             labels.push_back(cell);
-            //std::cout << ++i  << ": " << cell << std::endl; // DEBUG
         }
         return labels;
     }
@@ -308,34 +309,41 @@ namespace FileIO
     /*
      * Parse the file at the given path into a vector of integer arrays.
      */
-    std::vector<std::array<unsigned, 73>> file_to_gdvs(std::string filestr)
+    std::vector<std::vector<unsigned>> file_to_gdvs(std::string file)
     {
-        std::ifstream fin(filestr);
-        if (!fin.is_open())
-        {
-            std::cerr << "Could not open file " << filestr << std::endl;
-            return {};
-        }
+        // Identify the delimiter for this csv
+        char delim = detect_delimiter(file);
 
-        std::vector<std::array<unsigned, 73>> ret;
-
-        for (unsigned i = 0; !fin.eof(); ++i)
+        // Parse the file
+        std::ifstream infile(file);
+        std::vector<std::vector<unsigned>> gdvs;
+        std::string line;
+        int c = 0;
+        std::cout << "file: " << file << std::endl;
+        while (std::getline(infile, line))
         {
-            std::array<unsigned, 73> gdv;
-            for (unsigned j = 0; j < 73; ++j)
+            c++;
+            std::istringstream ss(line);
+            std::string val;
+            std::vector<unsigned> gdv;
+            while (std::getline(ss, val, delim))
             {
-                int temp;
-                fin >> temp;
-                //printf("%i ", gdv[j]); //debug
-                gdv[j] = abs(temp); // ONLY BECAUSE ORCA IS BROKEN (CAN'T TRUST TO BE POSITIVE)
+                try
+                {
+                    gdv.push_back(std::stoi(val));
+                }
+                catch (std::invalid_argument const&)
+                {
+                    gdv.push_back(0);
+                }
             }
-            ret.push_back(gdv);
+            gdvs.push_back(gdv);
+
         }
-        ret.pop_back(); // sort of a hack to get rid of the last line, should probably solve more intelligently
+        infile.close();
+        std::cout << "Parsed " << c << " lines" << std::endl; // DEBUG
 
-        fin.close();
-
-        return ret;
+        return gdvs;
     }
 
     /*
@@ -366,20 +374,29 @@ namespace FileIO
      * Write GDVs to a file
      */
     std::string gdvs_to_file(std::string folder, std::string graph_name,
-        std::vector<std::string> labels, std::vector<std::array<unsigned, 73>> gdvs)
+        std::vector<std::string> labels, std::vector<std::vector<unsigned>> gdvs)
     {
-        std::ofstream file(folder + graph_name + "_gdvs.csv");
-        unsigned i = 0;
-        for (auto gdv : gdvs)
+        std::string filestr = folder + graph_name + "_gdvs.csv";
+
+        std::ofstream fout(filestr);
+        if (!fout.is_open())
         {
-            file << labels[i++];
-            for (auto j : gdv)
-            {
-                file << "," << j;
-            }
+            std::cerr << "Could not open file " << filestr << std::endl;
+            return "";
         }
-        file.close();
-        return folder + graph_name + "_gdvs.csv";
+
+        for (unsigned i = 0; i < labels.size(); ++i)
+        {
+            fout << labels[i];
+            for (unsigned j = 0; j < gdvs[i].size(); ++j)
+            {
+                fout << "," << gdvs[i][j];
+            }
+            fout << std::endl;
+        }
+        fout.close();
+
+        return filestr;
     }
 
     /*
@@ -529,6 +546,39 @@ namespace FileIO
             }
         }
         
+        fout.close();
+
+        return filestr;
+    }
+
+    /*
+     * Write the collapsed matrix to a file.
+     */
+    std::string collapse_to_file(std::string folder, std::vector<std::string> gh_labels,
+        std::vector<std::vector<double>> collapsed)
+    {
+        std::string filestr = "collapsed.csv";
+
+        std::ofstream fout(folder + filestr);
+        if (!fout.is_open())
+        {
+            std::cerr << "Could not open file " << filestr << std::endl;
+            return "";
+        }
+
+        fout << "\"\"";
+        for (unsigned i = 0; i < collapsed[0].size(); ++i)
+        {
+            fout << "," << gh_labels[i];
+        }
+        for (unsigned i = 0; i < collapsed.size(); ++i)
+        {
+            fout << std::endl << gh_labels[i];
+            for (unsigned j = 0; j < collapsed[i].size(); ++j)
+            {
+                fout << "," << collapsed[i][j];
+            }
+        }
         fout.close();
 
         return filestr;
