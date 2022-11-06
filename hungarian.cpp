@@ -2,14 +2,11 @@
 // Hungarian Algorithm O(n^3)
 // Reed Nelson
 
-/* TODO:
- * 1. x Modify for specifically doubles
- * 2. x Handle non-square matrices
- * 3. x Integrate file I/O
- * 4. x Change structure and variable names as desired
- * 5. Change comments
- * 6. x Change row/col covers to unsigned chars.
- * 7. x Change mask matrix to unsigned chars.
+/*
+ * BUG:
+ * There are valid inputs which break the algorithm.
+ * When input is G != H, H = no_tuber_scab_Net1_5.csv, the algorithm seg faults in step 5.
+ * Strangely, this does not happen when G = no_tuber_scab_Net1_5.csv, H = anything.
  */
 
 #include <algorithm>
@@ -374,9 +371,8 @@ namespace Hungarian
      * row of Z1 (there will always be one).  Continue until the series terminates at a
      * primed zero that has no starred zero in its column.  Unstar each starred zero of
      * the series, star each primed zero of the series, erase all primes and uncover every
-     * line in the matrix.  Return to Step 3.  You may notice that Step 5 seems vaguely
-     * familiar.  It is a verbal description of the augmenting path algorithm (for solving
-     * the maximal matching problem).
+     * line in the matrix.  Return to Step 3. Step 5 is a verbal description of the
+     * augmenting path algorithm (for solving the maximal matching problem).
      */
     void step5(std::vector<std::vector<int>> &path, int path_row_0, int path_col_0, std::vector<std::vector<unsigned char>> &mask,
                std::vector<unsigned char> &row_cover, std::vector<unsigned char> &col_cover, int &step)
@@ -395,7 +391,9 @@ namespace Hungarian
             if (r > -1)
             {
                 ++path_count;
+                // std::cout << "ps: " << path.size() << " : " << path_count - 1 << std::endl; // DEBUG
                 path[path_count - 1][0] = r;
+                // std::cout << "there" << std::endl; // DEBUG
                 path[path_count - 1][1] = path[path_count - 2][1];
             }
             else
@@ -418,6 +416,7 @@ namespace Hungarian
         clear_primes(mask);
 
         step = 3;
+        //std::cout << "done" << std::endl; // DEBUG
     }
 
     /* 
@@ -472,7 +471,7 @@ namespace Hungarian
             {
                 if (mask[r][c] != 0)
                 {
-                    row.push_back(original[r][c]);
+                    row.push_back(1 - original[r][c]);
                 }
                 else
                 {
@@ -517,6 +516,8 @@ namespace Hungarian
         // mask(i,j)=1 -> C(i,j) is a starred zero, mask(i,j)=2 -> C(i,j) is a primed zero
         std::vector<std::vector<unsigned char>> mask(costs.size(), std::vector<unsigned char>(costs.size(), 0));
 
+        //std::cout << costs.size() << " " << costs[0].size() << std::endl; // DEBUG
+
         /* We also define two vectors row_cover and col_cover that are used to "cover"
          * the rows and columns of the cost matrix C
          */
@@ -528,15 +529,18 @@ namespace Hungarian
 
         // Array for the augmenting path algorithm
         std::vector<std::vector<int>> path(costs.size() + 1, std::vector<int>(2, 0));
+        //std::cout << costs.size() + 1 << std::endl; // DEBUG
 
         bool done = false;
         int step = 1;
 
         while (!done)
         {
+            //std::cout << step << std::endl; // DEBUG
             switch (step)
             {
             case 1:
+                
                 step1(costs, step);
                 break;
             case 2:

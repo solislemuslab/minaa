@@ -34,7 +34,7 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"-1", "", "", "", "1", "1", "1"};
+        std::vector<std::string> args = {"-1", "", "", "", "1", "1", "0"};
 
         if (argc < 3 || argc > 7)
         {
@@ -54,14 +54,29 @@ namespace Util
             else if (arg.find("-a=") != std::string::npos)
             {
                 args[4] = arg.substr(3);
+
+                if (std::stod(args[4]) < 0 || std::stod(args[4]) > 1)
+                {
+                    throw std::invalid_argument("The alpha argument must be in range [0, 1].");
+                }
             }
             else if (arg.find("-b=") != std::string::npos)
             {
                 args[5] = arg.substr(3);
+
+                if (std::stod(args[5]) < 0 || std::stod(args[5]) > 1)
+                {
+                    throw std::invalid_argument("The beta argument must be in range [0, 1].");
+                }
             }
             else if (arg.find("-g=") != std::string::npos)
             {
                 args[6] = arg.substr(3);
+
+                if (std::stod(args[6]) < 0 || std::stod(args[6]) > 1)
+                {
+                    throw std::invalid_argument("The gamma argument must be in range [0, 1].");
+                }
             }
         }
 
@@ -172,7 +187,7 @@ namespace Util
             // Iterate through the first G columns
             for (unsigned j = 0; j < g_graph.size(); ++j)
             {
-                if (g_graph[i][j] > 0)
+                if (g_graph[i][j] > 0 && i != j) // ignoring self loops
                 {
                     bridged[i][j] = 1;
                 }
@@ -201,7 +216,7 @@ namespace Util
             // Iterate through the last H columns
             for (unsigned j = 0; j < h_graph.size(); ++j)
             {
-                if (h_graph[i][j] > 0)
+                if (h_graph[i][j] > 0 && i != j) // ignoring self loops
                 {
                     bridged[g_graph.size() + i][g_graph.size() + j] = 1;
                 }
@@ -287,6 +302,7 @@ namespace Util
 
     /*
      * Collapse graph H onto graph G, with respect to the alignment.
+     * TODO: make self-edges not exist
      */
     std::vector<std::vector<double>> collapse(
         std::vector<std::vector<unsigned>> g_graph,
@@ -321,7 +337,7 @@ namespace Util
                     // Iterate through all nodes gk adjacent to gi
                     for (unsigned gk = 0; gk < g_graph[0].size(); ++gk)
                     {
-                        if (g_graph[gi][gk] > 0) // gi and gk are adjacent
+                        if (g_graph[gi][gk] > 0 && gi != gk) // gi and gk are adjacent, ignoring self loops
                         {
                             unsigned hl = 0;
                             for (; hl < alignment[0].size(); ++hl)
@@ -355,10 +371,9 @@ namespace Util
                     // Iterate through all nodes hk adjacent to hj
                     for (unsigned hk = 0; hk < h_graph[0].size(); ++hk)
                     {
-                        if (h_graph[hj][hk] > 0) // hj and hk are adjacent
+                        if (h_graph[hj][hk] > 0 && hj != hk) // hj and hk are adjacent, ignopring self loops
                         {
                             unsigned gl = 0;
-                            //std::cout << "size(): " << alignment.size() << " " << alignment[0].size() << " hk: " << hk << std::endl; // DEBUG
                             for (; gl < alignment.size(); ++gl)
                             {
                                 if (alignment[gl][hk] > 0)
@@ -396,7 +411,7 @@ namespace Util
                 // Iterate through all nodes gj adjacent to gi
                 for (unsigned gj = 0; gj < g_graph[0].size(); ++gj)
                 {
-                    if (g_graph[gi][gj] > 0) // gi and gj are adjacent
+                    if (g_graph[gi][gj] > 0  && gi != gj) // gi and gj are adjacent, ignoring self loops
                     {
                         unsigned hk = 0;
                         for (; hk < alignment[0].size(); ++hk)
@@ -439,7 +454,7 @@ namespace Util
                 // Iterate through all nodes hk adjacent to hi
                 for (unsigned hk = 0; hk < h_graph[0].size(); ++hk)
                 {
-                    if (h_graph[hi][hk] > 0) // hi and hk are adjacent
+                    if (h_graph[hi][hk] > 0 && hi != hk) // hi and hk are adjacent, ignoring self loops
                     {
                         unsigned gl = 0;
                         for (; gl < alignment.size(); ++gl)

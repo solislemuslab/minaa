@@ -30,9 +30,9 @@ This utility takes six command-line arguments: `./mna.exe <G> <H> [-B=bio] [-a=a
 - **beta**: topological-biological cost matrix balancer
   - Require: a real number in range [0, 1]
   - Default: 1
-- **gamma**: any alignment cost equal or greater than this will not be recorded as an alignment
+- **gamma**: the score an aligned pair of nodes must exceed for their alignment to be recorded
   - Require: a real number in range [0, 1]
-  - Default: 1
+  - Default: 0
 
 ### Examples
 

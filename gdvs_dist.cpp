@@ -32,7 +32,7 @@ namespace GDVs_Dist
      */
     double weight(unsigned i)
     {
-        return 1 - (log10(O[i]) / log10(73));
+        return 1 - (std::log10(O[i]) / std::log10(73));
     }
 
     /*
@@ -40,10 +40,10 @@ namespace GDVs_Dist
      */
     double distance(unsigned vi, unsigned ui, unsigned i)
     {
-        double ret;
-        ret = log10(vi + 1) - log10(ui + 1);
-        ret = abs(ret);
-        ret /= log10(std::max(vi, ui) + 2);
+        double ret = 0;
+        ret = std::log10(vi + 1) - std::log10(ui + 1);
+        ret = std::abs(ret);
+        ret /= std::log10(std::max(vi, ui) + 2);
         ret *= weight(i);
 
         return ret;
@@ -110,6 +110,8 @@ namespace GDVs_Dist
 
         // Initialize the cost matrix to the right dimensions
         std::vector<std::vector<double>> costs(g_gdvs.size(), std::vector<double>(h_gdvs.size())); 
+
+        // cost(g_gdvs[0], h_gdvs[1], g_max_deg, h_max_deg); // DEBUG
 
         // Calculate the cost matrix between G and H
         for (unsigned i = 0; i < g_gdvs.size(); ++i)

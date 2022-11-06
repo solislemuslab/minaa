@@ -5,6 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 
 #include "hungarian.h"
 #include "gdvs_dist.h"
@@ -29,8 +30,17 @@ int main(int argc, char* argv[])
     }
 
     // Parse command line arguments
-    auto args = Util::parse_args(argc, argv);
-
+    std::vector<std::string> args;
+    try
+    {
+        args = Util::parse_args(argc, argv);
+    }
+    catch (std::invalid_argument& e)
+    {
+        std::cerr << "ERROR: " << e.what() << "\nPROGRAM TERMINATING" << std::endl;
+        return 1;
+    }
+    
     if (args[0] == "-1")
     {
         std::cerr << "Usage: mna.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta] [-g=gamma]" << std::endl;
@@ -204,7 +214,7 @@ int main(int argc, char* argv[])
     auto d61 = std::chrono::duration_cast<std::chrono::milliseconds>(f61-s61).count();
     FileIO::out(log, "done. (" + std::to_string(d61) + "ms)\n");
 
-    // Use the alignment to collapse H down onto G
+    // Use the alignment to collapse H and G
     auto s70 = std::chrono::high_resolution_clock::now();
     FileIO::out(log, "Collapsing G and H.............................");
     auto gh_labels = Util::collapse_labels(alignment, g_labels, h_labels);
