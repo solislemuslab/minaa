@@ -6,10 +6,10 @@ namespace Util
     std::string now();
     std::vector<std::string> parse_args(int, char**);
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>>);
-    std::vector<std::vector<double>> merge(std::vector<std::vector<double>>, std::vector<std::vector<double>>, double);
+    std::vector<std::vector<double>> combine(std::vector<std::vector<double>>, std::vector<std::vector<double>>, double);
     std::vector<std::vector<double>> bridge(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>);
-    std::vector<std::string> collapse_labels(std::vector<std::vector<double>>, std::vector<std::string>, std::vector<std::string>);
-    std::vector<std::vector<double>> collapse(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>, std::vector<std::string>, std::vector<std::string>, std::vector<std::string>);
+    std::vector<std::string> merge_labels(std::vector<std::vector<double>>, std::vector<std::string>, std::vector<std::string>);
+    std::vector<std::vector<double>> merge(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>, std::vector<std::string>, std::vector<std::string>, std::vector<std::string>);
 }
 
 #endif

@@ -5,10 +5,16 @@
 #include <limits>
 #include <vector>
 
+#include "file_io.h"
+
 namespace Util
 {
-    /*
+    /**
      * Gets the current date and time, formatted as a string.
+     * 
+     * @return the current date and time, formatted as a string.
+     * 
+     * @throws 
      */
     std::string now()
     {
@@ -22,25 +28,42 @@ namespace Util
         return str;
     }
 
-    /*
+    /**
      * Parse command line arguments.
-     * args[0]: error code
+     * args[0]: argv[0]
      * args[1]: graph G file
      * args[2]: graph H file
      * args[3]: biological data file
      * args[4]: GDV - edge weight balancer
      * args[5]: topological - biological balancer
      * args[6]: alignment cost threshold
+     * 
+     * @param argc The number of command line arguments.
+     * @param argv The command line arguments.
+     * 
+     * @return A list with values for all command line arguments, in a certain order.
+     * 
+     * @throws 
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"-1", "", "", "", "1", "1", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "0"};
 
         if (argc < 3 || argc > 7)
         {
-            return args;
+            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./mna.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta] [-g=gamma]");
         }
 
+        if (!FileIO::is_accessible(argv[1]))
+        {
+            throw std::invalid_argument("The first file specified cannot be read.");
+        }
+        if (!FileIO::is_accessible(argv[2]))
+        {
+            throw std::invalid_argument("The second file specified cannot be read.");
+        }
+
+        args[0] = argv[0];
         args[1] = argv[1];
         args[2] = argv[2];
 
@@ -50,6 +73,10 @@ namespace Util
             if (arg.find("-B=") != std::string::npos)
             {
                 args[3] = arg.substr(3);
+                if (!FileIO::is_accessible(args[3]))
+                {
+                    throw std::invalid_argument("The biological data file cannot be read.");
+                }
             }
             else if (arg.find("-a=") != std::string::npos)
             {
@@ -80,12 +107,17 @@ namespace Util
             }
         }
 
-        args[0] = "0"; // No errors
         return args;
     }
 
-    /*
-     * Normalize a matrix.
+    /**
+     * Normalize the entries of the given matrix to be in range [0, 1].
+     * 
+     * @param matrix The matrix to normalize.
+     * 
+     * @return The normalized matrix.
+     * 
+     * @throws 
      */
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>> matrix)
     {
@@ -138,11 +170,18 @@ namespace Util
         return norm_matrix;
     }
 
-    /*
-     * Merge the topological and biological cost matrices.
-     * beta of the weight goes to topological similarity, (1 - beta) goes to biological similarity.
+    /**
+     * Combine the topological and biological cost matrices.
+     * 
+     * @param topological_costs The topological cost matrix.
+     * @param biological_costs The biological cost matrix.
+     * @param beta of the weight goes to topological similarity, (1 - beta) goes to biological similarity.
+     * 
+     * @return The combined cost matrix.
+     * 
+     * @throws 
      */
-    std::vector<std::vector<double>> merge(
+    std::vector<std::vector<double>> combine(
         std::vector<std::vector<double>> topological_costs, std::vector<std::vector<double>> biological_costs, double beta) {
         // Handle absent biological costs
         if (biological_costs.empty()) {
@@ -169,11 +208,19 @@ namespace Util
         return overall_costs;
     }
 
-    /*
+    /**
      * Bridge graphs G and H, with respect to the alignment.
      * Returns simply:
      * [    G    ][A(G, H)]
-     * [A(G, H)^T][   H   ]
+     * [A(G, H)^T][   H   ] 
+     * 
+     * @param g_graph The graph G.
+     * @param h_graph The graph H.
+     * @param alignment The alignment between G and H.
+     * 
+     * @return A new graph containing G and H, and the edges between them, according to the alignment.
+     * 
+     * @throws 
      */
     std::vector<std::vector<double>> bridge(std::vector<std::vector<unsigned>> g_graph,
         std::vector<std::vector<unsigned>> h_graph, std::vector<std::vector<double>> alignment)
@@ -226,16 +273,24 @@ namespace Util
         return bridged;
     }
 
-    /*
-     * Map the labels of the will-be collapsed matrix to the indices of it.
+    /**
+     * Map the labels of the will-be merged matrix to the indices of it.
+     * 
+     * @param alignment The alignment between G and H.
+     * @param g_labels The labels of G.
+     * @param h_labels The labels of H.
+     * 
+     * @return The lables of the merged matrix.
+     * 
+     * @throws 
      */
-    std::vector<std::string> collapse_labels(std::vector<std::vector<double>> alignment,
+    std::vector<std::string> merge_labels(std::vector<std::vector<double>> alignment,
         std::vector<std::string> g_labels, std::vector<std::string> h_labels)
     {
-        std::vector<std::string> gh_labels;
+        std::vector<std::string> merged_labels;
         bool aligned = false;
 
-        // For each gi in G, label index i in GH with gi, or gi + hj if gi is aligned with hj
+        // For each gi in G, label index i in merged with gi, or gi + hj if gi is aligned with hj
         for (unsigned i = 0; i < alignment.size(); ++i)
         {
             aligned = false;
@@ -243,16 +298,14 @@ namespace Util
             {
                 if (alignment[i][j] > 0)
                 {
-                    gh_labels.push_back(g_labels[i] + h_labels[j]);
-                    //std::cout << g_labels[i] + h_labels[j] << std::endl; // DEBUG
+                    merged_labels.push_back(g_labels[i] + h_labels[j]);
                     aligned = true;
                     break;
                 }
             }
             if (!aligned)
             {
-                gh_labels.push_back(g_labels[i]);
-                //std::cout << g_labels[i] << std::endl; // DEBUG
+                merged_labels.push_back(g_labels[i]);
             }
         }
 
@@ -270,61 +323,72 @@ namespace Util
             }
             if (!aligned)
             {
-                gh_labels.push_back(h_labels[j]);
-                //std::cout << h_labels[j] << std::endl; // DEBUG
+                merged_labels.push_back(h_labels[j]);
             }
         }
 
-        return gh_labels;
+        return merged_labels;
     }
 
-    /*
-     * yes
+    /**
+     * Assigns the entry at index (label1, label2) the merged matrix the given value.
+     * 
+     * @param merged The merged matrix.
+     * @param merged_labels The labels of the merged matrix.
+     * @param label1 The first label.
+     * @param label2 The second label.
+     * @param value The value to assign.
+     * 
+     * @return The merged matrix with the new value.
+     * 
+     * @throws 
      */
     std::vector<std::vector<double>> assign(
-        std::vector<std::vector<double>> collapsed,
-        std::vector<std::string> gh_labels,
+        std::vector<std::vector<double>> merged,
+        std::vector<std::string> merged_labels,
         std::string label1,
         std::string label2,
-        unsigned value
-        )
+        unsigned value)
     {
-        int i = std::distance(std::begin(gh_labels), std::find(std::begin(gh_labels), std::end(gh_labels), label1));
-        int j = std::distance(std::begin(gh_labels), std::find(std::begin(gh_labels), std::end(gh_labels), label2));
+        int i = std::distance(std::begin(merged_labels), std::find(std::begin(merged_labels), std::end(merged_labels), label1));
+        int j = std::distance(std::begin(merged_labels), std::find(std::begin(merged_labels), std::end(merged_labels), label2));
         // If the label is not found, do something
 
-        collapsed[i][j] = value;
-        collapsed[j][i] = value;
+        merged[i][j] = value;
+        merged[j][i] = value;
 
-        return collapsed;
+        return merged;
     }
 
-
-    /*
-     * Collapse graph H onto graph G, with respect to the alignment.
-     * TODO: make self-edges not exist
+    /**
+     * Merge graph H onto graph G, with respect to the alignment.
+     * 
+     * @param g_graph The graph G.
+     * @param h_graph The graph H.
+     * @param alignment The alignment between G and H.
+     * @param g_labels The labels of G.
+     * @param h_labels The labels of H.
+     * @param merged_labels The labels of the merged matrix.
+     * 
+     * @return The merged matrix.
+     * 
+     * @throws 
      */
-    std::vector<std::vector<double>> collapse(
+    std::vector<std::vector<double>> merge(
         std::vector<std::vector<unsigned>> g_graph,
         std::vector<std::vector<unsigned>> h_graph,
         std::vector<std::vector<double>> alignment,
         std::vector<std::string> g_labels,
         std::vector<std::string> h_labels,
-        std::vector<std::string> gh_labels)
+        std::vector<std::string> merged_labels)
     {
-        // Denote the union (wrt the alignment) of the nodes in G and H as GH
-        // GOAL: an adj matrix GH x GH in which...
-        // - GH_i,j = 0 if there is no edge between nodes i and j
-        // - GH_i,j = 1 if only G draws an edge between nodes i and j
-        // - GH_i,j = 2 if only H draws an edge between nodes i and j
-        // - GH_i,j = 3 if both G and H draw an edge between nodes i and j
+        // merged_i,j = 0 iff there is no edge between nodes i and j
+        // merged_i,j = 1 iff only G draws an edge between nodes i and j
+        // merged_i,j = 2 iff only H draws an edge between nodes i and j
+        // merged_i,j = 3 iff both G and H draw an edge between nodes i and j
 
-        // Layout
-        // Break GH into 2 disjoint sets: G and H - alignment(G, H), and operate separately
-        // For each possible edge in the G adjacency matrix, 
-
-        // Initialize collapsed with 0s
-        std::vector<std::vector<double>> collapsed(gh_labels.size(), std::vector<double>(gh_labels.size(), 0));
+        // Initialize merged with 0s
+        std::vector<std::vector<double>> merged(merged_labels.size(), std::vector<double>(merged_labels.size(), 0));
 
         // Iterate through all nodes gi in G, aligned and unaligned
         for (unsigned gi = 0; gi < g_graph.size(); ++gi)
@@ -353,18 +417,18 @@ namespace Util
                                 auto label2 = g_labels[gk] + h_labels[hl];
                                 if (h_graph[hj][hl] > 0) // hj is adjacent to hl
                                 {
-                                    collapsed = assign(collapsed, gh_labels, label1, label2, 3);
+                                    merged = assign(merged, merged_labels, label1, label2, 3);
                                 }
                                 else // hj is not adjacent to hl
                                 {
-                                    collapsed = assign(collapsed, gh_labels, label1, label2, 1);
+                                    merged = assign(merged, merged_labels, label1, label2, 1);
                                 }
                             }
                             else // gk is unaligned
                             {
                                 auto label1 = g_labels[gi] + h_labels[hj];
                                 auto label2 = g_labels[gk];
-                                collapsed = assign(collapsed, gh_labels, label1, label2, 1);
+                                merged = assign(merged, merged_labels, label1, label2, 1);
                             }
                         }
                     }
@@ -387,19 +451,19 @@ namespace Util
                                 auto label2 = g_labels[gl] + h_labels[hk];
                                 if (g_graph[gi][gl] > 0) // gi is adjacent to gl 
                                 {
-                                    // collapsed = assign(collapsed, gh_labels, label1, label2, 3);
-                                    continue; // we already recorded this collapse
+                                    // merged = assign(merged, merged_labels, label1, label2, 3);
+                                    continue; // we already recorded this merge
                                 }
                                 else // gi is not adjacent to gl
                                 {
-                                    collapsed = assign(collapsed, gh_labels, label1, label2, 2);
+                                    merged = assign(merged, merged_labels, label1, label2, 2);
                                 }
                             }
                             else // hk is unaligned
                             {
                                 auto label1 = g_labels[gi] + h_labels[hj];
                                 auto label2 = h_labels[hk];
-                                collapsed = assign(collapsed, gh_labels, label1, label2, 2);
+                                merged = assign(merged, merged_labels, label1, label2, 2);
                             }
                         }
                     }
@@ -425,13 +489,13 @@ namespace Util
                         {
                             auto label1 = g_labels[gi];
                             auto label2 = g_labels[gj] + h_labels[hk];
-                            collapsed = assign(collapsed, gh_labels, label1, label2, 1);
+                            merged = assign(merged, merged_labels, label1, label2, 1);
                         }
                         else // gj is unaligned
                         {
                             auto label1 = g_labels[gi];
                             auto label2 = g_labels[gj];
-                            collapsed = assign(collapsed, gh_labels, label1, label2, 1);
+                            merged = assign(merged, merged_labels, label1, label2, 1);
                         }
                     }
                 }
@@ -468,19 +532,19 @@ namespace Util
                         {
                             auto label1 = h_labels[hi];
                             auto label2 = g_labels[gl] + h_labels[hk];
-                            collapsed = assign(collapsed, gh_labels, label1, label2, 2);
+                            merged = assign(merged, merged_labels, label1, label2, 2);
                         }
                         else // hk is unaligned
                         {
                             auto label1 = h_labels[hi];
                             auto label2 = h_labels[hk];
-                            collapsed = assign(collapsed, gh_labels, label1, label2, 2);
+                            merged = assign(merged, merged_labels, label1, label2, 2);
                         }
                     }
                 }
             }
         }
 
-        return collapsed;
+        return merged;
     }
 }
