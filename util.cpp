@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <sstream>
 #include <vector>
 
 #include "file_io.h"
@@ -29,6 +30,21 @@ namespace Util
     }
 
     /**
+     * Returns the given double as a string, with the given number of decimal places.
+     * 
+     * @param d The double to convert to a string.
+     * @param n Te number of decimal places to include in the string.
+     * 
+     * @return The given double as a string, with the given number of decimal places.
+     */
+    std::string to_string(double d, int n)
+    {
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(n) << d;
+        return oss.str();
+    }
+
+    /**
      * Parse command line arguments.
      * args[0]: argv[0]
      * args[1]: graph G file
@@ -37,19 +53,20 @@ namespace Util
      * args[4]: GDV - edge weight balancer
      * args[5]: topological - biological balancer
      * args[6]: alignment cost threshold
+     * args[7]: merged (whether to create the merged graph)
      * 
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
      * 
      * @return A list with values for all command line arguments, in a certain order.
      * 
-     * @throws 
+     * @throws std::invalid_argument if an argument is misformatted.
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "0", "0"};
 
-        if (argc < 3 || argc > 7)
+        if (argc < 3 || argc > 8)
         {
             throw std::invalid_argument("Invalid number of arguments.\nUsage: ./mna.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta] [-g=gamma]");
         }
@@ -99,15 +116,64 @@ namespace Util
             else if (arg.find("-g=") != std::string::npos)
             {
                 args[6] = arg.substr(3);
-
-                if (std::stod(args[6]) < 0 || std::stod(args[6]) > 1)
-                {
-                    throw std::invalid_argument("The gamma argument must be in range [0, 1].");
-                }
+                // We check the validity of the gamma string later.
+            }
+            else if (arg.find("-merge") != std::string::npos)
+            {
+                args[7] = "1";
+            }
+            else
+            {
+                throw std::invalid_argument("Invalid argument: " + arg);
             }
         }
 
         return args;
+    }
+
+    /**
+     * Parse a comma-separated string to a vector of doubles.
+     * 
+     * @param gamma The comma-separated string.
+     * 
+     * @returns A vector of doubles.
+     * 
+     * @throws std::invalid_argument if the string is not comma-separated or the values are out of range.
+     */
+    std::vector<double> parse_gammas(std::string gamma_str)
+    {
+        std::vector<double> gamma;
+        std::stringstream ss(gamma_str);
+
+        while(ss.good())
+        {
+            std::string substr;
+            getline(ss, substr, ',');
+            try
+            {
+                double gi = std::stod(substr);
+                if (gi < 0 || gi > 1)
+                {
+                    throw std::out_of_range("Each gamma value must be in range [0, 1].");
+                }
+                gamma.push_back(gi);
+            }
+            catch (const std::invalid_argument& e)
+            {
+                throw std::invalid_argument("Could not parse the gamma string.");
+            }
+            catch (const std::out_of_range& e)
+            {
+                throw std::invalid_argument("Each gamma value must be in range [0, 1].");
+            }  
+        }
+
+        if (gamma.size() > 10)
+        {
+            throw std::invalid_argument("It is not permitted to calculate more than 10 alignments in batch");
+        }
+
+        return gamma;
     }
 
     /**
@@ -217,13 +283,17 @@ namespace Util
      * @param g_graph The graph G.
      * @param h_graph The graph H.
      * @param alignment The alignment between G and H.
+     * @param gamma Gamma.
      * 
      * @return A new graph containing G and H, and the edges between them, according to the alignment.
      * 
      * @throws 
      */
-    std::vector<std::vector<double>> bridge(std::vector<std::vector<unsigned>> g_graph,
-        std::vector<std::vector<unsigned>> h_graph, std::vector<std::vector<double>> alignment)
+    std::vector<std::vector<double>> bridge(
+        std::vector<std::vector<unsigned>> g_graph,
+        std::vector<std::vector<unsigned>> h_graph,
+        std::vector<std::vector<double>> alignment,
+        double gamma)
     {
         // Initialize bridged with 0s
         std::vector<std::vector<double>> bridged(g_graph.size() + h_graph.size(), std::vector<double>(g_graph.size() + h_graph.size(), 0));
@@ -242,7 +312,7 @@ namespace Util
             // Iterate through the last H columns
             for (unsigned j = 0; j < h_graph.size(); ++j)
             {
-                if (alignment[i][j] > 0)
+                if (alignment[i][j] > 0 && alignment[i][j] >= gamma)
                 {
                     bridged[i][g_graph.size() + j] = 1;
                 }
@@ -255,7 +325,7 @@ namespace Util
             // Iterate through the first G columns
             for (unsigned j = 0; j < g_graph.size(); ++j)
             {
-                if (alignment[j][i] > 0)
+                if (alignment[j][i] > 0 && alignment[j][i] >= gamma)
                 {
                     bridged[g_graph.size() + i][j] = 1;
                 }
@@ -279,13 +349,17 @@ namespace Util
      * @param alignment The alignment between G and H.
      * @param g_labels The labels of G.
      * @param h_labels The labels of H.
+     * @param gamma Gamma.
      * 
      * @return The lables of the merged matrix.
      * 
      * @throws 
      */
-    std::vector<std::string> merge_labels(std::vector<std::vector<double>> alignment,
-        std::vector<std::string> g_labels, std::vector<std::string> h_labels)
+    std::vector<std::string> merge_labels(
+        std::vector<std::vector<double>> alignment,
+        std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels,
+        double gamma)
     {
         std::vector<std::string> merged_labels;
         bool aligned = false;
@@ -296,7 +370,7 @@ namespace Util
             aligned = false;
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] > 0)
+                if (alignment[i][j] > 0 && alignment[i][j] >= gamma)
                 {
                     merged_labels.push_back(g_labels[i] + h_labels[j]);
                     aligned = true;
@@ -315,7 +389,7 @@ namespace Util
             aligned = false;
             for (unsigned i = 0; i < alignment.size(); ++i)
             {
-                if (alignment[i][j] > 0)
+                if (alignment[i][j] > 0 && alignment[i][j] >= gamma)
                 {
                     aligned = true;
                     break;
@@ -369,6 +443,7 @@ namespace Util
      * @param g_labels The labels of G.
      * @param h_labels The labels of H.
      * @param merged_labels The labels of the merged matrix.
+     * @param gamma Gamma.
      * 
      * @return The merged matrix.
      * 
@@ -380,7 +455,8 @@ namespace Util
         std::vector<std::vector<double>> alignment,
         std::vector<std::string> g_labels,
         std::vector<std::string> h_labels,
-        std::vector<std::string> merged_labels)
+        std::vector<std::string> merged_labels,
+        double gamma)
     {
         // merged_i,j = 0 iff there is no edge between nodes i and j
         // merged_i,j = 1 iff only G draws an edge between nodes i and j
@@ -396,7 +472,7 @@ namespace Util
             unsigned hj = 0;
             for (; hj < alignment[0].size(); ++hj)
             {
-                if (alignment[gi][hj] > 0) // gi and hj are aligned
+                if (alignment[gi][hj] > 0 && alignment[gi][hj] >= gamma) // gi and hj are aligned
                 {
                     // Iterate through all nodes gk adjacent to gi
                     for (unsigned gk = 0; gk < g_graph[0].size(); ++gk)
@@ -406,7 +482,7 @@ namespace Util
                             unsigned hl = 0;
                             for (; hl < alignment[0].size(); ++hl)
                             {
-                                if (alignment[gk][hl] > 0)
+                                if (alignment[gk][hl] > 0 && alignment[gk][hl] >= gamma)
                                 {
                                     break; // this gk is aligned with only this hl
                                 }
@@ -440,7 +516,7 @@ namespace Util
                             unsigned gl = 0;
                             for (; gl < alignment.size(); ++gl)
                             {
-                                if (alignment[gl][hk] > 0)
+                                if (alignment[gl][hk] > 0 && alignment[gl][hk] >= gamma)
                                 {
                                     break; // this gl is aligned with only this hk
                                 }
@@ -480,7 +556,7 @@ namespace Util
                         unsigned hk = 0;
                         for (; hk < alignment[0].size(); ++hk)
                         {
-                            if (alignment[gj][hk] > 0)
+                            if (alignment[gj][hk] > 0 && alignment[gj][hk] >= gamma)
                             {
                                 break; // this gj is aligned with only this hk
                             }
@@ -508,7 +584,7 @@ namespace Util
             unsigned gj = 0;
             for (; gj < alignment.size(); ++gj)
             {
-                if (alignment[gj][hi] > 0) // gj and hi are aligned
+                if (alignment[gj][hi] > 0 && alignment[gj][hi] >= gamma) // gj and hi are aligned
                 {
                     break; // skip any aligned hi
                 }
@@ -523,7 +599,7 @@ namespace Util
                         unsigned gl = 0;
                         for (; gl < alignment.size(); ++gl)
                         {
-                            if (alignment[gl][hk] > 0)
+                            if (alignment[gl][hk] > 0 && alignment[gl][hk] >= gamma)
                             {
                                 break; // this hk is aligned with only this gl
                             }

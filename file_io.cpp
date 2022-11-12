@@ -651,14 +651,13 @@ namespace FileIO
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param alignment The alignment matrix to write to the file.
-     * @param gamma Gamma.
      * 
      * @return The path to the output file.
      * 
      * @throws std::runtime_error If the file could not be written.
      */
     std::string alignment_to_matrix_file(std::string folder, std::vector<std::string> g_labels,
-        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double gamma)
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment)
     {
         // Create and open the file
         std::string filestr = folder + "alignment_matrix.csv";
@@ -683,7 +682,7 @@ namespace FileIO
             fout << std::endl << g_labels[i];
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] > gamma)
+                if (alignment[i][j] > 0)
                 {
                     fout << "," << alignment[i][j];
                 }
@@ -705,14 +704,13 @@ namespace FileIO
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param alignment The alignment matrix to write to the file.
-     * @param gamma Gamma.
      * 
      * @return The path to the output file.
      * 
      * @throws std::runtime_error If the file could not be written.
      */
     std::string alignment_to_list_file(std::string folder, std::vector<std::string> g_labels,
-        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double gamma)
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment)
     {
         // Convert the alignment matrix into a list
         std::vector<std::array<double, 3>> list;
@@ -721,7 +719,7 @@ namespace FileIO
         {
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] > gamma)
+                if (alignment[i][j] > 0)
                 {
                     net_cost += (1 - alignment[i][j]);
                     list.push_back({(double)i, (double)j, alignment[i][j]});
@@ -756,7 +754,7 @@ namespace FileIO
     /**
      * Write the bridge graph to a file.
      * 
-     * @param folder The folder to write the graph to.
+     * @param file The file to write the graph to.
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param bridge_graph The bridge graph to write to the file.
@@ -765,20 +763,19 @@ namespace FileIO
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    std::string bridged_to_file(std::string folder, std::vector<std::string> g_labels,
+    std::string bridged_to_file(std::string file, std::vector<std::string> g_labels,
         std::vector<std::string> h_labels, std::vector<std::vector<double>> bridged_graph)
     {
         // Create and open the file
-        std::string filestr = folder + "bridged.csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(file);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + file);
         }
 
         // Write the first row
@@ -814,13 +811,13 @@ namespace FileIO
         
         fout.close();
 
-        return filestr;
+        return file;
     }
 
     /**
      * Write the merged matrix to a file.
      * 
-     * @param folder The folder to write the graph to.
+     * @param file The file to write the graph to.
      * @param gh_labels Labels for the merged graph.
      * @param merged The merged graph to write to the file.
      * 
@@ -828,20 +825,19 @@ namespace FileIO
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    std::string merged_to_file(std::string folder, std::vector<std::string> gh_labels,
+    std::string merged_to_file(std::string file, std::vector<std::string> gh_labels,
         std::vector<std::vector<double>> merged)
     {
         // Create and open the file
-        std::string filestr = folder + "merged.csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(file);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + file);
         }
 
         fout << "\"\"";
@@ -859,7 +855,7 @@ namespace FileIO
         }
         fout.close();
 
-        return filestr;
+        return file;
     }
 
 }
