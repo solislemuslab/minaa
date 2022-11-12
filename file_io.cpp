@@ -727,6 +727,13 @@ namespace FileIO
             }
         }
 
+        // Put the list in order of decreasing similarity score
+        std::sort(list.begin(), list.end(),
+          [](const std::array<double, 3>& a, const std::array<double, 3>& b)
+          {
+            return a[2] > b[2];
+        });
+
         // Create and open the file
         std::string filestr = folder + "alignment_list.csv";
         std::ofstream fout;
