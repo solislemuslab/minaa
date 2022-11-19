@@ -4,6 +4,10 @@
 
 The **Microbiome Network Alignment** algorithm aligns two networks based their topologies and biologies.
 
+## Requirements
+
+This utility requires C++ 20 or higher.
+
 ## Compilation
 
 Compile with `make` or `g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
@@ -14,26 +18,42 @@ This utility takes two to seven command-line arguments: `./mna.exe <G> <H> [-B=b
 
 ### Required arguments (ordered)
 
-1. **G**: A graph to align
-   - Require: the graph is represented by an adjacency list or matrix in CSV format
-2. **H**: A graph to align
-   - Require: the graph is represented by an adjacency list or matrix in CSV format
+1. **G**: A graph to align.
+2. **H**: A graph to align.
+
+- Require:
+  - The graphs are represented by adjacency matrices in CSV format, with labels in  both the first column and row.
+  - The CSV delimiter must be one of {comma, semicolon, space, tab}, and will be detected automatically.
+  - Any nonzero entry is considered an edge.
 
 ### Optional arguments (unordered)
 
-- **bio**: The path to the biological cost matrix file
-  - Require: CSV file type
-  - Default: the algorithm will run using only topological calculations
+- **bio**: The path to the biological cost matrix file.
+  - Require: CSV adjacency matrix where the first column is the labels of G, and first row is the labels of H.
+  - Default: the algorithm will run using only topological calculations.
 - **alpha**: GDV-edge weight balancer
-  - Require: a real number in range [0, 1]
+  - Require: a real number in range [0, 1].
   - Default: 1
-- **beta**: topological-biological cost matrix balancer
-  - Require: a real number in range [0, 1]
+- **beta**: topological-biological cost matrix balancer.
+  - Require: a real number in range [0, 1].
   - Default: 1
-- **gamma**: the score an aligned pair of nodes must exceed for their alignment to be recorded
-  - Require: a series of real numbers in range [0, 1]
+- **gamma**: the score an aligned pair of nodes must exceed for their alignment to be recorded.
+  - Require: a series of real numbers in range [0, 1].
   - Default: 0
-- **merge**: A flag indicating to generate a merged visualization of the aligned graphs
+- **merge**: A flag indicating to generate a merged visualization of the aligned graphs.
+
+### Outputs
+
+- **X-Y-T/**: (where "X", "Y" are the input graphs, "T" is the date and time of execution) The folder containing the output files specified below.
+- **log.txt**: Record of the important details from the alignment.
+- **X_gdvs.csv**: (where "X" is the input graph) The Graphlet Degree Vectors for graph "X".
+- **top_costs.csv**: The topological cost matrix.
+- **bio_costs.csv**: The biologocal cost matrix (as inputed). Not created if biological input is not given.
+- **overall_costs.csv**: The combination of the topological and biological cost matrix. Not created if biological input is not given.
+- **alignment_list.csv**: A complete list of all aligned nodes, with rows in the format `g_node,h_node,similarity`, descending acording to similarity. The first row in this list is the total cost of the alignment, or the sum of (1 - similarity) for all aligned pairs.
+- **alignment_matrix.csv**: A matrix form of the same alignment, where the first column and row are the labels from the two input graphs, respectively.
+- **bridged_G.csv**: (where "G" is each gamma specified) The graph bridging the two input graphs, with respect to the alignment.
+- **merged_G.csv**: (where "G" is each gamma specified) The graph merging the two input graphs, with respect to the alignment. Not created if the `-merge` flag is not used.
 
 ### Examples
 
@@ -47,25 +67,19 @@ The presence of `-merge` indicates that, in addition to the classic alignment vi
 
 Here we align graph0 with graph1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
-<!-- ### Visualization Methods
+## Visualization Methods
 
-#### Bridge
+### Bridge
 
-This is the 
+This is what we call the standard method for visualization. Here, the input graphs `G` and `H` are set side by side and an edge is drawn between nodes `g_i` and `h_j` if they are aligned.
 
-#### Merge
+### Merge
 
-The merge method of visualization merges the input graphs intuitively, formalized by the following rules:
+The merge method of visualization merges the input graphs intuitively, according to the following rules:
 
-- Let network G have red nodes g_i and edges g_i,j, network H have blue nodes h_i and edges h_i,j.
-- Take '=' to mean 'is aligned to'
-- If g_i = h_j, merge these nodes into one, and color it purple.
-- If g_i = h_j, and g_k = h_l, 
-
-1. merged_i,j = 0 iff there is no edge between nodes i and j
-2. merged_i,j = 1 iff only G draws an edge between nodes i and j
-3. merged_i,j = 2 iff only H draws an edge between nodes i and j
-4. merged_i,j = 3 iff both G and H draw an edge between nodes i and j -->
+- Let network `G` have red nodes `g_i` and edges `g_i,j`, network `H` have blue nodes `h_i` and edges `h_i,j`.
+- If `g_i` is aligned to `h_j`, merge these nodes into one node and color it purple.
+- If `g_i` is aligned to `h_j`, and `g_k` is aligned to `h_l`, and `g_i` is adjacent to `g_k`, color the edge `g_i,k` red. If instead `h_j` is adjacent to `h_l`, color `h_j,l` blue. If both, color `g_i,k` (aka `h_j,l`) purple.
 
 ## Data
 
