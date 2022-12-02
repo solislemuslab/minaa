@@ -4,9 +4,7 @@
 
 /*
  * BUG:
- * There are valid inputs which break the algorithm.
- * When input is G != H, H = no_tuber_scab_Net1_5.csv, the algorithm seg faults in step 5.
- * Strangely, this does not happen when G = no_tuber_scab_Net1_5.csv, H = anything.
+ * The algorithm occasionally breaks on inputs where graph G > graph H.
  */
 
 #include <algorithm>
@@ -17,6 +15,13 @@
 
 namespace Hungarian
 {
+    // PROGRESS
+    int prog = 0;
+    void printProgress(double val) {
+        std::cout << "\r" << val;
+    }
+    // END PROGRESS
+
     const int MAX = 1;
 
     /* 
@@ -345,6 +350,9 @@ namespace Hungarian
             }
             else
             {
+                double p = double(prog++) / (costs.size() * costs.size()); // PROGRESS
+                printProgress(p); // PROGRESS
+                
                 mask[row][col] = 2;
                 if (star_in_row(row, mask)) 
                 {

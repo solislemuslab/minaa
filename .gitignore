@@ -11,5 +11,4 @@ testdata
 *.png
 *.pdf
 *.o
-*>*
 *.Rhistory

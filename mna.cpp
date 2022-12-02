@@ -186,10 +186,12 @@ int main(int argc, char* argv[])
         {
             // Run the alignment algorithm
             FileIO::out(log, "Aligning the graphs............................");
+            FileIO::out(log, "\n"); // PROGRESS
             auto s50 = std::chrono::high_resolution_clock::now();
             alignment = Hungarian::hungarian(topological_costs);
             auto f50 = std::chrono::high_resolution_clock::now();
             auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
+            FileIO::out(log, "\n"); // PROGRESS
             FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
         }
 
@@ -202,6 +204,7 @@ int main(int argc, char* argv[])
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
 
+        // Visualizations
         for (auto gamma : gammas)
         {
             auto gamma_str = Util::to_string(gamma, 3);

@@ -22,9 +22,10 @@ This utility takes two to seven command-line arguments: `./mna.exe <G> <H> [-B=b
 2. **H**: A graph to align.
 
 - Require:
-  - The graphs are represented by adjacency matrices in CSV format, with labels in  both the first column and row.
+  - The graphs are represented by adjacency matrices in CSV format, with labels in both the first column and row.
   - The CSV delimiter must be one of {comma, semicolon, space, tab}, and will be detected automatically.
   - Any nonzero entry is considered an edge.
+  - |G| should be lesser or equal to |H|.
 
 ### Optional arguments (unordered)
 
@@ -68,6 +69,8 @@ The presence of `-merge` indicates that, in addition to the classic alignment vi
 Here we align graph0 with graph1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
 ## Visualization Methods
+
+> Note: this feature is a work-in-progress, and does not yield graphics at this time.
 
 ### Bridge
 
