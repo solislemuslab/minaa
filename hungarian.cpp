@@ -15,11 +15,11 @@
 
 namespace Hungarian
 {
-    int prog = 0;                                 // PROGRESS
-    void print_progress(double val)               // PROGRESS
-    {                                             // PROGRESS
+    int prog = 0;                                       // PROGRESS
+    void print_progress(double val)                     // PROGRESS
+    {                                                   // PROGRESS
         std::cout << "\33[2K\r~ " << val / 0.14 << "%"; // PROGRESS
-    }                                             // PROGRESS
+    }                                                   // PROGRESS
 
     const int MAX = 1;
 
@@ -350,7 +350,7 @@ namespace Hungarian
             else
             {
                 double p = double(prog++) / (costs.size() * costs.size()); // PROGRESS
-                printProgress(p); // PROGRESS
+                printProgress(p);                                          // PROGRESS
                 
                 mask[row][col] = 2;
                 if (star_in_row(row, mask)) 
