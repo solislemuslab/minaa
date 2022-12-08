@@ -140,7 +140,7 @@ namespace FileIO
      */
     void out(std::string file, std::string str)
     {
-        std::cout << str;
+        std::cout << str << std::flush;
 
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
@@ -167,7 +167,7 @@ namespace FileIO
     {
         std::string err_str = "ERROR: " + str + "\nPROGRAM TERMINATING\n";
         
-        std::cerr << err_str;
+        std::cerr << err_str << std::flush;
 
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);

@@ -26,7 +26,7 @@ file_io.o: file_io.cpp
 util.o: util.cpp
 	$(CC) $(FLAGS) util.cpp -std=c++20
 
-clean:
+clean: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT)
 	rm -f $(OBJS)
 
