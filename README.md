@@ -1,8 +1,8 @@
-# Microbiome Network Alignment
+# MiNA: Microbiome Network Alignment Algorithm
 
 ## Description
 
-The **Microbiome Network Alignment** algorithm aligns two networks based their topologies and biologies.
+**MiNA** aligns two networks based their topologies and biologies.
 
 ## Requirements
 
@@ -10,11 +10,12 @@ This utility requires C++ 20 or higher.
 
 ## Compilation
 
-Compile with `make` or `g++ -O2 -std=c++20 -o mna.exe mna.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
+Unix: `make` or `make clean`
+Windows: `g++ -O2 -std=c++20 -o mina.exe mina.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
 
 ## Usage
 
-This utility takes two to seven command-line arguments: `./mna.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta] [-g=gamma] [-merge]`
+This utility takes two to seven command-line arguments: `./mina.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta] [-g=gamma] [-merge]`
 
 ### Required arguments (ordered)
 
@@ -48,8 +49,8 @@ This utility takes two to seven command-line arguments: `./mna.exe <G> <H> [-B=b
 - **log.txt**: Record of the important details from the alignment.
 - **X_gdvs.csv**: (where "X" is the input graph) The Graphlet Degree Vectors for graph "X".
 - **top_costs.csv**: The topological cost matrix.
-- **bio_costs.csv**: The biologocal cost matrix (as inputed). Not created if biological input is not given.
-- **overall_costs.csv**: The combination of the topological and biological cost matrix. Not created if biological input is not given.
+- **bio_costs.csv**: The biologocal cost matrix (as inputed). Not created unless biological input is given.
+- **overall_costs.csv**: The combination of the topological and biological cost matrix. Not created unless biological input is given.
 - **alignment_list.csv**: A complete list of all aligned nodes, with rows in the format `g_node,h_node,similarity`, descending acording to similarity. The first row in this list is the total cost of the alignment, or the sum of (1 - similarity) for all aligned pairs.
 - **alignment_matrix.csv**: A matrix form of the same alignment, where the first column and row are the labels from the two input graphs, respectively.
 - **bridged_G.csv**: (where "G" is each gamma specified) The graph bridging the two input graphs, with respect to the alignment.
@@ -57,17 +58,17 @@ This utility takes two to seven command-line arguments: `./mna.exe <G> <H> [-B=b
 
 ### Examples
 
-`./mna.exe graph0.csv graph1.csv -a=0.6 -g=0,0.7,0.8 -merge`
+`./mina.exe graph0.csv graph1.csv -a=0.6 -g=0,0.7,0.8 -merge`
 
 Here we align graph0 with graph1 using no biological data. `-a=0.6` sets alpha equal to 0.6, meaning 60% of the topological cost function comes from similarity calculated by GDVs, and 40% from simpler node degree data.
 `g=0,0.7,0.8` runs the alignment visualization step 3 times: at gamma=0, gamma=0.7, and gamma=0.8. When gamma=0.7, for example, the output will be visualization data for which only aligned pairs of similarity score greater than or equal to 0.7 are actually considered aligned. When gamma=1, only identical nodes will be considered aligned.
 The presence of `-merge` indicates that, in addition to the classic alignment visualization for each gamma, we also generate a graph which merges the input graphs intuitively with respect to the alignment.
 
-`./mna.exe graph0.csv graph1.csv bio_costs.csv -b=0.85`
+`./mina.exe graph0.csv graph1.csv bio_costs.csv -b=0.85`
 
 Here we align graph0 with graph1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
-## Visualization Methods
+## Visualization Methods (work in progress)
 
 ### Bridge
 

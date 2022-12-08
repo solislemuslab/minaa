@@ -34,10 +34,21 @@ namespace FileIO
      */
     std::string name_file(std::string file)
     {
-        auto si = file.find_last_of("/") + 1;
-        auto ei = file.find_last_of(".");
-        auto file_name = file.substr(si, ei - si);
-        return file_name;
+        #if defined(_WIN32) || defined(_WIN64) // Windows
+        {
+            auto si = file.find_last_of("\\") + 1;
+            auto ei = file.find_last_of(".");
+            auto file_name = file.substr(si, ei - si);
+            return file_name;
+        }
+        #else // Unix
+        {
+            auto si = file.find_last_of("/") + 1;
+            auto ei = file.find_last_of(".");
+            auto file_name = file.substr(si, ei - si);
+            return file_name;
+        }
+        #endif
     }
 
     /**
@@ -53,26 +64,55 @@ namespace FileIO
      */
     std::string name_folder(std::string g_name, std::string h_name, std::string datetime)
     {
-        const std::string OUTPUT_FOLDER = "outputs/";
+        std::string folder = "";
 
-        // Make directory "outputs/" if it doesn't exist
-        if (mkdir(OUTPUT_FOLDER.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+        #ifdef _WIN32 // Windows
         {
-            if(errno != EEXIST)
+            const std::string OUTPUT_FOLDER = "outputs\\";
+
+            // Make directory "outputs\" if it doesn't exist
+            if (mkdir(OUTPUT_FOLDER.c_str()) == -1)
             {
-                throw std::runtime_error("Unable to create directory " + OUTPUT_FOLDER);
+                if(errno != EEXIST)
+                {
+                    throw std::runtime_error("Unable to create directory " + OUTPUT_FOLDER);
+                }
+            }
+            
+            // Make directory "outputs\g_name-h_name\ if it doesn't exist
+            folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "\\";
+            if (mkdir(folder.c_str()) == -1)
+            {
+                if(errno != EEXIST)
+                {
+                    throw std::runtime_error("Unable to create output folder " + folder);
+                }
             }
         }
-        
-        // Make directory "outputs/g_name-h_name/ if it doesn't exist
-        auto folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
-        if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+        #else // Unix
         {
-            if(errno != EEXIST)
+            const std::string OUTPUT_FOLDER = "outputs/";
+
+            // Make directory "outputs/" if it doesn't exist
+            if (mkdir(OUTPUT_FOLDER.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {
-                throw std::runtime_error("Unable to create output folder " + folder);
+                if(errno != EEXIST)
+                {
+                    throw std::runtime_error("Unable to create directory " + OUTPUT_FOLDER);
+                }
+            }
+            
+            // Make directory "outputs/g_name-h_name/ if it doesn't exist
+            folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
+            if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+            {
+                if(errno != EEXIST)
+                {
+                    throw std::runtime_error("Unable to create output folder " + folder);
+                }
             }
         }
+        #endif
 
         // Create log file
         auto log_file = folder + "log.txt";

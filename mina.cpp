@@ -1,4 +1,4 @@
-// mna.cpp
+// mina.cpp
 // Microbial Network Alignment
 // Reed Nelson
 
@@ -23,14 +23,6 @@ int main(int argc, char* argv[])
     try
     {
         auto datetime = Util::now();
-
-        // // Tests
-        // if (argc == 2)
-        // {
-        //     // Rscript visualize.R bridge.csv
-        //     // ./mna.exe testdata/no_tuber_scab_adj/no_tuber_scab_Net1_1.csv testdata/no_tuber_scab_adj/no_tuber_scab_Net1_2.csv
-        //     return 0;
-        // }
 
         // Parse command line arguments
         std::vector<std::string> args;
@@ -102,10 +94,12 @@ int main(int argc, char* argv[])
         auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name); // TEMP
         auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);             // TEMP
         auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);             // TEMP
+        #ifndef _WIN32                                              // TEMP
         std::string rm1 = "rm " + folder + g_name + ".csv";         // TEMP
         system(rm1.c_str());                                        // TEMP
         std::string rm2 = "rm " + folder + h_name + ".csv";         // TEMP
         system(rm2.c_str());                                        // TEMP
+        #endif                                                      // TEMP
         // auto g_gdvs = ORCA::orca(g_graph);
         // auto h_gdvs = ORCA::orca(h_graph);
         auto f10 = std::chrono::high_resolution_clock::now();
@@ -176,20 +170,24 @@ int main(int argc, char* argv[])
 
             // Run the alignment algorithm
             FileIO::out(log, "Aligning the graphs............................");
+            std::cout << std::endl;
             auto s50 = std::chrono::high_resolution_clock::now();
             alignment = Hungarian::hungarian(overall_costs);
             auto f50 = std::chrono::high_resolution_clock::now();
             auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
+            std::cout << "\33[2K\r";
             FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
         }
         else // topopogical data only
         {
             // Run the alignment algorithm
             FileIO::out(log, "Aligning the graphs............................");
+            std::cout << std::endl;
             auto s50 = std::chrono::high_resolution_clock::now();
             alignment = Hungarian::hungarian(topological_costs);
             auto f50 = std::chrono::high_resolution_clock::now();
             auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
+            std::cout << "\33[2K\r";
             FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
         }
 
@@ -202,6 +200,7 @@ int main(int argc, char* argv[])
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
 
+        /* VISUALIZATION
         for (auto gamma : gammas)
         {
             auto gamma_str = Util::to_string(gamma, 3);
@@ -246,6 +245,7 @@ int main(int argc, char* argv[])
                 // system(cmd.c_str());
             }
         }
+        */
 
         auto f = std::chrono::high_resolution_clock::now();
         auto d = std::chrono::duration_cast<std::chrono::milliseconds>(f-s).count();
