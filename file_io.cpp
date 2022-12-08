@@ -34,7 +34,7 @@ namespace FileIO
      */
     std::string name_file(std::string file)
     {
-        #if defined(_WIN32) || defined(_WIN64) // Windows
+        #ifdef _WIN32 // Windows
         {
             auto si = file.find_last_of("\\") + 1;
             auto ei = file.find_last_of(".");

@@ -69,7 +69,7 @@ The presence of `-merge` indicates that, in addition to the classic alignment vi
 
 Here we align graph0 with graph1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
-## Visualization Methods (work in progress)
+## Visualization Methods
 
 > Note: this feature is a work-in-progress, and does not yield graphics at this time.
 

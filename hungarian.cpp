@@ -350,7 +350,7 @@ namespace Hungarian
             else
             {
                 double p = double(prog++) / (costs.size() * costs.size()); // PROGRESS
-                printProgress(p);                                          // PROGRESS
+                print_progress(p);                                         // PROGRESS
                 
                 mask[row][col] = 2;
                 if (star_in_row(row, mask)) 
