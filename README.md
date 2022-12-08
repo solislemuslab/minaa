@@ -11,6 +11,7 @@ This utility requires C++ 20 or higher.
 ## Compilation
 
 Unix: `make` or `make clean`
+
 Windows: `g++ -O2 -std=c++20 -o mina.exe mina.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
 
 ## Usage
