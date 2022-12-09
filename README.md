@@ -1,8 +1,8 @@
-# MiNA: Microbiome Network Alignment Algorithm
+# MiNAA: Microbiome Network Alignment Algorithm
 
 ## Description
 
-**MiNA** aligns two networks based their topologies and biologies.
+**MiNAA** aligns two networks based their topologies and biologies.
 
 ## Requirements
 
@@ -12,11 +12,11 @@ This utility requires C++ 20 or higher.
 
 Unix: `make` or `make clean`
 
-Windows: `g++ -O2 -std=c++20 -o mina.exe mina.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
+Windows: `g++ -O2 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
 
 ## Usage
 
-This utility takes two to seven command-line arguments: `./mina.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta] [-g=gamma] [-merge]`
+This utility takes two to seven command-line arguments: `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta] [-g=gamma] [-merge]`
 
 ### Required arguments (ordered)
 
@@ -60,13 +60,13 @@ This utility takes two to seven command-line arguments: `./mina.exe <G> <H> [-B=
 
 ### Examples
 
-`./mina.exe graph0.csv graph1.csv -a=0.6 -g=0,0.7,0.8 -merge`
+`./minaa.exe graph0.csv graph1.csv -a=0.6 -g=0,0.7,0.8 -merge`
 
 Here we align graph0 with graph1 using no biological data. `-a=0.6` sets alpha equal to 0.6, meaning 60% of the topological cost function comes from similarity calculated by GDVs, and 40% from simpler node degree data.
 `g=0,0.7,0.8` runs the alignment visualization step 3 times: at gamma=0, gamma=0.7, and gamma=0.8. When gamma=0.7, for example, the output will be visualization data for which only aligned pairs of similarity score greater than or equal to 0.7 are actually considered aligned. When gamma=1, only identical nodes will be considered aligned.
 The presence of `-merge` indicates that, in addition to the classic alignment visualization for each gamma, we also generate a graph which merges the input graphs intuitively with respect to the alignment.
 
-`./mina.exe graph0.csv graph1.csv bio_costs.csv -b=0.85`
+`./minaa.exe graph0.csv graph1.csv bio_costs.csv -b=0.85`
 
 Here we align graph0 with graph1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 

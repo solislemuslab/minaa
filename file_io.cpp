@@ -79,7 +79,7 @@ namespace FileIO
                 }
             }
             
-            // Make directory "outputs\g_name-h_name\ if it doesn't exist
+            // Make directory "outputs\g_name-h_name-datetime\ if it doesn't exist
             folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "\\";
             if (mkdir(folder.c_str()) == -1)
             {
@@ -102,7 +102,7 @@ namespace FileIO
                 }
             }
             
-            // Make directory "outputs/g_name-h_name/ if it doesn't exist
+            // Make directory "outputs/g_name-h_name-datetime/ if it doesn't exist
             folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
             if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {

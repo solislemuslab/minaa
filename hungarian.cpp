@@ -15,11 +15,11 @@
 
 namespace Hungarian
 {
-    int prog = 0;                                       // PROGRESS
-    void print_progress(double val)                     // PROGRESS
-    {                                                   // PROGRESS
-        std::cout << "\33[2K\r~ " << val / 0.14 << "%"; // PROGRESS
-    }                                                   // PROGRESS
+    int prog = 0;                                               // PROGRESS
+    void print_progress(double val)                             // PROGRESS
+    {                                                           // PROGRESS
+        std::cout << "\33[2K\r~ " << (val / 0.15) * 100 << "%"; // PROGRESS
+    }                                                           // PROGRESS
 
     const int MAX = 1;
 

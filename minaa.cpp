@@ -1,5 +1,5 @@
-// mina.cpp
-// Microbial Network Alignment
+// minaa.cpp
+// Microbiome Network Alignment Algorithm
 // Reed Nelson
 
 #include <chrono>
