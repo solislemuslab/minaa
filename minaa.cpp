@@ -182,12 +182,12 @@ int main(int argc, char* argv[])
         {
             // Run the alignment algorithm
             FileIO::out(log, "Aligning the graphs............................");
-            std::cout << std::endl;
+            std::cout << std::endl; // PROGRESS
             auto s50 = std::chrono::high_resolution_clock::now();
             alignment = Hungarian::hungarian(topological_costs);
             auto f50 = std::chrono::high_resolution_clock::now();
             auto d50 = std::chrono::duration_cast<std::chrono::milliseconds>(f50-s50).count();
-            std::cout << "\33[2K\r";
+            std::cout << "\33[2K\r"; // PROGRESS
             FileIO::out(log, "done. (" + std::to_string(d50) + "ms)\n");
         }
 

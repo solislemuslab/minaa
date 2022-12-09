@@ -398,9 +398,7 @@ namespace Hungarian
             if (r > -1)
             {
                 ++path_count;
-                // std::cout << "ps: " << path.size() << " : " << path_count - 1 << std::endl; // DEBUG
                 path[path_count - 1][0] = r;
-                // std::cout << "there" << std::endl; // DEBUG
                 path[path_count - 1][1] = path[path_count - 2][1];
             }
             else
@@ -423,7 +421,6 @@ namespace Hungarian
         clear_primes(mask);
 
         step = 3;
-        //std::cout << "done" << std::endl; // DEBUG
     }
 
     /* 
@@ -523,8 +520,6 @@ namespace Hungarian
         // mask(i,j)=1 -> C(i,j) is a starred zero, mask(i,j)=2 -> C(i,j) is a primed zero
         std::vector<std::vector<unsigned char>> mask(costs.size(), std::vector<unsigned char>(costs.size(), 0));
 
-        //std::cout << costs.size() << " " << costs[0].size() << std::endl; // DEBUG
-
         /* We also define two vectors row_cover and col_cover that are used to "cover"
          * the rows and columns of the cost matrix C
          */
@@ -536,14 +531,12 @@ namespace Hungarian
 
         // Array for the augmenting path algorithm
         std::vector<std::vector<int>> path(costs.size() + 1, std::vector<int>(2, 0));
-        //std::cout << costs.size() + 1 << std::endl; // DEBUG
 
         bool done = false;
         int step = 1;
 
         while (!done)
         {
-            //std::cout << step << std::endl; // DEBUG
             switch (step)
             {
             case 1:
