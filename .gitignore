@@ -7,8 +7,4 @@ testdata
 *.exe
 *.txt
 *.csv
-*.svg
-*.png
-*.pdf
 *.o
-*.Rhistory

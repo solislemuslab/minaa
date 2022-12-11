@@ -241,71 +241,8 @@ namespace FileIO
 
     /* FILE INPUT */
 
-    // /**
-    //  * Parse the given csv adjacency matrix file into a list
-    //  * TEMPORARY
-    //  * 
-    //  * @param file the graph file to parse.
-    //  * 
-    //  * @return A path to a file containing the graph in the format expected by ORCA.
-    //  * 
-    //  * @throws std::runtime_error If the file could not be opened, or the output file could not be created.
-    //  * DOESN'T ACTUALLY THROW ANYTHING NOW
-    //  */
-    // std::string orca_in(std::string file)
-    // {
-    //     // Identify the delimiter for this csv
-    //     char delim = detect_delimiter(file);
-    //     // Parse the file into a matrix
-    //     std::ifstream fin(file);
-    //     std::vector<std::vector<double>> matrix;
-    //     std::string line;
-    //     while (std::getline(fin, line))
-    //     {
-    //         std::stringstream ss(line);
-    //         std::string cell;
-    //         std::vector<double> row;
-    //         while (std::getline(ss, cell, delim))
-    //         {
-    //             try
-    //             {
-    //                 row.push_back(std::stod(cell));
-    //             }
-    //             catch (std::invalid_argument const&)
-    //             {
-    //                 row.push_back(0);
-    //             }
-    //         }
-    //         matrix.push_back(row);
-    //     }
-    //     // Convert the matrix into a list, with first pair being (# nodes, # edges)
-    //     std::vector<std::array<unsigned, 2>> list;
-    //     list.push_back({0, 0});
-    //     for (unsigned i = 1; i < matrix.size(); ++i)
-    //     {
-    //         for (unsigned j = i; j < matrix[i].size(); ++j)
-    //         {
-    //             if (i != j && matrix[i][j] != 0)
-    //             {
-    //                 list.push_back({i, j});
-    //             }
-    //         }
-    //     }
-    //     list[0] = {(unsigned)(matrix.size() - 1), (unsigned)(list.size() - 1)};
-    //     // Write the list to a file
-    //     std::string out_file = "testdata/orca_in/" + name_file(file) + ".txt";
-    //     std::ofstream outfile(out_file);
-    //     for (auto &row : list)
-    //     {
-    //         outfile << row[0] << " " << row[1] << std::endl;
-    //     }
-    //     outfile.close();
-    //     return out_file;
-    // }
-
     /**
      * Parse the given csv adjacency matrix file into a list
-     * TEMPORARY, UNTIL ORCA IS FIXED AND INTEGRATED
      * 
      * @param file_in the graph file to parse.
      * 
@@ -401,7 +338,6 @@ namespace FileIO
     /**
      * Parse the file at the given path into a graph object
      * Require that the file is a CSV
-     * Improvement?: change from unsigned to 1 byte or bool or something
      * 
      * @param file The graph file to parse into a graph object.
      * 
@@ -513,50 +449,6 @@ namespace FileIO
 
         return labels;
     }
-    
-    // /**
-    //  * Parse the file at the given path into a vector of integer arrays.
-    //  * 
-    //  * @param file The file to parse into a list of GDVs.
-    //  * 
-    //  * @return A list of GDVs.
-    //  * 
-    //  * @throws std::runtime_error If the file could not be opened.
-    //  * DOESN't ACTUALLY THROW EXCEPTIONS NOW
-    //  */
-    // std::vector<std::vector<unsigned>> file_to_gdvs(std::string file)
-    // {
-    //     // Identify the delimiter for this csv
-    //     char delim = detect_delimiter(file);
-    //     // Parse the file
-    //     std::ifstream fin(file);
-    //     std::vector<std::vector<unsigned>> gdvs;
-    //     std::string line;
-    //     int c = 0;
-    //     std::cout << "file: " << file << std::endl;
-    //     while (std::getline(fin, line))
-    //     {
-    //         c++;
-    //         std::istringstream ss(line);
-    //         std::string val;
-    //         std::vector<unsigned> gdv;
-    //         while (std::getline(ss, val, delim))
-    //         {
-    //             try
-    //             {
-    //                 gdv.push_back(std::stoi(val));
-    //             }
-    //             catch (std::invalid_argument const&)
-    //             {
-    //                 gdv.push_back(0);
-    //             }
-    //         }
-    //         gdvs.push_back(gdv);
-    //     }
-    //     fin.close();
-    //     std::cout << "Parsed " << c << " lines" << std::endl; // DEBUG
-    //     return gdvs;
-    // }
 
     /**
      * Parse the file at the given path into a double vector vector.
@@ -788,7 +680,7 @@ namespace FileIO
         }
 
         // Write the list to a file
-        fout << net_cost << "," << "" << "," << "" << std::endl; // DO SOMETHING?
+        fout << net_cost << "," << "" << "," << "" << std::endl;
         for (unsigned i = 0; i < list.size(); ++i)
         {
             fout << g_labels[list[i][0]] << "," << h_labels[list[i][1]] << "," << list[i][2] << std::endl;
@@ -796,113 +688,6 @@ namespace FileIO
         fout.close();
 
         return filestr;
-    }
-
-    /**
-     * Write the bridge graph to a file.
-     * 
-     * @param file The file to write the graph to.
-     * @param g_labels Labels for the G graph.
-     * @param h_labels Labels for the H graph.
-     * @param bridge_graph The bridge graph to write to the file.
-     * 
-     * @return The path to the output file.
-     * 
-     * @throws std::runtime_error If the file could not be written.
-     */
-    std::string bridged_to_file(std::string file, std::vector<std::string> g_labels,
-        std::vector<std::string> h_labels, std::vector<std::vector<double>> bridged_graph)
-    {
-        // Create and open the file
-        std::ofstream fout;
-        fout.exceptions(std::ofstream::badbit);
-        try 
-        {
-            fout.open(file);
-        }
-        catch (const std::ofstream::failure& e)
-        {
-            throw std::runtime_error("Unable to open file " + file);
-        }
-
-        // Write the first row
-        fout << "\"\"";
-        for (unsigned i = 0; i < g_labels.size(); ++i)
-        {
-            fout << "," << g_labels[i];
-        }
-        for (unsigned i = 0; i < h_labels.size(); ++i)
-        {
-            fout << "," << h_labels[i];
-        }
-
-        // Write the rows with G labels
-        for (unsigned i = 0; i < g_labels.size(); ++i)
-        {
-            fout << std::endl << g_labels[i];
-            for (unsigned j = 0; j < bridged_graph.size(); ++j)
-            {
-                fout << "," << bridged_graph[i][j];
-            }
-        }
-
-        // Write the rows with H labels
-        for (unsigned i = 0; i < h_labels.size(); ++i)
-        {
-            fout << std::endl << h_labels[i];
-            for (unsigned j = 0; j < bridged_graph.size(); ++j)
-            {
-                fout << "," << bridged_graph[g_labels.size() + i][j];
-            }
-        }
-        
-        fout.close();
-
-        return file;
-    }
-
-    /**
-     * Write the merged matrix to a file.
-     * 
-     * @param file The file to write the graph to.
-     * @param gh_labels Labels for the merged graph.
-     * @param merged The merged graph to write to the file.
-     * 
-     * @return The path to the output file.
-     * 
-     * @throws std::runtime_error If the file could not be written.
-     */
-    std::string merged_to_file(std::string file, std::vector<std::string> gh_labels,
-        std::vector<std::vector<double>> merged)
-    {
-        // Create and open the file
-        std::ofstream fout;
-        fout.exceptions(std::ofstream::badbit);
-        try 
-        {
-            fout.open(file);
-        }
-        catch (const std::ofstream::failure& e)
-        {
-            throw std::runtime_error("Unable to open file " + file);
-        }
-
-        fout << "\"\"";
-        for (unsigned i = 0; i < merged[0].size(); ++i)
-        {
-            fout << "," << gh_labels[i];
-        }
-        for (unsigned i = 0; i < merged.size(); ++i)
-        {
-            fout << std::endl << gh_labels[i];
-            for (unsigned j = 0; j < merged[i].size(); ++j)
-            {
-                fout << "," << merged[i][j];
-            }
-        }
-        fout.close();
-
-        return file;
     }
 
 }

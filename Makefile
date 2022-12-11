@@ -3,7 +3,7 @@ SOURCE	= minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.
 HEADER	= hungarian.h gdvs_dist.h graphcrunch.h file_io.h util.h
 OUT	    = minaa.exe
 CC      = g++
-FLAGS   = -O2 -g -c -Wall -Wextra -ansi -pedantic
+FLAGS   = -O3 -g -c -Wall -Wextra -ansi -pedantic
 
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT)
@@ -31,4 +31,4 @@ clean: $(OBJS)
 	rm -f $(OBJS)
 
 # Alternate to make
-# g++ -O2 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp
+# g++ -O3 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp
