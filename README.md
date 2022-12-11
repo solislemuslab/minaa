@@ -74,6 +74,7 @@ This script simulates networks over different numbers of nodes (10, 30, 50, 100,
 ### Align Networks in Batch
 
 Unix: *simulate/align.sh*
+
 Windows: *simulate/align.bat*
 
 This script sequentially aligns all network pairs output by generate.R. The result is stored in the folder *outputs/*.
