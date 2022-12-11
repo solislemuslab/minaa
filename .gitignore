@@ -2,9 +2,11 @@
 inputs
 outputs
 testdata
+simulate/*/
 
 # ignore files
+*.o
 *.exe
 *.txt
 *.csv
-*.o
+*.png

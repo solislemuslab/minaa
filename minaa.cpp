@@ -3,6 +3,7 @@
 // Reed Nelson
 
 #include <chrono>
+#include <cstdio>
 #include <vector>
 #include <iostream>
 #include <stdexcept>
@@ -88,12 +89,10 @@ int main(int argc, char* argv[])
         auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name);
         auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);
         auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);
-        #ifndef _WIN32
-        std::string rm1 = "rm " + folder + g_name + ".csv";
-        system(rm1.c_str());
-        std::string rm2 = "rm " + folder + h_name + ".csv";
-        system(rm2.c_str());
-        #endif
+        std::string rm1 = folder + g_name + ".csv";
+        remove(rm1.c_str());
+        std::string rm2 = folder + h_name + ".csv";
+        remove(rm2.c_str());
         auto f10 = std::chrono::high_resolution_clock::now();
         auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
         FileIO::out(log, "done. (" + std::to_string(d10) + "ms)\n");
