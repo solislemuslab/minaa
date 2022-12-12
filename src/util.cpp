@@ -66,7 +66,7 @@ namespace Util
 
         if (argc < 3 || argc > 6)
         {
-            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./mna.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta]");
+            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta]");
         }
 
         if (!FileIO::is_accessible(argv[1]))

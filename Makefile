@@ -1,34 +1,23 @@
-OBJS	= minaa.o hungarian.o gdvs_dist.o graphcrunch.o file_io.o util.o
+#OBJS	= minaa.o hungarian.o gdvs_dist.o graphcrunch.o file_io.o util.o
 SOURCE	= minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp
 HEADER	= hungarian.h gdvs_dist.h graphcrunch.h file_io.h util.h
-OUT	    = minaa.exe
+TARGET  = minaa.exe
 CC      = g++
-FLAGS   = -O3 -g -c -Wall -Wextra -ansi -pedantic
+FLAGS   = -O3 -g -c -Wall -Wextra -ansi -pedantic -std=c++20 -Iinclude
 
-all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT)
+HEADER_FILES = $(addprefix include/,$(HEADER))
+SOURCE_FILES = $(addprefix src/,$(SOURCE))
+OBJECT_FILES = $(addprefix obj/,$(SOURCE:.cpp=.o))
 
-minaa.o: minaa.cpp
-	$(CC) $(FLAGS) minaa.cpp -std=c++20
+all: $(OBJECT_FILES)
+	$(CC) -g $(OBJECT_FILES) -o $(TARGET)
 
-hungarian.o: hungarian.cpp
-	$(CC) $(FLAGS) hungarian.cpp -std=c++20
+obj/%.o: src/%.cpp $(HEADER_FILES)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -o $@ $<
 
-gdvs_dist.o: gdvs_dist.cpp
-	$(CC) $(FLAGS) gdvs_dist.cpp -std=c++20
-
-graphcrunch.o: graphcrunch.cpp
-	$(CC) $(FLAGS) graphcrunch.cpp -std=c++20
-
-file_io.o: file_io.cpp
-	$(CC) $(FLAGS) file_io.cpp -std=c++20
-
-util.o: util.cpp
-	$(CC) $(FLAGS) util.cpp -std=c++20
-
-clean: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT)
-	rm -f $(OBJS)
+clean:
+	rm -f $(TARGET) obj/*.o
 
 # Alternate to make
 # g++ -O3 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp

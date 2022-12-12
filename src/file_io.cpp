@@ -68,9 +68,9 @@ namespace FileIO
 
         #ifdef _WIN32 // Windows
         {
-            const std::string OUTPUT_FOLDER = "outputs\\";
+            const std::string OUTPUT_FOLDER = "alignments\\";
 
-            // Make directory "outputs\" if it doesn't exist
+            // Make directory "alignments\" if it doesn't exist
             if (mkdir(OUTPUT_FOLDER.c_str()) == -1)
             {
                 if(errno != EEXIST)
@@ -79,7 +79,7 @@ namespace FileIO
                 }
             }
             
-            // Make directory "outputs\g_name-h_name-datetime\ if it doesn't exist
+            // Make directory "alignments\g_name-h_name-datetime\ if it doesn't exist
             folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "\\";
             if (mkdir(folder.c_str()) == -1)
             {
@@ -91,9 +91,9 @@ namespace FileIO
         }
         #else // Unix
         {
-            const std::string OUTPUT_FOLDER = "outputs/";
+            const std::string OUTPUT_FOLDER = "alignments/";
 
-            // Make directory "outputs/" if it doesn't exist
+            // Make directory "alignments/" if it doesn't exist
             if (mkdir(OUTPUT_FOLDER.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {
                 if(errno != EEXIST)
@@ -102,8 +102,8 @@ namespace FileIO
                 }
             }
             
-            // Make directory "outputs/g_name-h_name-datetime/ if it doesn't exist
-            folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
+            // Make directory "alignments/g_name-h_name-datetime/ if it doesn't exist
+            folder = OUTPUT_FOLDER + g_name + "-" + h_name+ "-" + datetime  + "/";
             if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {
                 if(errno != EEXIST)

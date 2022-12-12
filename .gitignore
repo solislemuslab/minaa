@@ -1,6 +1,7 @@
 # Folders
 networks
-outputs
+alignments
+obj
 
 # Files
 *.o

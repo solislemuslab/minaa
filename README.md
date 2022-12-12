@@ -12,9 +12,9 @@ This program requires C++20 or higher.
 
 ## Compilation
 
-Unix: `make` or `make clean`
+Unix: `make`
 
-Windows: `g++ -O3 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
+Windows: `work in progress`
 
 ## Usage
 
