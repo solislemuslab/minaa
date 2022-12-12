@@ -62,8 +62,8 @@ The algorithm's main output is the complete alignment of $G$ and $H$. That is, w
 # Simulations
 
 We simulate networks with the R package SPIEC-EASI (SParse InversE
-Covariance Estimation for Ecological Association Inference) `[@kurtz2015sparse]`.
-We focus on the ``Cluster" network topology since Cluster networks are conducive to speculative ecological scenarios. Indeed, for microbial communities that inhabit many discontinuous niches (clusters) and have minimal interactions between niches, cluster networks may serve as archetypal models 
+Covariance Estimation for Ecological Association Inference) ``[@kurtz2015sparse]``.
+We focus on the "Cluster" network topology since Cluster networks are conducive to speculative ecological scenarios. Indeed, for microbial communities that inhabit many discontinuous niches (clusters) and have minimal interactions between niches, cluster networks may serve as archetypal models 
 `[@peschel2021netcomi; @yang2019meta]`.
 
 A network is simulated with certain number of nodes, and then a proportion of its edges are flipped to produce a second network. Because the second network is just a perturbation of the first network, we expect our alignment method to align the same nodes correctly.
