@@ -1,5 +1,7 @@
 # MiNAA: Microbiome Network Alignment Algorithm
 
+[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![yes](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
+
 ## Description
 
 **MiNAA** aligns two networks based their topologies and biologies.
