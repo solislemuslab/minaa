@@ -690,4 +690,111 @@ namespace FileIO
         return filestr;
     }
 
+    /**
+     * Write the bridge graph to a file.
+     * 
+     * @param file The file to write the graph to.
+     * @param g_labels Labels for the G graph.
+     * @param h_labels Labels for the H graph.
+     * @param bridge_graph The bridge graph to write to the file.
+     * 
+     * @return The path to the output file.
+     * 
+     * @throws std::runtime_error If the file could not be written.
+     */
+    std::string bridged_to_file(std::string file, std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> bridged_graph)
+    {
+        // Create and open the file
+        std::ofstream fout;
+        fout.exceptions(std::ofstream::badbit);
+        try 
+        {
+            fout.open(file);
+        }
+        catch (const std::ofstream::failure& e)
+        {
+            throw std::runtime_error("Unable to open file " + file);
+        }
+
+        // Write the first row
+        fout << "\"\"";
+        for (unsigned i = 0; i < g_labels.size(); ++i)
+        {
+            fout << "," << g_labels[i];
+        }
+        for (unsigned i = 0; i < h_labels.size(); ++i)
+        {
+            fout << "," << h_labels[i];
+        }
+
+        // Write the rows with G labels
+        for (unsigned i = 0; i < g_labels.size(); ++i)
+        {
+            fout << std::endl << g_labels[i];
+            for (unsigned j = 0; j < bridged_graph.size(); ++j)
+            {
+                fout << "," << bridged_graph[i][j];
+            }
+        }
+
+        // Write the rows with H labels
+        for (unsigned i = 0; i < h_labels.size(); ++i)
+        {
+            fout << std::endl << h_labels[i];
+            for (unsigned j = 0; j < bridged_graph.size(); ++j)
+            {
+                fout << "," << bridged_graph[g_labels.size() + i][j];
+            }
+        }
+        
+        fout.close();
+
+        return file;
+    }
+
+    /**
+     * Write the merged matrix to a file.
+     * 
+     * @param file The file to write the graph to.
+     * @param gh_labels Labels for the merged graph.
+     * @param merged The merged graph to write to the file.
+     * 
+     * @return The path to the output file.
+     * 
+     * @throws std::runtime_error If the file could not be written.
+     */
+    std::string merged_to_file(std::string file, std::vector<std::string> gh_labels,
+        std::vector<std::vector<double>> merged)
+    {
+        // Create and open the file
+        std::ofstream fout;
+        fout.exceptions(std::ofstream::badbit);
+        try 
+        {
+            fout.open(file);
+        }
+        catch (const std::ofstream::failure& e)
+        {
+            throw std::runtime_error("Unable to open file " + file);
+        }
+
+        fout << "\"\"";
+        for (unsigned i = 0; i < merged[0].size(); ++i)
+        {
+            fout << "," << gh_labels[i];
+        }
+        for (unsigned i = 0; i < merged.size(); ++i)
+        {
+            fout << std::endl << gh_labels[i];
+            for (unsigned j = 0; j < merged[i].size(); ++j)
+            {
+                fout << "," << merged[i][j];
+            }
+        }
+        fout.close();
+
+        return file;
+    }
+
 }

@@ -41,7 +41,10 @@ int main(int argc, char* argv[])
         auto bio_f = args[3];                      // biological data file
         auto alpha = std::stod(args[4]);           // GDV - edge weight balancer
         auto beta = std::stod(args[5]);            // topological - biological balancer
+        auto gammas = Util::parse_gammas(args[6]); // alignment cost thresholds
+        auto merge_int = std::stoi(args[7]);       // include merged graph in output 
 
+        bool do_merge = (merge_int != 0);          // include merged graph in output     
         bool bio = (bio_f != "");                  // biological data file provided
 
         // Generate output names
@@ -66,6 +69,8 @@ int main(int argc, char* argv[])
         FileIO::out(log, "Bio File: " + bio_f + "\n");
         FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
+        FileIO::out(log, "Gamma:    " + args[6] + "\n");
+        FileIO::out(log, "Merge:    " + std::to_string(do_merge) + "\n");
         FileIO::out(log, "\n");
 
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
@@ -191,6 +196,55 @@ int main(int argc, char* argv[])
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
         
+        // Visualization
+        for (auto gamma : gammas)
+        {
+            auto gamma_str = Util::to_string(gamma, 3);
+
+            // Let's rethink our approach to Bridge
+            /*
+            // Use the alignment to bridge G and H
+            FileIO::out(log, "Bridging G and H for gamma = " + gamma_str + ".............");
+            auto s60 = std::chrono::high_resolution_clock::now();
+            auto bridged = Util::bridge(g_graph, h_graph, alignment, gamma);
+            auto f60 = std::chrono::high_resolution_clock::now();
+            auto d60 = std::chrono::duration_cast<std::chrono::milliseconds>(f60-s60).count();
+            FileIO::out(log, "done. (" + std::to_string(d60) + "ms)\n");
+
+            // Write bridge to file
+            FileIO::out(log, "Writing the bridge graph to file...............");
+            auto s61 = std::chrono::high_resolution_clock::now();
+            auto bridged_f = FileIO::bridged_to_file(folder + "bridged_" + gamma_str + ".csv", g_labels, h_labels, bridged);
+            auto f61 = std::chrono::high_resolution_clock::now();
+            auto d61 = std::chrono::duration_cast<std::chrono::milliseconds>(f61-s61).count();
+            FileIO::out(log, "done. (" + std::to_string(d61) + "ms)\n");
+            */
+
+            if (do_merge)
+            {
+                // Use the alignment to merge H and G
+                FileIO::out(log, "Merging G and H for gamma = " + gamma_str + "..............");
+                auto s70 = std::chrono::high_resolution_clock::now();
+                auto merged_labels = Util::merge_labels(alignment, g_labels, h_labels, gamma);
+                auto merged = Util::merge(g_graph, h_graph, alignment, g_labels, h_labels, merged_labels, gamma);
+                auto f70 = std::chrono::high_resolution_clock::now();
+                auto d70 = std::chrono::duration_cast<std::chrono::milliseconds>(f70-s70).count();
+                FileIO::out(log, "done. (" + std::to_string(d70) + "ms)\n");
+
+                // Write merge to file
+                FileIO::out(log, "Writing the merge graph to file................");
+                auto s71 = std::chrono::high_resolution_clock::now();
+                auto merged_f = FileIO::merged_to_file(folder + "merged_" + gamma_str + ".csv", merged_labels, merged);
+                auto f71 = std::chrono::high_resolution_clock::now();
+                auto d71 = std::chrono::duration_cast<std::chrono::milliseconds>(f71-s71).count();
+                FileIO::out(log, "done. (" + std::to_string(d71) + "ms)\n");
+
+                // // Get a visual representation of the alignment using R
+                // std::string cmd = "Rscript ./visualize.R " + folder + "bridge.csv " + folder;
+                // system(cmd.c_str());
+            }
+        }
+
         auto f = std::chrono::high_resolution_clock::now();
         auto d = std::chrono::duration_cast<std::chrono::milliseconds>(f-s).count();
         FileIO::out(log, "ALIGNMENT COMPLETED (" + std::to_string(d) + "ms)\n");
