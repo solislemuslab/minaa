@@ -1,6 +1,6 @@
 # MiNAA: Microbiome Network Alignment Algorithm
 
-[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![yes](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
+[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
 
 ## Description
 
@@ -20,7 +20,7 @@ Windows: `g++ -O3 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp 
 
 This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`
 
-### Required arguments (ordered)
+### Required Arguments (ordered)
 
 1. **G**: A network to align.
 2. **H**: A network to align.
@@ -31,7 +31,7 @@ This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=
   - Any nonzero entry is considered an edge.
   - |G| should be lesser or equal to |H|.
 
-### Optional arguments (unordered)
+### Optional Arguments (unordered)
 
 - **bio**: The path to the biological cost matrix file.
   - Require: CSV adjacency matrix where the first column is the labels of G, and first row is the labels of H.
@@ -64,22 +64,24 @@ Here we align network0 with network1 using no biological data. `-a=0.6` sets alp
 
 Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
-## Simulations in the manuscript
+## Simulations in the Manuscript
 
-All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulate` folder.
+All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulations` folder.
 
-## Contributions
+## Contributions, Questions, Issues, and Feedback
 
-Users interested in expanding functionalities in MiNAA are welcome to do so.
-See details on how to contribute in [CONTRIBUTING.md](https://github.com/solislemuslab/minaa/blob/master/CONTRIBUTING.md)
+Users interested in expanding functionalities in MiNAA are welcome to do so. Issues reports are encouraged through Github's [issue tracker](https://github.com/solislemuslab/minaa/issues). See details on how to contribute and report issues in [CONTRIBUTING.md](https://github.com/solislemuslab/minaa/blob/master/CONTRIBUTING.md).
 
 ## License
+
 MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2022)
 
 ## Citation
-If you use the MiNAA in your work, we kindly ask that you cite the following paper:
-```
-@ARTICLE{Reed2022,
+
+If you use MiNAA in your work, we kindly ask that you cite the following paper:
+
+```bibtex
+@ARTICLE{Nelson2022,
   title         = "MiNAA: Microbiome Network Alignment Algorithm",
   author        = "Nelson, Reed and Aghdam, Rosa and
                    Solis-Lemus, Claudia",
@@ -89,7 +91,3 @@ If you use the MiNAA in your work, we kindly ask that you cite the following pap
   eprint        = "xxx"
 }
 ```
-
-## Feedback, issues and questions
-
-Issues reports are encouraged through the [GitHub issue tracker](https://github.com/solislemuslab/minaa/issues).

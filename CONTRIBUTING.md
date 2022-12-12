@@ -1,6 +1,6 @@
 # Contributing to MiNAA
 
-The following guidelines are designed for contributors to `MiNAA`.
+The following guidelines are designed for contributors to MiNAA.
 
 ## Reporting Issues and Questions
 
@@ -16,20 +16,17 @@ When reporting a bug, it is most helpful to include:
 
 ## Contributing Code
 
-To make contributions to `MiNAA`, request your change(s) or contribution(s) via a pull request against the `main` branch of `MiNAA` from a non-main branch in your fork. Using a non-main branch on your end will give developers push access to your
-branch to make edits to it (in case we want to work collaboratively on the new code).
+To make contributions to MiNAA, request your changes or contributions via a pull request against the `development` branch of the MiNAA repository.
 
 Please use the following steps:
 
-1. Fork the `MiNAA` repository to your GitHub account
+1. Fork the MiNAA repository to your GitHub account
 2. Clone your fork locally with `git clone`
 3. Create a new branch with a name that describes your contribution. For example, if your contribution is a bug fix in `fileio.cpp`, your new branch can be named `bugfix/fileio`. You can create and switch to it with `git checkout -b bugfix/fileio`
 4. Make your changes on this new branch.
 5. Push your changes to your fork.
-6. [Submit a pull request](https://github.com/solislemuslab/minaa/pulls) against the `main` branch in `MiNAA`.
+6. [Submit a pull request](https://github.com/solislemuslab/minaa/pulls) against the `development` branch in MiNAA.
 
 ## License
 
 By contributing, you agree that your contributions will be licensed under its MIT License.
-
-_These Contributing Guidelines have been adapted from the [Contributing Guidelines](https://github.com/atomneb/AtomNeb-py/blob/master/CONTRIBUTING.md) of [The Turing Way](https://github.com/atomneb/AtomNeb-py)! (License: MIT)_

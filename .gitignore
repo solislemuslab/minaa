@@ -1,16 +1,15 @@
-# ignore folders
-inputs
+# Folders
+networks
 outputs
-testdata
-simulate/*/
 
-# ignore files
+# Files
 *.o
 *.exe
 *.txt
 *.csv
 *.png
 *.pdf
+!paper/graphics/*.pdf
 
 # Packages #
 ############
