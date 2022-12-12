@@ -75,7 +75,7 @@ See details on how to contribute in [CONTRIBUTING.md](https://github.com/solisle
 MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2022)
 
 ## Citation
-If you use the MiNaa in your work, we kindly ask that you cite the following paper:
+If you use the MiNAA in your work, we kindly ask that you cite the following paper:
 ```
 (upcoming)
 ```
