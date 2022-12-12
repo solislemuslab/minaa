@@ -77,7 +77,15 @@ MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. 
 ## Citation
 If you use the MiNAA in your work, we kindly ask that you cite the following paper:
 ```
-(upcoming)
+@ARTICLE{Reed2022,
+  title         = "MiNAA: Microbiome Network Alignment Algorithm",
+  author        = "Nelson, Reed and Aghdam, Rosa and
+                   Solis-Lemus, Claudia",
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "q-bio.PE",
+  eprint        = "xxx"
+}
 ```
 
 ## Feedback, issues and questions
