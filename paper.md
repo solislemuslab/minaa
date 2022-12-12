@@ -11,6 +11,7 @@ authors:
     affiliation: 2
   - name: Claudia Solis-Lemus
     corresponding: true # (This is how to denote the corresponding author)
+    email: solislemus@wisc.edu
     affiliation: "2,3"
 affiliations:
  - name: Department of Computer Science, University of Wisconsin-Madison
