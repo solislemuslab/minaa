@@ -10,7 +10,8 @@ namespace FileIO
     void err(std::string, std::string);
     char detect_delimiter(std::string);
 
-    std::string graphcrunch_in(std::string, std::string);
+    std::string orca_in(std::string);                     // TEMP
+    std::string graphcrunch_in(std::string, std::string); // TEMP
 
     std::vector<std::vector<unsigned>> file_to_graph(std::string);
     std::vector<std::string> parse_labels(std::string);

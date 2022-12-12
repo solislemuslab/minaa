@@ -243,6 +243,65 @@ namespace FileIO
 
     /**
      * Parse the given csv adjacency matrix file into a list
+     * TEMPORARY. Make it so ORCA takes a network as input.
+     * 
+     * @param file the graph file to parse.
+     * 
+     * @return A path to a file containing the graph in the format expected by ORCA.
+     */
+    std::string orca_in(std::string file)
+    {
+        // Identify the delimiter for this csv
+        char delim = detect_delimiter(file);
+        // Parse the file into a matrix
+        std::ifstream fin(file);
+        std::vector<std::vector<double>> matrix;
+        std::string line;
+        while (std::getline(fin, line))
+        {
+            std::stringstream ss(line);
+            std::string cell;
+            std::vector<double> row;
+            while (std::getline(ss, cell, delim))
+            {
+                try
+                {
+                    row.push_back(std::stod(cell));
+                }
+                catch (std::invalid_argument const&)
+                {
+                    row.push_back(0);
+                }
+            }
+            matrix.push_back(row);
+        }
+        // Convert the matrix into a list, with first pair being (# nodes, # edges)
+        std::vector<std::array<unsigned, 2>> list;
+        list.push_back({0, 0});
+        for (unsigned i = 1; i < matrix.size(); ++i)
+        {
+            for (unsigned j = i; j < matrix[i].size(); ++j)
+            {
+                if (i != j && matrix[i][j] != 0)
+                {
+                    list.push_back({i, j});
+                }
+            }
+        }
+        list[0] = {(unsigned)(matrix.size() - 1), (unsigned)(list.size() - 1)};
+        // Write the list to a file
+        std::string out_file = "testdata/orca_in/" + name_file(file) + ".txt";
+        std::ofstream outfile(out_file);
+        for (auto &row : list)
+        {
+            outfile << row[0] << " " << row[1] << std::endl;
+        }
+        outfile.close();
+        return out_file;
+    }
+
+    /**
+     * Parse the given csv adjacency matrix file into a list
      * 
      * @param file_in the graph file to parse.
      * 

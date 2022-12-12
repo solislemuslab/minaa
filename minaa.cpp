@@ -10,6 +10,7 @@
 
 #include "hungarian.h"
 #include "gdvs_dist.h"
+// #include "orca.h"
 #include "graphcrunch.h"
 #include "file_io.h"
 #include "util.h"
@@ -85,14 +86,16 @@ int main(int argc, char* argv[])
         // Calculate the GDVs for G and H
         FileIO::out(log, "Calculating GDVs...............................");
         auto s10 = std::chrono::high_resolution_clock::now();
-        auto g_gc_f = FileIO::graphcrunch_in(g_f, folder + g_name);
-        auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name);
-        auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);
-        auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);
-        std::string rm1 = folder + g_name + ".csv";
-        remove(rm1.c_str());
-        std::string rm2 = folder + h_name + ".csv";
-        remove(rm2.c_str());
+        auto g_gc_f = FileIO::graphcrunch_in(g_f, folder + g_name); // TEMP
+        auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name); // TEMP
+        auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);             // TEMP
+        auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);             // TEMP
+        std::string rm1 = folder + g_name + ".csv";                 // TEMP
+        remove(rm1.c_str());                                        // TEMP
+        std::string rm2 = folder + h_name + ".csv";                 // TEMP
+        remove(rm2.c_str());                                        // TEMP
+        // auto g_gdvs = ORCA::orca(g_graph);
+        // auto h_gdvs = ORCA::orca(h_graph);
         auto f10 = std::chrono::high_resolution_clock::now();
         auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
         FileIO::out(log, "done. (" + std::to_string(d10) + "ms)\n");
