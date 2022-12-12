@@ -31,3 +31,5 @@ Please use the following steps:
 ## License
 
 By contributing, you agree that your contributions will be licensed under its MIT License.
+
+_These Contributing Guidelines have been adapted from the [Contributing Guidelines](https://github.com/atomneb/AtomNeb-py/blob/master/CONTRIBUTING.md) of [The Turing Way](https://github.com/atomneb/AtomNeb-py)! (License: MIT)_

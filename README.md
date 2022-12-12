@@ -64,46 +64,32 @@ Here we align network0 with network1 using no biological data. `-a=0.6` sets alp
 
 Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
-## Data
+## Simulations in the manuscript
 
-### Generate Synthetic Networks
+All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulate` folder.
 
-*simulate/generate.R*
+## Contributions
 
-This script simulates networks over different numbers of nodes (10, 30, 50, 100, 250 and 500), and different proportions of edges changed (5, 10, and 90 percent). For each of these combinations, 30 networks are generated. Altogether that makes 1,080 simulated networks. The result is stored in the folder *networks/*.
-> Warning: the output from this script is 116MB.
+Users interested in expanding functionalities in MiNAA are welcome to do so.
+See details on how to contribute in [CONTRIBUTING.md](https://github.com/solislemuslab/minaa/blob/master/CONTRIBUTING.md)
 
-### Align Networks in Batch
+## License
+MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2022)
 
-Unix: *simulate/align.sh*
+## Citation
+If you use the MiNAA in your work, we kindly ask that you cite the following paper:
+```
+@ARTICLE{Reed2022,
+  title         = "MiNAA: Microbiome Network Alignment Algorithm",
+  author        = "Nelson, Reed and Aghdam, Rosa and
+                   Solis-Lemus, Claudia",
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "q-bio.PE",
+  eprint        = "xxx"
+}
+```
 
-Windows: *simulate/align.bat*
+## Feedback, issues and questions
 
-This script sequentially aligns all network pairs output by generate.R. The result is stored in the folder *outputs/*.
-> Warning: the output from this script is 318MB.
-
-### Produce Heat Maps
-
-*simulate/heatmap.py*
-
-This script generates a heat map for each (graph order, edge flip) combination. The result is a graphic called *heatmap.png*.
-
-### Installation
-
-1. **generate** requirements
-   1. Install R
-   2. Install DevTools: `install.packages("devtools")`; then load it: `library(devtools)`
-   3. Install SpiecEasi: `install_github("zdk123/SpiecEasi")`
-2. **align** requirements
-   1. Install C++20
-   2. Compile MiNAA
-3. **heatmap** requirements
-   1. Install Python & Pip
-   2. Install dependencies: `pip install numpy pandas matplotlib seaborn`
-
-### Execution
-
-0. `cd simulate`
-1. `Rscript generate.R`
-2. `./align.sh` (Unix) **OR** `align.bat` (Windows)
-3. `python heatmap.py`
+Issues reports are encouraged through the [GitHub issue tracker](https://github.com/solislemuslab/minaa/issues).
