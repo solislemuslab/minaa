@@ -41,7 +41,7 @@ In addition, unlike most existing network alignment methods that are tailored fo
 Two networks, represented by adjacency matrices, are the main inputs for our algorithm. Let $G$ and $H$ be such input networks such that $|G| \leq |H|$, where $|G|$ indicates the size of $G$. Optionally, the user may add biological similarity (as a $|G| \times |H|$ matrix) to be weighed into the alignment. This matrix could include gene similarity, phylogenetic similarity, functional similarity, among others. Our algorithm also includes additional options that allow the user to specify how much weight should be placed on biological versus topological information. Specifics on all the input arguments can be found on GitHub https://github.com/solislemuslab/minaa.
 
 **Algorithms.**
-For each input network ($G, H$), we calculate the _graphlet degree vector_, also denoted the _node signature_ of each node. This topological descriptor characterizes a node based on its local neighborhood within a 5-node radius `[@prvzulj2007biological]`. 
+For each input network ($G,H$), we calculate the _graphlet degree vector_, also denoted the _node signature_ of each node. This topological descriptor characterizes a node based on its local neighborhood within a 5-node radius `[@prvzulj2007biological]`. 
 
 Currently, we use the same algorithm for calculating node signatures as in GraphCrunch2 `[@kuchaiev2011graphcrunch]` which is a $O(ed^3)$ algorithm where $e$ is the number of edges, and $d$ is the maximal node degree. Future work will see this implementation replaced by ORCA `[@hovcevar2016computation]`, a functional equivalent with runtime $O(ed^2)$ for sparse graphs such as microbial networks.
 
