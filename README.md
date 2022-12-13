@@ -12,9 +12,18 @@ This program requires C++20 or higher.
 
 ## Compilation
 
-Unix: `make`
+### Unix
 
-Windows: `work in progress`
+`make`
+
+### Windows
+
+```cmd
+mkdir obj
+make
+```
+
+In addition to C++20, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to follow [this guide](https://linuxhint.com/run-makefile-windows/), however any method for compiling C++ should suffice.
 
 ## Usage
 

@@ -11,15 +11,18 @@ OBJECT_FILES = $(addprefix obj/,$(SOURCE:.cpp=.o))
 ifdef SystemRoot # Wndows
     RM = del /Q
 	RMOBJ = obj\*.o
+	MKDIR =
 else 			 # Unix
 	RM = rm -f
 	RMOBJ = obj/*.o
+	MKDIR = @mkdir -p $(@D)
 endif
 
 all: $(OBJECT_FILES)
 	$(CC) -g $(OBJECT_FILES) -o $(TARGET)
 
 obj/%.o: src/%.cpp $(HEADER_FILES)
+	$(MKDIR)
 	$(CC) $(FLAGS) -o $@ $<
 
 clean:
