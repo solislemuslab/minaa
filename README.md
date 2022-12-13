@@ -1,6 +1,6 @@
 # MiNAA: Microbiome Network Alignment Algorithm
 
-[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![yes](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
+[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
 
 ## Description
 
@@ -12,15 +12,24 @@ This program requires C++20 or higher.
 
 ## Compilation
 
-Unix: `make` or `make clean`
+### Unix
 
-Windows: `g++ -O3 -std=c++20 -o minaa.exe minaa.cpp hungarian.cpp gdvs_dist.cpp graphcrunch.cpp file_io.cpp util.cpp`
+`make`
+
+### Windows
+
+```cmd
+mkdir obj
+make
+```
+
+In addition to C++20, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to follow [this guide](https://linuxhint.com/run-makefile-windows/), however any method for compiling C++ should suffice.
 
 ## Usage
 
 This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`
 
-### Required arguments (ordered)
+### Required Arguments (ordered)
 
 1. **G**: A network to align.
 2. **H**: A network to align.
@@ -31,7 +40,7 @@ This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=
   - Any nonzero entry is considered an edge.
   - |G| should be lesser or equal to |H|.
 
-### Optional arguments (unordered)
+### Optional Arguments (unordered)
 
 - **bio**: The path to the biological cost matrix file.
   - Require: CSV adjacency matrix where the first column is the labels of G, and first row is the labels of H.
@@ -88,46 +97,30 @@ The merge method of visualization merges the input graphs intuitively, according
 - If `g_i` is aligned to `h_j`, merge these nodes into one node and color it purple.
 - If `g_i` is aligned to `h_j`, and `g_k` is aligned to `h_l`, and `g_i` is adjacent to `g_k`, color the edge `g_i,k` red. If instead `h_j` is adjacent to `h_l`, color `h_j,l` blue. If both, color `g_i,k` (aka `h_j,l`) purple.
 
-## Data
+## Simulations in the Manuscript
 
-### Generate Synthetic Networks
+All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulations` folder.
 
-*simulate/generate.R*
+## Contributions, Questions, Issues, and Feedback
 
-This script simulates networks over different numbers of nodes (10, 30, 50, 100, 250 and 500), and different proportions of edges changed (5, 10, and 90 percent). For each of these combinations, 30 networks are generated. Altogether that makes 1,080 simulated networks. The result is stored in the folder *networks/*.
-> Warning: the output from this script is 116MB.
+Users interested in expanding functionalities in MiNAA are welcome to do so. Issues reports are encouraged through Github's [issue tracker](https://github.com/solislemuslab/minaa/issues). See details on how to contribute and report issues in [CONTRIBUTING.md](https://github.com/solislemuslab/minaa/blob/master/CONTRIBUTING.md).
 
-### Align Networks in Batch
+## License
 
-Unix: *simulate/align.sh*
+MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2022)
 
-Windows: *simulate/align.bat*
+## Citation
 
-This script sequentially aligns all network pairs output by generate.R. The result is stored in the folder *outputs/*.
-> Warning: the output from this script is 318MB.
+If you use MiNAA in your work, we kindly ask that you cite the following paper:
 
-### Produce Heat Maps
-
-*simulate/heatmap.py*
-
-This script generates a heat map for each (graph order, edge flip) combination. The result is a graphic called *heatmap.png*.
-
-### Installation
-
-1. **generate** requirements
-   1. Install R
-   2. Install DevTools: `install.packages("devtools")`; then load it: `library(devtools)`
-   3. Install SpiecEasi: `install_github("zdk123/SpiecEasi")`
-2. **align** requirements
-   1. Install C++20
-   2. Compile MiNAA
-3. **heatmap** requirements
-   1. Install Python & Pip
-   2. Install dependencies: `pip install numpy pandas matplotlib seaborn`
-
-### Execution
-
-0. `cd simulate`
-1. `Rscript generate.R`
-2. `./align.sh` (Unix) **OR** `align.bat` (Windows)
-3. `python heatmap.py`
+```bibtex
+@ARTICLE{Nelson2022,
+  title         = "MiNAA: Microbiome Network Alignment Algorithm",
+  author        = "Nelson, Reed and Aghdam, Rosa and
+                   Solis-Lemus, Claudia",
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "q-bio.PE",
+  eprint        = "xxx"
+}
+```

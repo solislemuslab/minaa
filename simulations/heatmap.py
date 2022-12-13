@@ -14,7 +14,7 @@ warnings.filterwarnings('ignore')
 
 # In[2]:
 
-path = 'outputs/'
+path = 'alignments/'
 
 # In[3]:
 
