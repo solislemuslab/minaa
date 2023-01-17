@@ -71,7 +71,7 @@ Here we align network0 with network1 using no biological data. `-a=0.6` sets alp
 
 `./minaa.exe network0.csv network1.csv bio_costs.csv -b=0.85`
 
-Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha and gamma were unspecified, they default to 0.5 and 1 respectively. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
+Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
 
 ## Simulations in the Manuscript
 
