@@ -1,5 +1,7 @@
 # MiNAA: Microbiome Network Alignment Algorithm
 
+<img src="logo.png" style="float: right; max-width:40%;">
+
 [![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
 
 ## Description
@@ -83,7 +85,7 @@ Users interested in expanding functionalities in MiNAA are welcome to do so. Iss
 
 ## License
 
-MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2022)
+MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab projects (2023)
 
 ## Citation
 

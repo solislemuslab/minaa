@@ -11,6 +11,7 @@ obj
 *.png
 *.pdf
 !paper/graphics/*.pdf
+!logo.png
 
 # Packages #
 ############
