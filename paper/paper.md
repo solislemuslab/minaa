@@ -14,11 +14,11 @@ authors:
     email: solislemus@wisc.edu
     affiliation: "2,3"
 affiliations:
- - name: Department of Computer Science, University of Wisconsin-Madison
+ - name: Department of Computer Science, University of Wisconsin-Madison, Madison, WI, United States of America
    index: 1
- - name: Wisconsin Institute for Discovery, University of Wisconsin-Madison
+ - name: Wisconsin Institute for Discovery, University of Wisconsin-Madison, Madison, WI, United States of America
    index: 2
- - name: Department of Plant Pathology, University of Wisconsin-Madison
+ - name: Department of Plant Pathology, University of Wisconsin-Madison, Madison, WI, United States of America
    index: 3
 date: 12 December 2022
 bibliography: paper.bib
