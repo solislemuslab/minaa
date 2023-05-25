@@ -26,14 +26,91 @@ namespace FileIO
     }
 
     /**
+     * Check if the given string is a valid file name.
+     * 
+     * @param name
+     * 
+     * @return True if the file name is valid, false otherwise.
+     */
+    bool isValidFileName(std::string name)
+    {
+        return (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-.") == std::string::npos);
+    }
+
+    /**
+     * Detect the delimiter used for a CSV file.
+     * Detectable delimiters are comma, semicolon, space, and tab.
+     * 
+     * @param file The csv file to detect the delimiter of.
+     * 
+     * @return the delimiter used in the file.
+     * 
+     * @throws std::runtime_error If the file could not be opened.
+     */
+    char detect_delimiter(std::string file)
+    {
+        // Open the given file, read the first line
+        std::ifstream fin;
+        fin.exceptions(std::ofstream::badbit);
+        try 
+        {
+            fin.open(file);
+        }
+        catch (const std::ifstream::failure& e)
+        {
+            throw std::runtime_error("Unable to open file " + file);
+        }
+
+        std::string line;
+        std::getline(fin, line);
+
+        char delims[] = {',', ';', ' ', '\t'};
+        unsigned counts[] = {0, 0, 0, 0};
+        unsigned delims_length = (sizeof(delims) / sizeof(char));
+
+        for (unsigned c = 0; c < line.length() - 1; ++c)
+        {
+            // Skip through all values inside quotes
+            if (line[c] == '"')
+            {
+                ++c;
+                while (line[c] != '"' && c < line.length() - 1)
+                {
+                    ++c;
+                }
+            }
+            // See if this value outside quotes is a possible delimiter
+            for (unsigned d = 0; d < delims_length; ++d)
+            {
+                if (line[c] == delims[d])
+                {
+                    ++counts[d];
+                }
+            }
+        }
+
+        unsigned most_frequent = std::distance(counts, std::max_element(counts, counts + delims_length));
+        return delims[most_frequent];
+    }
+
+    /**
      * Returns the truncated name of the file.
      * 
      * @param file The file to truncate.
      * 
      * @return The truncated name of the file.
      */
-    std::string name_file(std::string file)
+    std::string name_file(std::string file, std::string given_name)
     {
+        if (file == "")
+        {
+            return "";
+        }
+        if (given_name != "")
+        {
+            return given_name;
+        }
+
         #ifdef _WIN32 // Windows
         {
             auto si = file.find_last_of("\\") + 1;
@@ -102,7 +179,7 @@ namespace FileIO
                 }
             }
             
-            // Make directory "alignments/g_name-h_name-datetime/ if it doesn't exist
+            // Make directory "alignments/g_name-h_name-datetime/" if it doesn't exist
             folder = OUTPUT_FOLDER + g_name + "-" + h_name+ "-" + datetime  + "/";
             if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {
@@ -183,62 +260,6 @@ namespace FileIO
         fout.close();
     }
 
-    /**
-     * Detect the delimiter used for a CSV file.
-     * Detectable delimiters are comma, semicolon, space, and tab.
-     * 
-     * @param file The csv file to detect the delimiter of.
-     * 
-     * @return the delimiter used in the file.
-     * 
-     * @throws std::runtime_error If the file could not be opened.
-     */
-    char detect_delimiter(std::string file)
-    {
-        // Open the given file, read the first line
-        std::ifstream fin;
-        fin.exceptions(std::ofstream::badbit);
-        try 
-        {
-            fin.open(file);
-        }
-        catch (const std::ifstream::failure& e)
-        {
-            throw std::runtime_error("Unable to open file " + file);
-        }
-
-        std::string line;
-        std::getline(fin, line);
-
-        char delims[] = {',', ';', ' ', '\t'};
-        unsigned counts[] = {0, 0, 0, 0};
-        unsigned delims_length = (sizeof(delims) / sizeof(char));
-
-        for (unsigned c = 0; c < line.length() - 1; ++c)
-        {
-            // Skip through all values inside quotes
-            if (line[c] == '"')
-            {
-                ++c;
-                while (line[c] != '"' && c < line.length() - 1)
-                {
-                    ++c;
-                }
-            }
-            // See if this value outside quotes is a possible delimiter
-            for (unsigned d = 0; d < delims_length; ++d)
-            {
-                if (line[c] == delims[d])
-                {
-                    ++counts[d];
-                }
-            }
-        }
-
-        unsigned most_frequent = std::distance(counts, std::max_element(counts, counts + delims_length));
-        return delims[most_frequent];
-    }
-
     /* FILE INPUT */
 
     /**
@@ -311,7 +332,7 @@ namespace FileIO
         }
 
         // Open the output file
-        std::string out_file = file_out + ".csv";
+        std::string out_file = file_out + "_gc.csv";
         std::ofstream outfile;
         outfile.exceptions(std::ofstream::badbit);
         try 
@@ -491,6 +512,57 @@ namespace FileIO
     /* FILE OUTPUT */
 
     /**
+     * Write graph to a file.
+     * 
+     * @param folder The folder to write the file to.
+     * @param file_name The name of the file to write the graph to.
+     * @param graph_labels The labels for the graph.
+     * @param graph The graph to write to the file.
+     * 
+     * @returns The path to the output file.
+     * 
+     * @throws std::runtime_error If the file could not be written.
+     */
+    std::string graph_to_file(std::string folder, std::string file_name,
+    std::vector<std::string> graph_labels, std::vector<std::vector<unsigned>> graph)
+    {
+        std::string filestr = folder + "/" + file_name + ".csv";
+        std::ofstream fout;
+        fout.exceptions(std::ofstream::badbit);
+        try 
+        {
+            fout.open(filestr);
+        }
+        catch (const std::ofstream::failure& e)
+        {
+            throw std::runtime_error("Unable to open file " + filestr);
+        }
+
+        // Write the labels
+        fout << "\"\"";
+        for (unsigned i = 0; i < graph_labels.size(); ++i)
+        {
+            fout << "," << graph_labels[i];
+        }
+        fout << std::endl;
+
+        // Write the graph
+        for (unsigned i = 0; i < graph.size(); ++i)
+        {
+            fout << graph_labels[i];
+            for (unsigned j = 0; j < graph[i].size(); ++j)
+            {
+                fout << "," << graph[i][j];
+            }
+            fout << std::endl;
+        }
+
+        fout.close();
+
+        return filestr;
+    }
+
+    /**
      * Write GDVs to a file.
      * 
      * @param file The file to write the GDVs to.
@@ -542,11 +614,11 @@ namespace FileIO
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    std::string cost_to_file(std::string folder, std::vector<std::string> g_labels,
+    std::string cost_to_file(std::string folder, std::string file, std::vector<std::string> g_labels,
         std::vector<std::string> h_labels, std::vector<std::vector<double>> cost)
     {
         // Create and open the file
-        std::string filestr = folder + "top_costs.csv";
+        std::string filestr = folder + file;
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
@@ -577,7 +649,7 @@ namespace FileIO
     }
 
     /**
-     * Write the given alignment to a csv file as a matrix.
+     * Write the given alignment to a csv file as a matrix. // COPILOTTED
      * 
      * @param folder The folder to write the alignment to.
      * @param g_labels Labels for the G graph.

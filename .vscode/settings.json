@@ -70,6 +70,7 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
+        "*.spyx": "python",
         "__bit_reference": "cpp",
         "__bits": "cpp",
         "__config": "cpp",
@@ -93,6 +94,9 @@
         "optional": "cpp",
         "stack": "cpp",
         "string_view": "cpp",
-        "variant": "cpp"
-    }
+        "variant": "cpp",
+        "__verbose_abort": "cpp",
+        "bit": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

@@ -52,6 +52,9 @@ namespace Util
      * args[3]: biological data file
      * args[4]: GDV - edge weight balancer
      * args[5]: topological - biological balancer
+     * args[6]: G alias
+     * args[7]: H alias
+     * args[8]: B alias
      * 
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
@@ -62,11 +65,11 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", ""};
 
-        if (argc < 3 || argc > 6)
+        if (argc < 3 || argc > 9)
         {
-            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta]");
+            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta] [-Galias=G_alias] [-Halias=H_alias] [-Balias=B_alias]");
         }
 
         if (!FileIO::is_accessible(argv[1]))
@@ -96,7 +99,6 @@ namespace Util
             else if (arg.find("-a=") != std::string::npos)
             {
                 args[4] = arg.substr(3);
-
                 if (std::stod(args[4]) < 0 || std::stod(args[4]) > 1)
                 {
                     throw std::invalid_argument("The alpha argument must be in range [0, 1].");
@@ -105,10 +107,33 @@ namespace Util
             else if (arg.find("-b=") != std::string::npos)
             {
                 args[5] = arg.substr(3);
-
                 if (std::stod(args[5]) < 0 || std::stod(args[5]) > 1)
                 {
                     throw std::invalid_argument("The beta argument must be in range [0, 1].");
+                }
+            }
+            else if (arg.find("-Galias=") != std::string::npos)
+            {
+                args[6] = arg.substr(8);
+                if (!FileIO::isValidFileName(args[6]))
+                {
+                    throw std::invalid_argument("The G alias contains an illegal character.");
+                }
+            }
+            else if (arg.find("-Halias=") != std::string::npos)
+            {
+                args[7] = arg.substr(8);
+                if (!FileIO::isValidFileName(args[7]))
+                {
+                    throw std::invalid_argument("The H alias contains an illegal character.");
+                }
+            }
+            else if (arg.find("-Balias=") != std::string::npos)
+            {
+                args[8] = arg.substr(8);
+                if (!FileIO::isValidFileName(args[8]))
+                {
+                    throw std::invalid_argument("The B alias contains an illegal character.");
                 }
             }
             else

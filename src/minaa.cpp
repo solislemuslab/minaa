@@ -41,12 +41,16 @@ int main(int argc, char* argv[])
         auto bio_f = args[3];                      // biological data file
         auto alpha = std::stod(args[4]);           // GDV - edge weight balancer
         auto beta = std::stod(args[5]);            // topological - biological balancer
+        auto g_alias = args[6];                    // graph G alias
+        auto h_alias = args[7];                    // graph H alias
+        auto bio_alias = args[8];                  // biological data alias
 
         bool bio = (bio_f != "");                  // biological data file provided
 
         // Generate output names
-        auto g_name = FileIO::name_file(g_f);
-        auto h_name = FileIO::name_file(h_f);
+        auto g_name = FileIO::name_file(g_f, g_alias);
+        auto h_name = FileIO::name_file(h_f, h_alias);
+        auto bio_name = FileIO::name_file(bio_f, bio_alias);
         auto folder = FileIO::name_folder(g_name, h_name, datetime);
         log = folder + "log.txt";
 
@@ -61,9 +65,9 @@ int main(int argc, char* argv[])
         FileIO::out(log, "Y_M_D-H_M_S: " + datetime + "\n");
         FileIO::out(log, "\n");
         FileIO::out(log, "ARGUMENTS\n");
-        FileIO::out(log, "G File:   " + g_name + "\n");
-        FileIO::out(log, "H File:   " + h_name + "\n");
-        FileIO::out(log, "Bio File: " + bio_f + "\n");
+        FileIO::out(log, "G File:   " + g_name + ".csv\n");
+        FileIO::out(log, "H File:   " + h_name + ".csv\n");
+        if (bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n");
         FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
         FileIO::out(log, "\n");
@@ -71,13 +75,15 @@ int main(int argc, char* argv[])
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
         auto s = std::chrono::high_resolution_clock::now();
 
-        // Read graph files into graph objects
+        // Read graph files into graph objects, write back to files
         FileIO::out(log, "Reading graph files............................");
         auto s00 = std::chrono::high_resolution_clock::now();
         auto g_graph = FileIO::file_to_graph(g_f);
         auto h_graph = FileIO::file_to_graph(h_f);
         auto g_labels = FileIO::parse_labels(g_f);
         auto h_labels = FileIO::parse_labels(h_f);
+        FileIO::graph_to_file(folder, g_name, g_labels, g_graph);
+        FileIO::graph_to_file(folder, h_name, h_labels, h_graph);
         auto f00 = std::chrono::high_resolution_clock::now();
         auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
         FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
@@ -89,9 +95,9 @@ int main(int argc, char* argv[])
         auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name);
         auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);
         auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);
-        std::string rm1 = folder + g_name + ".csv";
+        std::string rm1 = folder + g_name + "_gc.csv";
         remove(rm1.c_str());
-        std::string rm2 = folder + h_name + ".csv";
+        std::string rm2 = folder + h_name + "_gc.csv";
         remove(rm2.c_str());
         auto f10 = std::chrono::high_resolution_clock::now();
         auto d10 = std::chrono::duration_cast<std::chrono::milliseconds>(f10-s10).count();
@@ -100,8 +106,8 @@ int main(int argc, char* argv[])
         // Writing GDVs to files
         FileIO::out(log, "Writing GDVs to files..........................");
         auto s11 = std::chrono::high_resolution_clock::now();
-        auto g_gdvs_f = FileIO::gdvs_to_file(folder + g_name, g_labels, g_gdvs);
-        auto h_gdvs_f = FileIO::gdvs_to_file(folder + h_name, h_labels, h_gdvs);
+        FileIO::gdvs_to_file(folder + g_name, g_labels, g_gdvs);
+        FileIO::gdvs_to_file(folder + h_name, h_labels, h_gdvs);
         auto f11 = std::chrono::high_resolution_clock::now();
         auto d11 = std::chrono::duration_cast<std::chrono::milliseconds>(f11-s11).count();
         FileIO::out(log, "done. (" + std::to_string(d11) + "ms)\n");
@@ -117,7 +123,7 @@ int main(int argc, char* argv[])
         // Store the topological cost matrix in a file
         FileIO::out(log, "Writing the topological cost matrix to file....");
         auto s21 = std::chrono::high_resolution_clock::now();
-        auto topological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, topological_costs);
+        FileIO::cost_to_file(folder, "topological_costs.csv", g_labels, h_labels, topological_costs);
         auto f21 = std::chrono::high_resolution_clock::now();
         auto d21 = std::chrono::duration_cast<std::chrono::milliseconds>(f21-s21).count();
         FileIO::out(log, "done. (" + std::to_string(d21) + "ms)\n");
@@ -129,7 +135,7 @@ int main(int argc, char* argv[])
             // Parse and normalize the biological cost matrix
             FileIO::out(log, "Processing biological data.....................");
             auto s30 = std::chrono::high_resolution_clock::now();
-            auto biological_costs = FileIO::file_to_cost(bio_f);
+            auto biological_costs = FileIO::file_to_cost(bio_f); // this surely won't work as is
             biological_costs = Util::normalize(biological_costs);
             auto f30 = std::chrono::high_resolution_clock::now();
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
@@ -138,7 +144,7 @@ int main(int argc, char* argv[])
             // Store the biological cost matrix in a file
             FileIO::out(log, "Writing the biological cost matrix to file.....");
             auto s31 = std::chrono::high_resolution_clock::now();
-            auto biological_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, biological_costs);
+            FileIO::cost_to_file(folder, "biological_costs.csv", g_labels, h_labels, biological_costs);
             auto f31 = std::chrono::high_resolution_clock::now();
             auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
             FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
@@ -154,7 +160,7 @@ int main(int argc, char* argv[])
             // Store the overall cost matrix in a file
             FileIO::out(log, "Writing the overall cost matrix to file........");
             auto s41 = std::chrono::high_resolution_clock::now();
-            auto overall_costs_f = FileIO::cost_to_file(folder, g_labels, h_labels, overall_costs);
+            FileIO::cost_to_file(folder, "overall_costs.csv", g_labels, h_labels, overall_costs);
             auto f41 = std::chrono::high_resolution_clock::now();
             auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
             FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");
@@ -185,8 +191,8 @@ int main(int argc, char* argv[])
         // Write the alignment to csv files
         FileIO::out(log, "Writing the alignment to file..................");
         auto s51 = std::chrono::high_resolution_clock::now();
-        auto alignment_mf = FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment);
-        auto alignment_lf = FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment);
+        FileIO::alignment_to_matrix_file(folder, g_labels, h_labels, alignment);
+        FileIO::alignment_to_list_file(folder, g_labels, h_labels, alignment);
         auto f51 = std::chrono::high_resolution_clock::now();
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
