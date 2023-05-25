@@ -75,20 +75,27 @@ int main(int argc, char* argv[])
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
         auto s = std::chrono::high_resolution_clock::now();
 
-        // Read graph files into graph objects, write back to files
+        // Read graph files into graph objects
         FileIO::out(log, "Reading graph files............................");
         auto s00 = std::chrono::high_resolution_clock::now();
         auto g_graph = FileIO::file_to_graph(g_f);
         auto h_graph = FileIO::file_to_graph(h_f);
         auto g_labels = FileIO::parse_labels(g_f);
         auto h_labels = FileIO::parse_labels(h_f);
-        FileIO::graph_to_file(folder, g_name, g_labels, g_graph);
-        FileIO::graph_to_file(folder, h_name, h_labels, h_graph);
         auto f00 = std::chrono::high_resolution_clock::now();
         auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
         FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
 
-        // Calculate the GDVs for G and H
+        // Write graph objects back to files
+        FileIO::out(log, "Writing graph files............................");
+        auto s01 = std::chrono::high_resolution_clock::now();
+        FileIO::graph_to_file(folder, g_name, g_labels, g_graph);
+        FileIO::graph_to_file(folder, h_name, h_labels, h_graph);
+        auto f01 = std::chrono::high_resolution_clock::now();
+        auto d01 = std::chrono::duration_cast<std::chrono::milliseconds>(f01-s01).count();
+        FileIO::out(log, "done. (" + std::to_string(d01) + "ms)\n");
+
+        // Calculate the GDVs for G and H, remove temp files
         FileIO::out(log, "Calculating GDVs...............................");
         auto s10 = std::chrono::high_resolution_clock::now();
         auto g_gc_f = FileIO::graphcrunch_in(g_f, folder + g_name);
@@ -135,11 +142,13 @@ int main(int argc, char* argv[])
             // Parse and normalize the biological cost matrix
             FileIO::out(log, "Processing biological data.....................");
             auto s30 = std::chrono::high_resolution_clock::now();
-            auto biological_costs = FileIO::file_to_cost(bio_f); // this surely won't work as is
+            auto biological_costs = FileIO::file_to_cost(bio_f);
             biological_costs = Util::normalize(biological_costs);
             auto f30 = std::chrono::high_resolution_clock::now();
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
             FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
+
+            // Do a passthrough of the biological cost matrix?
             
             // Store the biological cost matrix in a file
             FileIO::out(log, "Writing the biological cost matrix to file.....");
