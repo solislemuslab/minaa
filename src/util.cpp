@@ -55,6 +55,7 @@ namespace Util
      * args[6]: G alias
      * args[7]: H alias
      * args[8]: B alias
+     * args[9]: passthrough?
      * 
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
@@ -65,20 +66,20 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", ""};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0"};
 
-        if (argc < 3 || argc > 9)
+        if (argc < 3 || argc > 10)
         {
-            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> [-B=bio_costs.csv] [-a=alpha] [-b=beta] [-Galias=G_alias] [-Halias=H_alias] [-Balias=B_alias]");
+            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional parameters and details.");
         }
 
         if (!FileIO::is_accessible(argv[1]))
         {
-            throw std::invalid_argument("The first file specified cannot be read.");
+            throw std::invalid_argument("The first argument specified must be a readable file.");
         }
         if (!FileIO::is_accessible(argv[2]))
         {
-            throw std::invalid_argument("The second file specified cannot be read.");
+            throw std::invalid_argument("The second argument specified must be a readable file.");
         }
 
         args[0] = argv[0];
@@ -135,6 +136,10 @@ namespace Util
                 {
                     throw std::invalid_argument("The B alias contains an illegal character.");
                 }
+            }
+            else if (arg.find("-p") != std::string::npos)
+            {
+                args[9] = "1";
             }
             else
             {

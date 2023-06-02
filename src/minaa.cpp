@@ -44,8 +44,9 @@ int main(int argc, char* argv[])
         auto g_alias = args[6];                    // graph G alias
         auto h_alias = args[7];                    // graph H alias
         auto bio_alias = args[8];                  // biological data alias
+        auto passthrough = (args[9] == "1");       // passthrough?
 
-        bool bio = (bio_f != "");                  // biological data file provided
+        bool bio = (bio_f != "");                  // biological data file provided?
 
         // Generate output names
         auto g_name = FileIO::name_file(g_f, g_alias);
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
         FileIO::out(log, "ARGUMENTS\n");
         FileIO::out(log, "G File:   " + g_name + ".csv\n");
         FileIO::out(log, "H File:   " + h_name + ".csv\n");
-        if (bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n");
+        if (bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n"); // double .csv if no alias
         FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
         FileIO::out(log, "\n");
@@ -87,13 +88,16 @@ int main(int argc, char* argv[])
         FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
 
         // Write graph objects back to files
-        FileIO::out(log, "Writing graph files............................");
-        auto s01 = std::chrono::high_resolution_clock::now();
-        FileIO::graph_to_file(folder, g_name, g_labels, g_graph);
-        FileIO::graph_to_file(folder, h_name, h_labels, h_graph);
-        auto f01 = std::chrono::high_resolution_clock::now();
-        auto d01 = std::chrono::duration_cast<std::chrono::milliseconds>(f01-s01).count();
-        FileIO::out(log, "done. (" + std::to_string(d01) + "ms)\n");
+        if (passthrough)
+        {
+            FileIO::out(log, "Writing graph files............................");
+            auto s01 = std::chrono::high_resolution_clock::now();
+            FileIO::graph_to_file(folder, g_name, g_labels, g_graph);
+            FileIO::graph_to_file(folder, h_name, h_labels, h_graph);
+            auto f01 = std::chrono::high_resolution_clock::now();
+            auto d01 = std::chrono::duration_cast<std::chrono::milliseconds>(f01-s01).count();
+            FileIO::out(log, "done. (" + std::to_string(d01) + "ms)\n");
+        }
 
         // Calculate the GDVs for G and H, remove temp files
         FileIO::out(log, "Calculating GDVs...............................");
@@ -148,7 +152,10 @@ int main(int argc, char* argv[])
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
             FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
 
-            // Do a passthrough of the biological cost matrix?
+            if (passthrough)
+            {
+                // Do a passthrough of the biological data file?
+            }
             
             // Store the biological cost matrix in a file
             FileIO::out(log, "Writing the biological cost matrix to file.....");
