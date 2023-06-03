@@ -7,7 +7,7 @@ namespace FileIO
     bool isValidFileName(std::string);
     char detect_delimiter(std::string);
     std::string name_file(std::string, std::string);
-    std::string name_folder(std::string, std::string, std::string);
+    std::string name_folder(std::string, std::string, std::string, bool);
     void out(std::string, std::string);
     void err(std::string, std::string);
 

@@ -46,16 +46,17 @@ namespace Util
 
     /**
      * Parse command line arguments.
-     * args[0]: argv[0]
-     * args[1]: graph G file
-     * args[2]: graph H file
-     * args[3]: biological data file
-     * args[4]: GDV - edge weight balancer
-     * args[5]: topological - biological balancer
-     * args[6]: G alias
-     * args[7]: H alias
-     * args[8]: B alias
-     * args[9]: passthrough?
+     * args[0]:  argv[0]
+     * args[1]:  graph G file
+     * args[2]:  graph H file
+     * args[3]:  biological data file
+     * args[4]:  GDV - edge weight balancer
+     * args[5]:  topological - biological balancer
+     * args[6]:  G alias
+     * args[7]:  H alias
+     * args[8]:  B alias
+     * args[9]:  do a passthrough?
+     * args[10]: includs a timestamp?
      * 
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
@@ -66,11 +67,11 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0"};
 
-        if (argc < 3 || argc > 10)
+        if (argc < 3 || argc > 11)
         {
-            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional parameters and details.");
+            throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional options and details.");
         }
 
         if (!FileIO::is_accessible(argv[1]))
@@ -140,6 +141,10 @@ namespace Util
             else if (arg.find("-p") != std::string::npos)
             {
                 args[9] = "1";
+            }
+            else if (arg.find("-t") != std::string::npos)
+            {
+                args[10] = "1";
             }
             else
             {

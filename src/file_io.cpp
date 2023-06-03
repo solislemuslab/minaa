@@ -139,7 +139,7 @@ namespace FileIO
      * 
      * @throws std::runtime_error If a necessary folder/file could not be created.
      */
-    std::string name_folder(std::string g_name, std::string h_name, std::string datetime)
+    std::string name_folder(std::string g_name, std::string h_name, std::string datetime, bool do_timestamp)
     {
         std::string folder = "";
 
@@ -155,8 +155,17 @@ namespace FileIO
                     throw std::runtime_error("Unable to create directory " + OUTPUT_FOLDER);
                 }
             }
+
+            if (do_timestamp)
+            {
+                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "\\";
+            } 
+            else
+            {
+                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "\\";
+            }
             
-            // Make directory "alignments\g_name-h_name-datetime\ if it doesn't exist
+            // Make directory if it doesn't exist
             folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "\\";
             if (mkdir(folder.c_str()) == -1)
             {
@@ -178,9 +187,17 @@ namespace FileIO
                     throw std::runtime_error("Unable to create directory " + OUTPUT_FOLDER);
                 }
             }
-            
-            // Make directory "alignments/g_name-h_name-datetime/" if it doesn't exist
-            folder = OUTPUT_FOLDER + g_name + "-" + h_name+ "-" + datetime  + "/";
+
+            if (do_timestamp)
+            {
+                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
+            } 
+            else
+            {
+                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "/";
+            }
+
+            // Make directory if it doesn't exist
             if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
             {
                 if(errno != EEXIST)
