@@ -2,6 +2,7 @@
 networks
 alignments
 obj
+.vscode
 
 # Files
 *.o
