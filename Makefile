@@ -8,7 +8,7 @@ HEADER_FILES = $(addprefix include/,$(HEADER))
 SOURCE_FILES = $(addprefix src/,$(SOURCE))
 OBJECT_FILES = $(addprefix obj/,$(SOURCE:.cpp=.o))
 
-ifdef SystemRoot # Wndows
+ifdef SystemRoot # Windows
     RM = del /Q
 	RMOBJ = obj\*.o
 	MKDIR =
