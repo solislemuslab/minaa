@@ -8,11 +8,8 @@ The purpose of this folder is to provide a basic worked example of MiNAA's input
 
 `G.csv` and `H.csv` are networks of 250 nodes, generated using the `generate.R` script in the `simulations` folder. H is a mutation of G in which 10% of the possible or actual edges were flipped from their state in G to the opposite state.
 
-## Unix Example
-
-From the project root directory run:
+Once MiNAA is compiled, run the command below from the root directory:
 
 ```bash
-make
 ./minaa.exe example/G.csv example/H.csv
 ```
