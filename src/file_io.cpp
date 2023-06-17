@@ -139,7 +139,7 @@ namespace FileIO
      * 
      * @throws std::runtime_error If a necessary folder/file could not be created.
      */
-    std::string name_folder(std::string g_name, std::string h_name, std::string datetime, bool do_timestamp)
+    std::string name_folder(std::string g_name, std::string h_name, std::string datetime, bool do_timestamp, bool do_greekstamp, std::string alpha, std::string beta, bool do_bio)
     {
         std::string folder = "";
 
@@ -188,14 +188,23 @@ namespace FileIO
                 }
             }
 
+            folder = OUTPUT_FOLDER + g_name + "-" + h_name;
+
+            if (do_greekstamp)
+            {
+                folder += "-a" + alpha;
+                if (do_bio)
+                {
+                    folder += "-b" + beta;
+                }
+            }
+
             if (do_timestamp)
             {
-                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "-" + datetime + "/";
+                folder += "-" + datetime;
             } 
-            else
-            {
-                folder = OUTPUT_FOLDER + g_name + "-" + h_name + "/";
-            }
+            
+            folder += "/";
 
             // Make directory if it doesn't exist
             if (mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)

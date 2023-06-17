@@ -56,7 +56,8 @@ namespace Util
      * args[7]:  H alias
      * args[8]:  B alias
      * args[9]:  do a passthrough?
-     * args[10]: includs a timestamp?
+     * args[10]: include a timestamp?
+     * args[11]: include a greekstamp?
      * 
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
@@ -67,9 +68,9 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0", "0"};
 
-        if (argc < 3 || argc > 11)
+        if (argc < 3 || argc > 12)
         {
             throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional options and details.");
         }
@@ -145,6 +146,10 @@ namespace Util
             else if (arg.find("-t") != std::string::npos)
             {
                 args[10] = "1";
+            }
+            else if (arg.find("-g") != std::string::npos)
+            {
+                args[11] = "1";
             }
             else
             {

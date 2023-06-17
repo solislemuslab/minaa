@@ -46,13 +46,14 @@ int main(int argc, char* argv[])
         auto bio_alias = args[8];                  // biological data alias
         auto do_passthrough = (args[9] == "1");    // do a passthrough of input files?
         auto do_timestamp = (args[10] == "1");     // include a timestamp in the folder name?
+        auto do_greekstamp = (args[11] == "1");    // include a greekstamp in the folder name?
         auto do_bio = (bio_f != "");               // biological data file provided?
 
         // Generate output names
         auto g_name = FileIO::name_file(g_f, g_alias);
         auto h_name = FileIO::name_file(h_f, h_alias);
         auto bio_name = FileIO::name_file(bio_f, bio_alias);
-        auto folder = FileIO::name_folder(g_name, h_name, datetime, do_timestamp);
+        auto folder = FileIO::name_folder(g_name, h_name, datetime, do_timestamp, do_greekstamp, args[4], args[5], do_bio);
         log = folder + "log.txt";
 
         // Write log file

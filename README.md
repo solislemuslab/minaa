@@ -70,13 +70,16 @@ In addition to C++20, Windows requires a special means to run the provided makef
 - **-p**: passthrough; whether or not to write the input files into the output folder.
   - Require: none.
   - Default: the files are not passed through to the output folder.
-- **-t**: Timestamp; the output folder's name includes the date and time of execution.
+- **-t**: timestamp; the output folder's name includes the date and time of execution.
   - Require: none.
   - Default: the output folder's name does not include date and time.
+- **-g**: greekstamp; the output folder's name includes the values for alpha and beta.
+  - Require: none.
+  - Default: the output folder's name does not include the values for alpha and beta.
 
 ### Outputs
 
-- **G-H-T/**: (where G, H are the input networks, T is the date and time of execution) The folder containing the output files specified below.
+- **G-H/**: (where G, H are the input networks) The folder containing the output files specified below.
 - **log.txt**: record of the important details from the alignment.
 - **G_gdvs.csv**: (where G is the input network) the Graphlet Degree Vectors for network G.
 - **H_gdvs.csv**: (where H is the input network) the Graphlet Degree Vectors for network H.
