@@ -11,7 +11,7 @@ This script simulates networks over different numbers of nodes (10, 30, 50, 100,
 
 ### Align Networks in Batch: `align.sh`, `align.bat`
 
-This script sequentially aligns all network pairs output by generate.R. The result is stored in the folder *outputs/*.
+This script sequentially aligns all network pairs output by generate.R. The result is stored in the folder *alignments/*.
 > Warning: the output from this script is 318MB.
 
 ### Produce Heat Maps: `heatmap.py`
@@ -33,7 +33,7 @@ This script generates a heat map for each (graph order, edge flip) combination. 
 
 ### Execution
 
-0. `cd simulate`
+0. `cd simulations`
 1. `Rscript generate.R`
 2. `./align.sh` (Unix) **OR** `align.bat` (Windows)
 3. `python heatmap.py`
