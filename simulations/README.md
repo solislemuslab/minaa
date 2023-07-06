@@ -23,7 +23,9 @@ This script generates a heat map for each (graph order, edge flip) combination. 
 1. **generate** requirements
    1. Install R
    2. Install DevTools: `install.packages("devtools")`; then load it: `library(devtools)`
-   3. Install SpiecEasi: `install_github("zdk123/SpiecEasi")`
+   3. Install SpiecEasi:
+      1. Download the latest release of [SpiecEasi](https://github.com/zdk123/SpiecEasi/releases)
+      2. In R Studio, from the *Install Packages* window, select *Package Archive File* and complete the install.
 2. **align** requirements
    1. Install C++20
    2. Compile MiNAA
