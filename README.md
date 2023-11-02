@@ -6,7 +6,7 @@
 
 ## Description
 
-**MiNAA** aligns two networks based their topologies and biologies.
+**MiNAA** is a network alignment algorithm. That is, MiNAA takes as input a pair of node-edge networks, and finds a correspondance between them such that each node in one is mapped to its most similar node in the other. MiNAA is capable of using both *topological* (structural) information about the network, and *biological* information about the taxa each node represents, in order to produce a good approximation of the optimal alignment. Due to the complexity of this task, an approximation is the best that can be done in an efficient runtime. Network alignment in this setting is done primarily for comparative purposes. For example, an alignment might map clusters of taxa to each other, revealing conserved or analogous functions between microbial communities. See our [software note](https://arxiv.org/abs/2212.05880) (preprint) for additional details.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ In addition to C++20, Windows requires a special means to run the provided makef
 
 ## Usage
 
-This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`
+This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 ### Required Arguments (ordered)
 
@@ -45,7 +45,7 @@ This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=
 ### Optional Arguments (unordered)
 
 - **bio**: The path to the biological cost matrix file.
-  - Require: CSV adjacency matrix where the first column is the labels of G, and first row is the labels of H.
+  - Require: CSV adjacency matrix where the first column consists of the labels of G, and first row consists of the labels of H.
   - Default: the algorithm will run using only topological calculations.
 - **alpha**: GDV-edge weight balancer
   - Require: a real number in range [0, 1].
