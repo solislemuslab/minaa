@@ -10,7 +10,7 @@
 
 ## Requirements
 
-This program requires C++20 or higher.
+This program requires C++20 or higher, and g++.
 
 ## Compilation
 
@@ -25,7 +25,7 @@ mkdir obj
 make
 ```
 
-In addition to C++20, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to follow [this guide](https://linuxhint.com/run-makefile-windows/), however any method for compiling C++ should suffice.
+In addition to C++20 and g++, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to download MinGW [here](https://sourceforge.net/projects/mingw/), and follow [this guide](https://linuxhint.com/run-makefile-windows/) for installation, however any method for compiling C++ using g++ should suffice.
 
 ## Usage
 
