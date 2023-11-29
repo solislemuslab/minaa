@@ -111,21 +111,10 @@ namespace FileIO
             return given_name;
         }
 
-        #ifdef _WIN32 // Windows
-        {
-            auto si = file.find_last_of("\\") + 1;
-            auto ei = file.find_last_of(".");
-            auto file_name = file.substr(si, ei - si);
-            return file_name;
-        }
-        #else // Unix
-        {
-            auto si = file.find_last_of("/") + 1;
-            auto ei = file.find_last_of(".");
-            auto file_name = file.substr(si, ei - si);
-            return file_name;
-        }
-        #endif
+        auto start_index = file.find_last_of("/|\\") + 1;
+        auto end_index = file.find_last_of(".");
+        auto file_name = file.substr(start_index, end_index - start_index);
+        return file_name;
     }
 
     /**
