@@ -2,15 +2,15 @@
 
 <img src="logo.png" style="width:40%;" align=right>
 
-[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa)
+[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENCE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa) [![status](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3/status.svg)](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3)
 
 ## Description
 
-**MiNAA** aligns two networks based their topologies and biologies.
+MiNAA takes as input a pair of node-edge networks, and finds a correspondance between them such that each node in one is mapped to its most similar node in the other. MiNAA is capable of using both *topological* (structural) information about the network, and *biological* information about the taxa each node represents, in order to produce a good approximation of the optimal alignment. Due to the complexity of this task, an approximation is the best that can be done in an efficient runtime. Network alignment in this setting is done primarily for comparative purposes. For example, an alignment might map clusters of taxa to each other, revealing conserved or analogous functions between microbial communities. See our [software note](https://arxiv.org/abs/2212.05880) (preprint) for additional details.
 
 ## Requirements
 
-This program requires C++20 or higher.
+This program requires C++20 or higher, and g++.
 
 ## Compilation
 
@@ -25,11 +25,11 @@ mkdir obj
 make
 ```
 
-In addition to C++20, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to follow [this guide](https://linuxhint.com/run-makefile-windows/), however any method for compiling C++ should suffice.
+In addition to C++20 and g++, Windows requires a special means to run the provided makefile. The MinGW Package Manager provides a lightweight make function. It is recommended to download MinGW [here](https://sourceforge.net/projects/mingw/), and follow [this guide](https://linuxhint.com/run-makefile-windows/) for installation, however any method for compiling C++ using g++ should suffice.
 
 ## Usage
 
-This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`
+This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 ### Required Arguments (ordered)
 
@@ -45,7 +45,7 @@ This utility takes two to five command-line arguments: `./minaa.exe <G> <H> [-B=
 ### Optional Arguments (unordered)
 
 - **bio**: The path to the biological cost matrix file.
-  - Require: CSV adjacency matrix where the first column is the labels of G, and first row is the labels of H.
+  - Require: CSV adjacency matrix where the first column consists of the labels of G, and first row consists of the labels of H.
   - Default: the algorithm will run using only topological calculations.
 - **alpha**: GDV-edge weight balancer
   - Require: a real number in range [0, 1].
@@ -74,6 +74,8 @@ Here we align network0 with network1 using no biological data. `-a=0.6` sets alp
 `./minaa.exe network0.csv network1.csv bio_costs.csv -b=0.85`
 
 Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
+
+See the `example/` directory for a sample input and output to MiNAA, which you can look at and replicate yourself.
 
 ## Simulations in the Manuscript
 
