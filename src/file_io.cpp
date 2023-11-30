@@ -13,15 +13,15 @@
 namespace FileIO
 {
     /**
-     * Returns whether or not the given string is to a readable file.
+     * Returns whether or not the given string is a path to a readable file.
      * 
-     * @param file The file to check.
+     * @param filepath The filepath to check.
      * 
      * @return True if the file is readable, false otherwise.
      */
-    bool is_accessible(std::string file)
+    bool is_accessible(std::string filepath)
     {
-        std::ifstream fin(file);
+        std::ifstream fin(filepath);
         return fin.good();
     }
 
@@ -41,24 +41,24 @@ namespace FileIO
      * Detect the delimiter used for a CSV file.
      * Detectable delimiters are comma, semicolon, space, and tab.
      * 
-     * @param file The csv file to detect the delimiter of.
+     * @param filepath Path to the csv file to detect the delimiter of.
      * 
      * @return the delimiter used in the file.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    char detect_delimiter(std::string file)
+    char detect_delimiter(std::string filepath)
     {
         // Open the given file, read the first line
         std::ifstream fin;
         fin.exceptions(std::ofstream::badbit);
         try 
         {
-            fin.open(file);
+            fin.open(filepath);
         }
         catch (const std::ifstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + file);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         std::string line;
@@ -96,13 +96,14 @@ namespace FileIO
     /**
      * Returns the truncated name of the file.
      * 
-     * @param file The file to truncate.
+     * @param filepath The filepath to truncate.
+     * @param given_name The name to give the file, if nonempty.
      * 
-     * @return The truncated name of the file.
+     * @return given_name if nonempty, else the truncated name of the file.
      */
-    std::string name_file(std::string file, std::string given_name)
+    std::string name_file(std::string filepath, std::string given_name)
     {
-        if (file == "")
+        if (filepath == "")
         {
             return "";
         }
@@ -111,9 +112,9 @@ namespace FileIO
             return given_name;
         }
 
-        auto start_index = file.find_last_of("/|\\") + 1;
-        auto end_index = file.find_last_of(".");
-        auto file_name = file.substr(start_index, end_index - start_index);
+        auto start_index = filepath.find_last_of("/|\\") + 1;
+        auto end_index = filepath.find_last_of(".");
+        auto file_name = filepath.substr(start_index, end_index - start_index);
         return file_name;
     }
 
@@ -122,7 +123,12 @@ namespace FileIO
      * 
      * @param g_name The name of the first graph file.
      * @param h_name The name of the second graph file.
-     * @param time The time of the run.
+     * @param datetime The date and time of the run.
+     * @param do_timestamp Whether or not to include the date and time in the folder name.
+     * @param do_greekstamp Whether or not to include the greek parameters in the folder name.
+     * @param alpha The alpha value used in the run.
+     * @param beta The beta value used in the run.
+     * @param do_bio Whether or not to include the biological input file in the folder name.
      * 
      * @return The name of the folder to store the output files in.
      * 
@@ -226,11 +232,11 @@ namespace FileIO
     /**
      * Outputs the given string to the given file and std::cout.
      * 
-     * @param file The file to output to.
+     * @param filepath The file to output to.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    void out(std::string file, std::string str)
+    void out(std::string filepath, std::string str)
     {
         std::cout << str << std::flush;
 
@@ -238,11 +244,11 @@ namespace FileIO
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(file, std::ios_base::app);
+            fout.open(filepath, std::ios_base::app);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to write to file " + file);
+            throw std::runtime_error("Unable to write to file " + filepath);
         }
         fout << str;
         fout.close();
@@ -251,11 +257,11 @@ namespace FileIO
     /**
      * Outputs the given string to the given file and std::cerr.
      * 
-     * @param file The file to output to.
+     * @param filepath The file to output to.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    void err(std::string file, std::string str)
+    void err(std::string filepath, std::string str)
     {
         std::string err_str = "ERROR: " + str + "\nPROGRAM TERMINATING\n";
         
@@ -265,11 +271,11 @@ namespace FileIO
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(file, std::ios_base::app);
+            fout.open(filepath, std::ios_base::app);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to write to file " + file);
+            throw std::runtime_error("Unable to write to file " + filepath);
         }
         fout << err_str;
         fout.close();
@@ -280,19 +286,19 @@ namespace FileIO
     /**
      * Parse the given csv adjacency matrix file into a list
      * 
-     * @param file_in the graph file to parse.
+     * @param filepath_in the graph file to parse.
      * 
      * @return Path to the GraphCrunch-friendly version of the input graph.
      * 
      * @throws std::runtime_error If the file could not be opened, or the output file could not be created.
      */
-    std::string graphcrunch_in(std::string file_in, std::string file_out)
+    std::string graphcrunch_in(std::string filepath_in, std::string filepath_out)
     {
         // Identify the delimiter for this csv
         char delim;
         try
         {
-            delim = detect_delimiter(file_in);
+            delim = detect_delimiter(filepath_in);
         }
         catch(const std::runtime_error& e)
         {
@@ -304,11 +310,11 @@ namespace FileIO
         fin.exceptions(std::ofstream::badbit);
         try 
         {
-            fin.open(file_in);
+            fin.open(filepath_in);
         }
         catch (const std::ifstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + file_in);
+            throw std::runtime_error("Unable to open file " + filepath_in);
         }
 
         // Parse the file into a matrix
@@ -347,16 +353,16 @@ namespace FileIO
         }
 
         // Open the output file
-        std::string out_file = file_out + "_gc.csv";
+        std::string out_filepath = filepath_out + "_gc.csv";
         std::ofstream outfile;
         outfile.exceptions(std::ofstream::badbit);
         try 
         {
-            outfile.open(out_file);
+            outfile.open(out_filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + out_file);
+            throw std::runtime_error("Unable to open file " + out_filepath);
         }
 
         // Write the list to a file
@@ -368,26 +374,26 @@ namespace FileIO
         }
         outfile.close();
 
-        return out_file;
+        return out_filepath;
     }
 
     /**
      * Parse the file at the given path into a graph object
      * Require that the file is a CSV
      * 
-     * @param file The graph file to parse into a graph object.
+     * @param filepath The graph file to parse into a graph object.
      * 
      * @return A graph object representing the graph in the given file.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    std::vector<std::vector<unsigned>> file_to_graph(std::string file) 
+    std::vector<std::vector<unsigned>> file_to_graph(std::string filepath) 
     {
         // Identify the delimiter for this csv
         char delim;
         try
         {
-            delim = detect_delimiter(file);
+            delim = detect_delimiter(filepath);
         }
         catch(const std::runtime_error& e)
         {
@@ -399,11 +405,11 @@ namespace FileIO
         fin.exceptions(std::ofstream::badbit);
         try 
         {
-            fin.open(file);
+            fin.open(filepath);
         }
         catch (const std::ifstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + file);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
         
         // Parse the file directly into a matrix
@@ -453,23 +459,23 @@ namespace FileIO
     /**
      * Parse the labels from the given file into a vector.
      * 
-     * @param file The file to parse the labels from.
+     * @param filepath The file to parse the labels from.
      * 
      * @return The labels from the given file.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    std::vector<std::string> parse_labels(std::string file)
+    std::vector<std::string> parse_labels(std::string filepath)
     {
         std::ifstream fin;
         fin.exceptions(std::ofstream::badbit);
         try 
         {
-            fin.open(file);
+            fin.open(filepath);
         }
         catch (const std::ifstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + file);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         std::vector<std::string> labels;
@@ -489,13 +495,13 @@ namespace FileIO
     /**
      * Parse the file at the given path into a double vector vector.
      * 
-     * @param file The file to parse into a cost matrix.
+     * @param filepath The file to parse into a cost matrix.
      * 
      * @return The cost matrix.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    std::vector<std::vector<double>> file_to_cost(std::string file)
+    std::vector<std::vector<double>> file_to_cost(std::string filepath)
     {
         // std::ifstream fin;
         // fin.exceptions(std::ofstream::badbit);
@@ -539,11 +545,11 @@ namespace FileIO
         fin.exceptions(std::ofstream::badbit);
         try 
         {
-            fin.open(file);
+            fin.open(filepath);
         }
         catch (const std::ifstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + file);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
         
         // Parse the file directly into a matrix
@@ -590,16 +596,16 @@ namespace FileIO
     std::string graph_to_file(std::string folder, std::string file_name,
     std::vector<std::string> graph_labels, std::vector<std::vector<unsigned>> graph)
     {
-        std::string filestr = folder + "/" + file_name + ".csv";
+        std::string filepath = folder + file_name + ".csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         // Write the labels
@@ -623,13 +629,14 @@ namespace FileIO
 
         fout.close();
 
-        return filestr;
+        return filepath;
     }
 
     /**
      * Write GDVs to a file.
      * 
-     * @param file The file to write the GDVs to.
+     * @param folder The folder to write the file to.
+     * @param file_name The name of the file to write the graph to.
      * @param labels The labels for the GDVs.
      * @param gdvs The GDVs to write to the file.
      * 
@@ -637,19 +644,19 @@ namespace FileIO
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    std::string gdvs_to_file(std::string file, std::vector<std::string> labels,
+    std::string gdvs_to_file(std::string folder, std::string file_name, std::vector<std::string> labels,
         std::vector<std::vector<unsigned>> gdvs)
     {
-        std::string filestr = file + "_gdvs.csv";
+        std::string filepath = folder + file_name  + "_gdvs.csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         for (unsigned i = 0; i < labels.size(); ++i)
@@ -663,13 +670,14 @@ namespace FileIO
         }
         fout.close();
 
-        return filestr;
+        return filepath;
     }
 
     /**
      * Write the cost matrix to a file.
      * 
      * @param folder The folder to write the cost matrix to.
+     * @param file_name The name of the file to write the graph to.
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param cost The cost matrix to write to the file.
@@ -678,20 +686,20 @@ namespace FileIO
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    std::string cost_to_file(std::string folder, std::string file, std::vector<std::string> g_labels,
+    std::string cost_to_file(std::string folder, std::string file_name, std::vector<std::string> g_labels,
         std::vector<std::string> h_labels, std::vector<std::vector<double>> cost)
     {
         // Create and open the file
-        std::string filestr = folder + file;
+        std::string filepath = folder + file_name;
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         fout << "\"\"";
@@ -709,7 +717,7 @@ namespace FileIO
         }
         fout.close();
 
-        return filestr;
+        return filepath;
     }
 
     /**
@@ -728,16 +736,16 @@ namespace FileIO
         std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment)
     {
         // Create and open the file
-        std::string filestr = folder + "alignment_matrix.csv";
+        std::string filepath = folder + "alignment_matrix.csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         fout << "\"\"";
@@ -762,7 +770,7 @@ namespace FileIO
         }
         fout.close();
 
-        return filestr;
+        return filepath;
     }
 
     /**
@@ -803,16 +811,16 @@ namespace FileIO
         });
 
         // Create and open the file
-        std::string filestr = folder + "alignment_list.csv";
+        std::string filepath = folder + "alignment_list.csv";
         std::ofstream fout;
         fout.exceptions(std::ofstream::badbit);
         try 
         {
-            fout.open(filestr);
+            fout.open(filepath);
         }
         catch (const std::ofstream::failure& e)
         {
-            throw std::runtime_error("Unable to open file " + filestr);
+            throw std::runtime_error("Unable to open file " + filepath);
         }
 
         // Write the list to a file
@@ -823,7 +831,7 @@ namespace FileIO
         }
         fout.close();
 
-        return filestr;
+        return filepath;
     }
 
 }
