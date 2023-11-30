@@ -118,8 +118,8 @@ int main(int argc, char* argv[])
         // Writing GDVs to files
         FileIO::out(log, "Writing GDVs to files..........................");
         auto s11 = std::chrono::high_resolution_clock::now();
-        FileIO::gdvs_to_file(folder + g_name, g_labels, g_gdvs);
-        FileIO::gdvs_to_file(folder + h_name, h_labels, h_gdvs);
+        FileIO::gdvs_to_file(folder, g_name, g_labels, g_gdvs);
+        FileIO::gdvs_to_file(folder, h_name, h_labels, h_gdvs);
         auto f11 = std::chrono::high_resolution_clock::now();
         auto d11 = std::chrono::duration_cast<std::chrono::milliseconds>(f11-s11).count();
         FileIO::out(log, "done. (" + std::to_string(d11) + "ms)\n");
