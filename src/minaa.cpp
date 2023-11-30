@@ -36,9 +36,9 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        auto g_f = args[1];                        // graph G file
-        auto h_f = args[2];                        // graph H file
-        auto bio_f = args[3];                      // biological data file
+        auto g_file = args[1];                     // graph G file
+        auto h_file = args[2];                     // graph H file
+        auto bio_file = args[3];                   // biological data file
         auto alpha = std::stod(args[4]);           // GDV - edge weight balancer
         auto beta = std::stod(args[5]);            // topological - biological balancer
         auto g_alias = args[6];                    // graph G alias
@@ -47,12 +47,12 @@ int main(int argc, char* argv[])
         auto do_passthrough = (args[9] == "1");    // do a passthrough of input files?
         auto do_timestamp = (args[10] == "1");     // include a timestamp in the folder name?
         auto do_greekstamp = (args[11] == "1");    // include a greekstamp in the folder name?
-        auto do_bio = (bio_f != "");               // biological data file provided?
+        auto do_bio = (bio_file != "");            // biological data file provided?
 
         // Generate output names
-        auto g_name = FileIO::name_file(g_f, g_alias);
-        auto h_name = FileIO::name_file(h_f, h_alias);
-        auto bio_name = FileIO::name_file(bio_f, bio_alias);
+        auto g_name = FileIO::name_file(g_file, g_alias);
+        auto h_name = FileIO::name_file(h_file, h_alias);
+        auto bio_name = FileIO::name_file(bio_file, bio_alias);
         auto folder = FileIO::name_folder(g_name, h_name, datetime, do_timestamp, do_greekstamp, args[4], args[5], do_bio);
         log = folder + "log.txt";
 
@@ -80,10 +80,10 @@ int main(int argc, char* argv[])
         // Read graph files into graph objects
         FileIO::out(log, "Reading graph files............................");
         auto s00 = std::chrono::high_resolution_clock::now();
-        auto g_graph = FileIO::file_to_graph(g_f);
-        auto h_graph = FileIO::file_to_graph(h_f);
-        auto g_labels = FileIO::parse_labels(g_f);
-        auto h_labels = FileIO::parse_labels(h_f);
+        auto g_graph = FileIO::file_to_graph(g_file);
+        auto h_graph = FileIO::file_to_graph(h_file);
+        auto g_labels = FileIO::parse_labels(g_file);
+        auto h_labels = FileIO::parse_labels(h_file);
         auto f00 = std::chrono::high_resolution_clock::now();
         auto d00 = std::chrono::duration_cast<std::chrono::milliseconds>(f00-s00).count();
         FileIO::out(log, "done. (" + std::to_string(d00) + "ms)\n");
@@ -103,10 +103,10 @@ int main(int argc, char* argv[])
         // Calculate the GDVs for G and H, remove temp files
         FileIO::out(log, "Calculating GDVs...............................");
         auto s10 = std::chrono::high_resolution_clock::now();
-        auto g_gc_f = FileIO::graphcrunch_in(g_f, folder + g_name);
-        auto h_gc_f = FileIO::graphcrunch_in(h_f, folder + h_name);
-        auto g_gdvs = GraphCrunch::graphcrunch(g_gc_f);
-        auto h_gdvs = GraphCrunch::graphcrunch(h_gc_f);
+        auto g_gc_file = FileIO::graphcrunch_in(g_file, folder + g_name);
+        auto h_gc_file = FileIO::graphcrunch_in(h_file, folder + h_name);
+        auto g_gdvs = GraphCrunch::graphcrunch(g_gc_file);
+        auto h_gdvs = GraphCrunch::graphcrunch(h_gc_file);
         std::string rm1 = folder + g_name + "_gc.csv";
         remove(rm1.c_str());
         std::string rm2 = folder + h_name + "_gc.csv";
@@ -147,24 +147,29 @@ int main(int argc, char* argv[])
             // Parse and normalize the biological cost matrix
             FileIO::out(log, "Processing biological data.....................");
             auto s30 = std::chrono::high_resolution_clock::now();
-            auto biological_costs = FileIO::file_to_cost(bio_f);
-            biological_costs = Util::normalize(biological_costs);
+            auto biological_costs_raw = FileIO::file_to_cost(bio_file);
+            auto biological_costs = Util::normalize(biological_costs_raw);
             auto f30 = std::chrono::high_resolution_clock::now();
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
             FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
 
             if (do_passthrough)
             {
-                // Do a passthrough of the biological data file?
+                FileIO::out(log, "Writing biological data file...................");
+                auto s31 = std::chrono::high_resolution_clock::now();
+                FileIO::cost_to_file(folder, bio_name, g_labels, h_labels, biological_costs_raw);
+                auto f31 = std::chrono::high_resolution_clock::now();
+                auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
+                FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
             }
             
             // Store the biological cost matrix in a file
             FileIO::out(log, "Writing the biological cost matrix to file.....");
-            auto s31 = std::chrono::high_resolution_clock::now();
+            auto s32 = std::chrono::high_resolution_clock::now();
             FileIO::cost_to_file(folder, "biological_costs.csv", g_labels, h_labels, biological_costs);
-            auto f31 = std::chrono::high_resolution_clock::now();
-            auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
-            FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
+            auto f32 = std::chrono::high_resolution_clock::now();
+            auto d32 = std::chrono::duration_cast<std::chrono::milliseconds>(f32-s32).count();
+            FileIO::out(log, "done. (" + std::to_string(d32) + "ms)\n");
 
             // Calculate the overall cost matrix
             FileIO::out(log, "Calculating the overall cost matrix............");

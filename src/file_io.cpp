@@ -497,6 +497,44 @@ namespace FileIO
      */
     std::vector<std::vector<double>> file_to_cost(std::string file)
     {
+        // std::ifstream fin;
+        // fin.exceptions(std::ofstream::badbit);
+        // try 
+        // {
+        //     fin.open(file);
+        // }
+        // catch (const std::ifstream::failure& e)
+        // {
+        //     throw std::runtime_error("Unable to open file " + file);
+        // }
+
+        // std::vector<std::vector<double>> costs;
+        // std::string line;
+        // while (std::getline(fin, line))
+        // {
+        //     std::istringstream iss(line);
+        //     std::vector<double> row;
+        //     double val;
+        //     while (iss >> val)
+        //     {
+        //         row.push_back(val);
+        //     }
+        //     costs.push_back(row);
+        // }
+        // return costs;
+
+        // Identify the delimiter for this csv
+        char delim;
+        try
+        {
+            delim = detect_delimiter(file);
+        }
+        catch(const std::runtime_error& e)
+        {
+            throw e;
+        }
+
+        // Open the input file
         std::ifstream fin;
         fin.exceptions(std::ofstream::badbit);
         try 
@@ -507,21 +545,32 @@ namespace FileIO
         {
             throw std::runtime_error("Unable to open file " + file);
         }
-
-        std::vector<std::vector<double>> costs;
+        
+        // Parse the file directly into a matrix
+        std::vector<std::vector<double>> matrix;
         std::string line;
         while (std::getline(fin, line))
         {
-            std::istringstream iss(line);
+            std::stringstream ss(line);
+            std::string cell;
             std::vector<double> row;
-            double val;
-            while (iss >> val)
+            while (std::getline(ss, cell, delim))
             {
-                row.push_back(val);
+                try
+                {
+                    row.push_back(std::stod(cell));
+                    // print
+                    out(std::stod(cell));
+                }
+                catch (std::invalid_argument const&)
+                {
+                    row.push_back(0);
+                }
             }
-            costs.push_back(row);
+            matrix.push_back(row);
         }
-        return costs;
+
+        return matrix;
     }
 
     /* FILE OUTPUT */
