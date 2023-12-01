@@ -161,6 +161,36 @@ namespace Util
     }
 
     /**
+     * Parse the given double matrix into a binary matrix.
+     * 
+     * @param double_matrix The matrix to convert to binary.
+     * 
+     * @return A binary matrix.
+     */
+    std::vector<std::vector<unsigned>> binarify(std::vector<std::vector<double>> double_matrix)
+    {
+        std::vector<std::vector<unsigned>> binary_matrix;
+        for (unsigned i = 1; i < double_matrix.size(); ++i)
+        {
+            std::vector<unsigned> row;
+            for (unsigned j = 1; j < double_matrix[i].size(); ++j)
+            {
+                if (double_matrix[i][j] != 0)
+                {
+                    row.push_back(1);
+                }
+                else
+                {
+                    row.push_back(0);
+                }
+            }
+            binary_matrix.push_back(row);
+        }
+
+        return binary_matrix;
+    }
+
+    /**
      * Normalize the entries of the given matrix to be in range [0, 1].
      * 
      * @param matrix The matrix to normalize.
@@ -190,7 +220,7 @@ namespace Util
             }
         }
 
-        // Make nonnegative
+        // Make all values non-negative
         if (min < 0)
         {
             // Shift all values up by the min value
@@ -205,7 +235,7 @@ namespace Util
             min = 0;
         }
 
-        // Normalize
+        // Rescale such that max is 1
         std::vector<std::vector<double>> norm_matrix;
         for (unsigned i = 0; i < matrix.size(); ++i)
         {

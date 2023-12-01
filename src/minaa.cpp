@@ -85,11 +85,13 @@ int main(int argc, char* argv[])
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
         auto s = std::chrono::high_resolution_clock::now();
 
-        // Read graph files into graph objects
+        // Read graph files into adjacency matrices
         FileIO::out(log, "Reading graph files............................");
         auto s00 = std::chrono::high_resolution_clock::now();
-        auto g_graph = FileIO::file_to_graph(g_file);
-        auto h_graph = FileIO::file_to_graph(h_file);
+        auto g_matrix = FileIO::file_to_matrix(g_file);
+        auto h_matrix = FileIO::file_to_matrix(h_file);
+        auto g_graph = Util::binarify(g_matrix);
+        auto h_graph = Util::binarify(h_matrix);
         auto g_labels = FileIO::parse_labels(g_file);
         auto h_labels = FileIO::parse_labels(h_file);
         auto f00 = std::chrono::high_resolution_clock::now();
@@ -143,7 +145,7 @@ int main(int argc, char* argv[])
         // Store the topological cost matrix in a file
         FileIO::out(log, "Writing the topological cost matrix to file....");
         auto s21 = std::chrono::high_resolution_clock::now();
-        FileIO::cost_to_file(directory + TOP_COSTS_FILENAME, g_labels, h_labels, topological_costs);
+        FileIO::matrix_to_file(directory + TOP_COSTS_FILENAME, g_labels, h_labels, topological_costs);
         auto f21 = std::chrono::high_resolution_clock::now();
         auto d21 = std::chrono::duration_cast<std::chrono::milliseconds>(f21-s21).count();
         FileIO::out(log, "done. (" + std::to_string(d21) + "ms)\n");
@@ -155,8 +157,8 @@ int main(int argc, char* argv[])
             // Parse and normalize the biological cost matrix
             FileIO::out(log, "Processing biological data.....................");
             auto s30 = std::chrono::high_resolution_clock::now();
-            auto biological_costs_raw = FileIO::file_to_cost(bio_file);
-            auto biological_costs = Util::normalize(biological_costs_raw);
+            auto biological_costs = FileIO::file_to_matrix(bio_file);
+            biological_costs = Util::normalize(biological_costs);
             auto f30 = std::chrono::high_resolution_clock::now();
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
             FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
@@ -165,19 +167,11 @@ int main(int argc, char* argv[])
             {
                 FileIO::out(log, "Writing biological data file...................");
                 auto s31 = std::chrono::high_resolution_clock::now();
-                FileIO::cost_to_file(directory + bio_name + ".csv", g_labels, h_labels, biological_costs_raw);
+                FileIO::matrix_to_file(directory + BIO_COSTS_FILENAME, g_labels, h_labels, biological_costs);
                 auto f31 = std::chrono::high_resolution_clock::now();
                 auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
                 FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
             }
-            
-            // Store the biological cost matrix in a file
-            FileIO::out(log, "Writing the biological cost matrix to file.....");
-            auto s32 = std::chrono::high_resolution_clock::now();
-            FileIO::cost_to_file(directory + BIO_COSTS_FILENAME, g_labels, h_labels, biological_costs);
-            auto f32 = std::chrono::high_resolution_clock::now();
-            auto d32 = std::chrono::duration_cast<std::chrono::milliseconds>(f32-s32).count();
-            FileIO::out(log, "done. (" + std::to_string(d32) + "ms)\n");
 
             // Calculate the overall cost matrix
             FileIO::out(log, "Calculating the overall cost matrix............");
@@ -190,7 +184,7 @@ int main(int argc, char* argv[])
             // Store the overall cost matrix in a file
             FileIO::out(log, "Writing the overall cost matrix to file........");
             auto s41 = std::chrono::high_resolution_clock::now();
-            FileIO::cost_to_file(directory + OVERALL_COSTS_FILENAME, g_labels, h_labels, overall_costs);
+            FileIO::matrix_to_file(directory + OVERALL_COSTS_FILENAME, g_labels, h_labels, overall_costs);
             auto f41 = std::chrono::high_resolution_clock::now();
             auto d41 = std::chrono::duration_cast<std::chrono::milliseconds>(f41-s41).count();
             FileIO::out(log, "done. (" + std::to_string(d41) + "ms)\n");

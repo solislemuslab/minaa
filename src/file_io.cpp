@@ -384,16 +384,16 @@ namespace FileIO
     }
 
     /**
-     * Parse the file at the given path into a graph object
-     * Require that the file is a CSV
+     * Parse the file at the given path into a matrix.
+     * Require that the file is a CSV, and that the first row and column are labels.
      * 
-     * @param filepath The graph file to parse into a graph object.
+     * @param filepath The graph file to parse into a matrix.
      * 
-     * @return A graph object representing the graph in the given file.
+     * @return A matrix containing the data elements of the given file.
      * 
      * @throws std::runtime_error If the file could not be opened.
      */
-    std::vector<std::vector<unsigned>> file_to_graph(std::string filepath) 
+    std::vector<std::vector<double>> file_to_matrix(std::string filepath) 
     {
         // Identify the delimiter for this csv
         char delim;
@@ -440,26 +440,7 @@ namespace FileIO
             matrix.push_back(row);
         }
 
-        // Convert the matrix into a graph
-        std::vector<std::vector<unsigned>> graph;
-        for (unsigned i = 1; i < matrix.size(); ++i)
-        {
-            std::vector<unsigned> row;
-            for (unsigned j = 1; j < matrix[i].size(); ++j)
-            {
-                if (matrix[i][j] != 0)
-                {
-                    row.push_back(1);
-                }
-                else
-                {
-                    row.push_back(0);
-                }
-            }
-            graph.push_back(row);
-        }
-
-        return graph;
+        return matrix;
     }
 
     /**
@@ -496,92 +477,6 @@ namespace FileIO
         }
 
         return labels;
-    }
-
-    /**
-     * Parse the file at the given path into a double vector vector.
-     * 
-     * @param filepath The file to parse into a cost matrix.
-     * 
-     * @return The cost matrix.
-     * 
-     * @throws std::runtime_error If the file could not be opened.
-     */
-    std::vector<std::vector<double>> file_to_cost(std::string filepath)
-    {
-        // std::ifstream fin;
-        // fin.exceptions(std::ofstream::badbit);
-        // try 
-        // {
-        //     fin.open(file);
-        // }
-        // catch (const std::ifstream::failure& e)
-        // {
-        //     throw std::runtime_error("Unable to open file " + file);
-        // }
-
-        // std::vector<std::vector<double>> costs;
-        // std::string line;
-        // while (std::getline(fin, line))
-        // {
-        //     std::istringstream iss(line);
-        //     std::vector<double> row;
-        //     double val;
-        //     while (iss >> val)
-        //     {
-        //         row.push_back(val);
-        //     }
-        //     costs.push_back(row);
-        // }
-        // return costs;
-
-        // Identify the delimiter for this csv
-        char delim;
-        try
-        {
-            delim = detect_delimiter(filepath);
-        }
-        catch(const std::runtime_error& e)
-        {
-            throw e;
-        }
-
-        // Open the input file
-        std::ifstream fin;
-        fin.exceptions(std::ofstream::badbit);
-        try 
-        {
-            fin.open(filepath);
-        }
-        catch (const std::ifstream::failure& e)
-        {
-            throw std::runtime_error("Unable to open file " + filepath);
-        }
-        
-        // Parse the file directly into a matrix
-        std::vector<std::vector<double>> matrix;
-        std::string line;
-        while (std::getline(fin, line))
-        {
-            std::stringstream ss(line);
-            std::string cell;
-            std::vector<double> row;
-            while (std::getline(ss, cell, delim))
-            {
-                try
-                {
-                    row.push_back(std::stod(cell));
-                    std::cout << std::stod(cell); // DEBUG
-                }
-                catch (std::invalid_argument const&)
-                {
-                    row.push_back(0);
-                }
-            }
-            matrix.push_back(row);
-        }
-
-        return matrix;
     }
 
     /* FILE OUTPUT */
@@ -671,12 +566,12 @@ namespace FileIO
      * @param filepath The path to the file to write the cost matrix to.
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
-     * @param cost The cost matrix to write to the file.
+     * @param matrix The matrix to write to the file.
      * 
      * @throws std::runtime_error If the file could not be written.
      */
-    void cost_to_file(std::string filepath, std::vector<std::string> g_labels, std::vector<std::string> h_labels,
-        std::vector<std::vector<double>> cost)
+    void matrix_to_file(std::string filepath, std::vector<std::string> g_labels, std::vector<std::string> h_labels,
+        std::vector<std::vector<double>> matrix)
     {
         // Create and open the file
         std::ofstream fout;
@@ -691,16 +586,16 @@ namespace FileIO
         }
 
         fout << "\"\"";
-        for (unsigned i = 0; i < cost[0].size(); ++i)
+        for (unsigned i = 0; i < matrix[0].size(); ++i)
         {
             fout << "," << h_labels[i];
         }
-        for (unsigned i = 0; i < cost.size(); ++i)
+        for (unsigned i = 0; i < matrix.size(); ++i)
         {
             fout << std::endl << g_labels[i];
-            for (unsigned j = 0; j < cost[i].size(); ++j)
+            for (unsigned j = 0; j < matrix[i].size(); ++j)
             {
-                fout << "," << cost[i][j];
+                fout << "," << matrix[i][j];
             }
         }
 

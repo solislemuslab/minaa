@@ -13,13 +13,12 @@ namespace FileIO
 
     std::string graphcrunch_in(std::string, std::string);
 
-    std::vector<std::vector<unsigned>> file_to_graph(std::string);
+    std::vector<std::vector<double>> file_to_matrix(std::string);
     std::vector<std::string> parse_labels(std::string);
-    std::vector<std::vector<double>> file_to_cost(std::string);
 
     void graph_to_file(std::string, std::vector<std::string>, std::vector<std::vector<unsigned>>);
     void gdvs_to_file(std::string, std::vector<std::string>, std::vector<std::vector<unsigned>>);
-    void cost_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
+    void matrix_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
     void alignment_to_matrix_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
     void alignment_to_list_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
 }
