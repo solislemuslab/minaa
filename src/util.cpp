@@ -118,7 +118,7 @@ namespace Util
             else if (arg.find("-Galias=") != std::string::npos)
             {
                 args[6] = arg.substr(8);
-                if (!FileIO::isValidFileName(args[6]))
+                if (!FileIO::is_valid_filename(args[6]))
                 {
                     throw std::invalid_argument("The G alias contains an illegal character.");
                 }
@@ -126,7 +126,7 @@ namespace Util
             else if (arg.find("-Halias=") != std::string::npos)
             {
                 args[7] = arg.substr(8);
-                if (!FileIO::isValidFileName(args[7]))
+                if (!FileIO::is_valid_filename(args[7]))
                 {
                     throw std::invalid_argument("The H alias contains an illegal character.");
                 }
@@ -134,7 +134,7 @@ namespace Util
             else if (arg.find("-Balias=") != std::string::npos)
             {
                 args[8] = arg.substr(8);
-                if (!FileIO::isValidFileName(args[8]))
+                if (!FileIO::is_valid_filename(args[8]))
                 {
                     throw std::invalid_argument("The B alias contains an illegal character.");
                 }

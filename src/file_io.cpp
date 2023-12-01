@@ -32,7 +32,7 @@ namespace FileIO
      * 
      * @return True if the file name is valid, false otherwise.
      */
-    bool isValidFileName(std::string name)
+    bool is_valid_filename(std::string name)
     {
         return (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-.") == std::string::npos);
     }
@@ -114,8 +114,8 @@ namespace FileIO
 
         auto start_index = filepath.find_last_of("/|\\") + 1;
         auto end_index = filepath.find_last_of(".");
-        auto file_name = filepath.substr(start_index, end_index - start_index);
-        return file_name;
+        auto filename = filepath.substr(start_index, end_index - start_index);
+        return filename;
     }
 
     /**

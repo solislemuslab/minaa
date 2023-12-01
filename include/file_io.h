@@ -4,7 +4,7 @@
 namespace FileIO
 {
     bool is_accessible(std::string);
-    bool isValidFileName(std::string);
+    bool is_valid_filename(std::string);
     char detect_delimiter(std::string);
     std::string name_file(std::string, std::string);
     std::string name_directory(std::string, std::string, std::string, std::string, bool, bool, std::string, std::string, bool);
