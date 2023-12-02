@@ -170,10 +170,10 @@ namespace Util
     std::vector<std::vector<unsigned>> binarify(std::vector<std::vector<double>> double_matrix)
     {
         std::vector<std::vector<unsigned>> binary_matrix;
-        for (unsigned i = 1; i < double_matrix.size(); ++i)
+        for (unsigned i = 0; i < double_matrix.size(); ++i)
         {
             std::vector<unsigned> row;
-            for (unsigned j = 1; j < double_matrix[i].size(); ++j)
+            for (unsigned j = 0; j < double_matrix[i].size(); ++j)
             {
                 if (double_matrix[i][j] != 0)
                 {

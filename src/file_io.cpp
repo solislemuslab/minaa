@@ -418,16 +418,30 @@ namespace FileIO
             throw std::runtime_error("Unable to open file " + filepath);
         }
         
-        // Parse the file directly into a matrix
+        // Parse the file directly into a matrix, skipping the first row and column
         std::vector<std::vector<double>> matrix;
         std::string line;
+        auto first_row = true;
         while (std::getline(fin, line))
         {
+            if (first_row)
+            {
+                first_row = false;
+                continue;
+            }
+
             std::stringstream ss(line);
             std::string cell;
             std::vector<double> row;
+            auto first_col = true;
             while (std::getline(ss, cell, delim))
             {
+                if (first_col)
+                {
+                    first_col = false;
+                    continue;
+                }
+
                 try
                 {
                     row.push_back(std::stod(cell));

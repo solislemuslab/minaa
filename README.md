@@ -53,10 +53,10 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
   - Default: the algorithm will run using only topological calculations.
 - **-a=**: alpha; the GDV-edge weight balancer.
   - Require: a real number in range [0, 1].
-  - Default: 1
+  - Default: 1 (100% GDV data).
 - **-b=**: beta; the topological-biological cost matrix balancer.
   - Require: a real number in range [0, 1].
-  - Default: 1
+  - Default: 1 (100% topological data).
 
 #### Uncommon
 
