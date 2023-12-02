@@ -174,7 +174,6 @@ namespace GraphCrunch
             int src = -1;
             int dst = -1;
             fscanf(f, "%d %d", &src, &dst);
-            //std::cout << i << ": " << src << " - " << dst << std::endl; // DEBUG
             assert(src < V && dst < V);
 
             if (src < 0 || dst < 0)
