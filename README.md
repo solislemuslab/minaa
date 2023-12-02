@@ -72,6 +72,7 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-p**: passthrough; whether or not to write the input files into the output folder.
   - Require: none.
   - Default: the files are not passed through to the output folder.
+  - Note: The output reflects the input data after having been processed by the algorithm, this is not a direct copy and paste.
 - **-t**: timestamp; the output folder's name includes the date and time of execution.
   - Require: none.
   - Default: the output folder's name does not include date and time.
