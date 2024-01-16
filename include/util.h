@@ -8,6 +8,7 @@ namespace Util
     std::vector<std::string> parse_args(int, char**);
     std::vector<std::vector<unsigned>> binarify(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>>);
+    std::vector<std::vector<double>> one_minus(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> combine(std::vector<std::vector<double>>, std::vector<std::vector<double>>, double);
 }
 

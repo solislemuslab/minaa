@@ -68,9 +68,9 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0", "0", "0"};
 
-        if (argc < 3 || argc > 12)
+        if (argc < 3 || argc > 13)
         {
             throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional options and details.");
         }
@@ -151,6 +151,10 @@ namespace Util
             {
                 args[11] = "1";
             }
+            else if (arg.find("-s") != std::string::npos)
+            {
+                args[12] = "1";
+            }
             else
             {
                 throw std::invalid_argument("Invalid argument: " + arg);
@@ -196,8 +200,6 @@ namespace Util
      * @param matrix The matrix to normalize.
      * 
      * @return The normalized matrix.
-     * 
-     * @throws 
      */
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>> matrix)
     {
@@ -206,7 +208,6 @@ namespace Util
         double max = std::numeric_limits<double>::min();
         for (unsigned i = 0; i < matrix.size(); ++i)
         {
-            std::vector<double> row;
             for (unsigned j = 0; j < matrix[i].size(); ++j)
             {
                 if (matrix[i][j] < min)
@@ -248,6 +249,29 @@ namespace Util
         }
 
         return norm_matrix;
+    }
+
+    /**
+     * Set all entries in the given matrix to 1 - value.
+     * 
+     * @param matrix The matrix to update each entry of.
+     * 
+     * @return The updated matrix.
+     */
+    std::vector<std::vector<double>> one_minus(std::vector<std::vector<double>> matrix)
+    {
+        std::vector<std::vector<double>> one_minus_matrix;
+        for (unsigned i = 0; i < matrix.size(); ++i)
+        {
+            std::vector<double> row;
+            for (unsigned j = 0; j < matrix[i].size(); ++j)
+            {
+                row.push_back(1 - matrix[i][j]);
+            }
+            one_minus_matrix.push_back(row);
+        }
+
+        return one_minus_matrix;
     }
 
     /**

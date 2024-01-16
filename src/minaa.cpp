@@ -36,18 +36,19 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        auto g_file = args[1];                     // graph G file
-        auto h_file = args[2];                     // graph H file
-        auto bio_file = args[3];                   // biological data file
-        auto alpha = std::stod(args[4]);           // GDV - edge weight balancer
-        auto beta = std::stod(args[5]);            // topological - biological balancer
-        auto g_alias = args[6];                    // graph G alias
-        auto h_alias = args[7];                    // graph H alias
-        auto bio_alias = args[8];                  // biological data alias
-        auto do_passthrough = (args[9] == "1");    // do a passthrough of input files?
-        auto do_timestamp = (args[10] == "1");     // include a timestamp in the directory name?
-        auto do_greekstamp = (args[11] == "1");    // include a greekstamp in the directory name?
-        auto do_bio = (bio_file != "");            // biological data file provided?
+        auto g_file = args[1];                              // graph G file
+        auto h_file = args[2];                              // graph H file
+        auto bio_file = args[3];                            // biological data file
+        auto alpha = std::stod(args[4]);                    // GDV - edge weight balancer
+        auto beta = std::stod(args[5]);                     // topological - biological balancer
+        auto g_alias = args[6];                             // graph G alias
+        auto h_alias = args[7];                             // graph H alias
+        auto bio_alias = args[8];                           // biological data alias
+        auto do_passthrough = (args[9] == "1");             // do a passthrough of input files?
+        auto do_timestamp = (args[10] == "1");              // include a timestamp in the directory name?
+        auto do_greekstamp = (args[11] == "1");             // include a greekstamp in the directory name?
+        auto do_similarity_conversion = (args[12] == "1");  // convert biological similarity to costs?
+        auto do_bio = (bio_file != "");                     // biological data file provided?
 
         const auto BASE_PATH = "alignments";
         const auto LOG_FILENAME = "log.txt";
@@ -77,7 +78,7 @@ int main(int argc, char* argv[])
         FileIO::out(log, "INPUTS\n");
         FileIO::out(log, "G File:   " + g_name + ".csv\n");
         FileIO::out(log, "H File:   " + h_name + ".csv\n");
-        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n"); // double .csv if no alias
+        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n");
         FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
         FileIO::out(log, "\n");
@@ -163,14 +164,25 @@ int main(int argc, char* argv[])
             auto d30 = std::chrono::duration_cast<std::chrono::milliseconds>(f30-s30).count();
             FileIO::out(log, "done. (" + std::to_string(d30) + "ms)\n");
 
-            if (do_passthrough)
+            if (do_similarity_conversion)
             {
-                FileIO::out(log, "Writing biological data file...................");
+                // Convert the biological similarity matrix to a cost matrix
+                FileIO::out(log, "Converting biological similarity to costs......");
                 auto s31 = std::chrono::high_resolution_clock::now();
-                FileIO::matrix_to_file(directory + BIO_COSTS_FILENAME, g_labels, h_labels, biological_costs);
+                biological_costs = Util::one_minus(biological_costs);
                 auto f31 = std::chrono::high_resolution_clock::now();
                 auto d31 = std::chrono::duration_cast<std::chrono::milliseconds>(f31-s31).count();
                 FileIO::out(log, "done. (" + std::to_string(d31) + "ms)\n");
+            }
+            
+            if (do_passthrough)
+            {
+                FileIO::out(log, "Writing biological data file...................");
+                auto s32 = std::chrono::high_resolution_clock::now();
+                FileIO::matrix_to_file(directory + BIO_COSTS_FILENAME, g_labels, h_labels, biological_costs);
+                auto f32 = std::chrono::high_resolution_clock::now();
+                auto d32 = std::chrono::duration_cast<std::chrono::milliseconds>(f32-s32).count();
+                FileIO::out(log, "done. (" + std::to_string(d32) + "ms)\n");
             }
 
             // Calculate the overall cost matrix
