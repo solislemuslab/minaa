@@ -77,11 +77,12 @@ int main(int argc, char* argv[])
         FileIO::out(log, "Y_M_D-H_M_S: " + datetime + "\n");
         FileIO::out(log, "\n");
         FileIO::out(log, "INPUTS\n");
-        FileIO::out(log, "G File:   " + g_name + ".csv\n");
-        FileIO::out(log, "H File:   " + h_name + ".csv\n");
-        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n"); // double .csv if no alias
-        FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
-        FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
+        FileIO::out(log, "G File:               " + g_name + ".csv\n");
+        FileIO::out(log, "H File:               " + h_name + ".csv\n");
+        if (do_bio) FileIO::out(log, "Bio File:             " + bio_name + ".csv\n"); // double .csv if no alias
+        FileIO::out(log, "Alpha:                " + Util::to_string(alpha, 3) + "\n");
+        FileIO::out(log, "Beta:                 " + Util::to_string(beta, 3) + "\n");
+        FileIO::out(log, "Similarity threshold: " + Util::to_string(similarity_threshold, 4) + "\n");
         FileIO::out(log, "\n");
 
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
