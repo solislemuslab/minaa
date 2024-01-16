@@ -652,7 +652,7 @@ namespace FileIO
             fout << std::endl << g_labels[i];
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] > 0)
+                if (alignment[i][j] >= 0)
                 {
                     fout << "," << alignment[i][j];
                 }
@@ -686,7 +686,7 @@ namespace FileIO
         {
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] > 0)
+                if (alignment[i][j] >= 0)
                 {
                     net_cost += (1 - alignment[i][j]);
                     list.push_back({(double)i, (double)j, alignment[i][j]});

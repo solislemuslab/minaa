@@ -35,22 +35,26 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 ### Required Arguments (ordered)
 
-1. G; A network to align.
-2. H; A network to align.
+1. G; a network to align.
+2. H; a network to align.
 
 - Require:
   - The networks are represented by adjacency matrices in CSV format, with labels in both the first column and row.
   - The CSV delimiter must be one of {comma, semicolon, space, tab}, and will be detected automatically.
-  - Any nonzero entry is considered an edge.
   - |G| is lesser or equal to |H|.
+- Notes:
+  - Any nonzero entry is considered an edge.
 
 ### Optional Arguments (unordered)
 
 #### Common
 
-- **-B=**: The path to the biological cost matrix file.
-  - Require: CSV adjacency matrix where the first column consists of the labels of G, and first row consists of the labels of H.
+- **-B=**: the path to the biological cost matrix file.
+  - Require: CSV adjacency matrix where the first column consists of the labels of G, in order, and first row consists of the labels of H, in order.
   - Default: the algorithm will run using only topological calculations.
+  - Notes:
+    - The input matrix is normalized by MiNAA such that all entries are in range [0, 1].
+    - The input is assumed to be a cost matrix. If it is a similarity matrix, use the **-s** option detailed below.
 - **-a=**: alpha; the GDV-edge weight balancer.
   - Require: a real number in range [0, 1].
   - Default: 1 (100% GDV data).
@@ -79,6 +83,9 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-g**: greekstamp; the output folder's name includes the values for alpha and beta.
   - Require: none.
   - Default: the output folder's name does not include the values for alpha and beta.
+- **-s**: similarity conversion; for each entry in the given biological matrix, the value (post normalization) is replaced with 1 - value. Use this if and only if the provided biological matrix is a similarity matrix.
+  - Require: none.
+  - Default: the given biological matrix is left as is.
 
 ### Outputs
 
@@ -89,7 +96,7 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **top_costs.csv**: the topological cost matrix.
 - **bio_costs.csv**: the biologocal cost matrix (as inputed). Not created unless biological input is given.
 - **overall_costs.csv**: the combination of the topological and biological cost matrix. Not created unless biological input is given.
-- **alignment_list.csv**: a complete list of all aligned nodes, with rows in the format `g_node,h_node,similarity`, descending acording to similarity. The first row in this list is the total cost of the alignment, or the sum of (1 - similarity) for all aligned pairs.
+- **alignment_list.csv**: a complete list of all aligned nodes, with rows in the format `g_node,h_node,similarity`, descending acording to similarity. The first row in this list is the total *cost* of the alignment, or the sum of (1 - similarity) for all aligned pairs.
 - **alignment_matrix.csv**: a matrix form of the same alignment, where the first column and row are the labels from the two input networks, respectively.
 
 ### Examples
@@ -100,7 +107,7 @@ Here we align network0 with network1 using no biological data. `-a=0.6` sets alp
 
 `./minaa.exe network0.csv network1.csv -B=bio_costs.csv -b=0.85`
 
-Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the topological cost matrix, and 15% is from the given biological cost matrix.
+Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the calculated topological cost matrix, and 15% is from the given biological cost matrix.
 
 `./minaa.exe network0.csv network1.csv -Galias=control -Halias=treatment -p -t`
 
