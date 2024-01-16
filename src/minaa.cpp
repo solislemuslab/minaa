@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
         FileIO::out(log, "INPUTS\n");
         FileIO::out(log, "G File:   " + g_name + ".csv\n");
         FileIO::out(log, "H File:   " + h_name + ".csv\n");
-        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n"); // double .csv if no alias
+        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n");
         FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
         FileIO::out(log, "\n");
