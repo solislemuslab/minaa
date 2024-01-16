@@ -617,17 +617,18 @@ namespace FileIO
     }
 
     /**
-     * Write the given alignment to a csv file as a matrix. // COPILOTTED
+     * Write the given alignment to a csv file as a matrix.
      * 
      * @param filepath The path to the output file.
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param alignment The alignment matrix to write to the file.
+     * @param similarity_threshold The similarity threshold above which alignments are included in the output.
      * 
      * @throws std::runtime_error If the file could not be written.
      */
     void alignment_to_matrix_file(std::string filepath, std::vector<std::string> g_labels,
-        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment)
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double similarity_threshold)
     {
         // Create and open the file
         std::ofstream fout;
@@ -652,7 +653,7 @@ namespace FileIO
             fout << std::endl << g_labels[i];
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] >= 0)
+                if (alignment[i][j] > similarity_threshold)
                 {
                     fout << "," << alignment[i][j];
                 }
@@ -673,11 +674,12 @@ namespace FileIO
      * @param g_labels Labels for the G graph.
      * @param h_labels Labels for the H graph.
      * @param alignment The alignment matrix to write to the file.
+     * @param similarity_threshold The similarity threshold above which alignments are included in the output.
      * 
      * @throws std::runtime_error If the file could not be written.
      */
     void alignment_to_list_file(std::string filepath, std::vector<std::string> g_labels,
-        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment)
+        std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double similarity_threshold)
     {
         // Convert the alignment matrix into a list
         std::vector<std::array<double, 3>> list;
@@ -686,7 +688,7 @@ namespace FileIO
         {
             for (unsigned j = 0; j < alignment[0].size(); ++j)
             {
-                if (alignment[i][j] >= 0)
+                if (alignment[i][j] > similarity_threshold)
                 {
                     net_cost += (1 - alignment[i][j]);
                     list.push_back({(double)i, (double)j, alignment[i][j]});

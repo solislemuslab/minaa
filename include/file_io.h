@@ -19,8 +19,8 @@ namespace FileIO
     void graph_to_file(std::string, std::vector<std::string>, std::vector<std::vector<unsigned>>);
     void gdvs_to_file(std::string, std::vector<std::string>, std::vector<std::vector<unsigned>>);
     void matrix_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
-    void alignment_to_matrix_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
-    void alignment_to_list_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
+    void alignment_to_matrix_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
+    void alignment_to_list_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
 }
 
 #endif

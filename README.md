@@ -61,6 +61,9 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-b=**: beta; the topological-biological cost matrix balancer.
   - Require: a real number in range [0, 1].
   - Default: 1 (100% topological data).
+- **-st=**: similarity threshold; The similarity value above which aligned pairs are included in the output.
+  - Require: a real number in range [0, 1].
+  - Default: 0.
 
 #### Uncommon
 
@@ -105,9 +108,9 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 Here we align network0 with network1 using no biological data. `-a=0.6` sets alpha equal to 0.6, meaning 60% of the topological cost function comes from similarity calculated by GDVs, and 40% from simpler node degree data.
 
-`./minaa.exe network0.csv network1.csv -B=bio_costs.csv -b=0.85`
+`./minaa.exe network0.csv network1.csv -B=bio_costs.csv -b=0.85 -st=0.5`
 
-Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the calculated topological cost matrix, and 15% is from the given biological cost matrix.
+Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the calculated topological cost matrix, and 15% is from the given biological cost matrix. Since the similarity threshold was set to 0.5, any aligned pair with similarity score less than or equal to 0.5 is excluded from the alignment results.
 
 `./minaa.exe network0.csv network1.csv -Galias=control -Halias=treatment -p -t`
 

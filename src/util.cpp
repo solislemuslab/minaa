@@ -68,9 +68,9 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char* argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "", "", "", "0", "0", "0", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "0", "", "", "", "0", "0", "0", "0"};
 
-        if (argc < 3 || argc > 13)
+        if (argc < 3 || argc > 14)
         {
             throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional options and details.");
         }
@@ -115,45 +115,53 @@ namespace Util
                     throw std::invalid_argument("The beta argument must be in range [0, 1].");
                 }
             }
+            else if (arg.find("-st=") != std::string::npos)
+            {
+                args[6] = arg.substr(4);
+                if (std::stod(args[6]) < 0 || std::stod(args[6]) > 1)
+                {
+                    throw std::invalid_argument("The similarity threshold argument must be in range [0, 1].");
+                }
+            }
             else if (arg.find("-Galias=") != std::string::npos)
             {
-                args[6] = arg.substr(8);
-                if (!FileIO::is_valid_filename(args[6]))
+                args[7] = arg.substr(8);
+                if (!FileIO::is_valid_filename(args[7]))
                 {
                     throw std::invalid_argument("The G alias contains an illegal character.");
                 }
             }
             else if (arg.find("-Halias=") != std::string::npos)
             {
-                args[7] = arg.substr(8);
-                if (!FileIO::is_valid_filename(args[7]))
+                args[8] = arg.substr(8);
+                if (!FileIO::is_valid_filename(args[8]))
                 {
                     throw std::invalid_argument("The H alias contains an illegal character.");
                 }
             }
             else if (arg.find("-Balias=") != std::string::npos)
             {
-                args[8] = arg.substr(8);
-                if (!FileIO::is_valid_filename(args[8]))
+                args[9] = arg.substr(8);
+                if (!FileIO::is_valid_filename(args[9]))
                 {
                     throw std::invalid_argument("The B alias contains an illegal character.");
                 }
             }
             else if (arg.find("-p") != std::string::npos)
             {
-                args[9] = "1";
+                args[10] = "1";
             }
             else if (arg.find("-t") != std::string::npos)
             {
-                args[10] = "1";
+                args[11] = "1";
             }
             else if (arg.find("-g") != std::string::npos)
             {
-                args[11] = "1";
+                args[12] = "1";
             }
             else if (arg.find("-s") != std::string::npos)
             {
-                args[12] = "1";
+                args[13] = "1";
             }
             else
             {
