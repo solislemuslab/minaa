@@ -50,7 +50,7 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 #### Common
 
 - **-B=**: the path to the biological cost matrix file.
-  - Require: CSV adjacency matrix where the first column consists of the labels of G, in order, and first row consists of the labels of H, in order.
+  - Require: a CSV adjacency matrix where the first column consists of the labels of G, in order, and first row consists of the labels of H, in order.
   - Default: the algorithm will run using only topological calculations.
   - Notes:
     - The input matrix is normalized by MiNAA such that all entries are in range [0, 1].
@@ -79,16 +79,17 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-p**: passthrough; whether or not to write the input files into the output folder.
   - Require: none.
   - Default: the files are not passed through to the output folder.
-  - Note: The output reflects the input data after having been processed by the algorithm, this is not a direct copy and paste.
+  - Note: the output reflects the input data after having been processed by the algorithm, this is not a direct copy and paste.
 - **-t**: timestamp; the output folder's name includes the date and time of execution.
   - Require: none.
   - Default: the output folder's name does not include date and time.
 - **-g**: greekstamp; the output folder's name includes the values for alpha and beta.
   - Require: none.
   - Default: the output folder's name does not include the values for alpha and beta.
-- **-s**: similarity conversion; for each entry in the given biological matrix, the value (post normalization) is replaced with 1 - value. Use this if and only if the provided biological matrix is a similarity matrix.
+- **-s**: similarity conversion; for each entry in the given biological matrix, the value (post normalization) is replaced with 1 - value.
   - Require: none.
   - Default: the given biological matrix is left as is.
+  - Note: use this if and only if the provided biological matrix is a similarity matrix.
 
 ### Outputs
 
