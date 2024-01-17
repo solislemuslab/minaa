@@ -41,13 +41,14 @@ int main(int argc, char* argv[])
         auto bio_file = args[3];                            // biological data file
         auto alpha = std::stod(args[4]);                    // GDV - edge weight balancer
         auto beta = std::stod(args[5]);                     // topological - biological balancer
-        auto g_alias = args[6];                             // graph G alias
-        auto h_alias = args[7];                             // graph H alias
-        auto bio_alias = args[8];                           // biological data alias
-        auto do_passthrough = (args[9] == "1");             // do a passthrough of input files?
-        auto do_timestamp = (args[10] == "1");              // include a timestamp in the directory name?
-        auto do_greekstamp = (args[11] == "1");             // include a greekstamp in the directory name?
-        auto do_similarity_conversion = (args[12] == "1");  // convert biological similarity to costs?
+        auto similarity_threshold = std::stod(args[6]);     // similarity threshold above which alignments report
+        auto g_alias = args[7];                             // graph G alias
+        auto h_alias = args[8];                             // graph H alias
+        auto bio_alias = args[9];                           // biological data alias
+        auto do_passthrough = (args[10] == "1");            // do a passthrough of input files?
+        auto do_timestamp = (args[11] == "1");              // include a timestamp in the directory name?
+        auto do_greekstamp = (args[12] == "1");             // include a greekstamp in the directory name?
+        auto do_similarity_conversion = (args[13] == "1");  // convert biological similarity to costs?
         auto do_bio = (bio_file != "");                     // biological data file provided?
 
         const auto BASE_PATH = "alignments";
@@ -76,11 +77,12 @@ int main(int argc, char* argv[])
         FileIO::out(log, "Y_M_D-H_M_S: " + datetime + "\n");
         FileIO::out(log, "\n");
         FileIO::out(log, "INPUTS\n");
-        FileIO::out(log, "G File:   " + g_name + ".csv\n");
-        FileIO::out(log, "H File:   " + h_name + ".csv\n");
-        if (do_bio) FileIO::out(log, "Bio File: " + bio_name + ".csv\n");
-        FileIO::out(log, "Alpha:    " + Util::to_string(alpha, 3) + "\n");
-        FileIO::out(log, "Beta:     " + Util::to_string(beta, 3) + "\n");
+        FileIO::out(log, "G File:               " + g_name + ".csv\n");
+        FileIO::out(log, "H File:               " + h_name + ".csv\n");
+        if (do_bio) FileIO::out(log, "Bio File:             " + bio_name + ".csv\n");
+        FileIO::out(log, "Alpha:                " + Util::to_string(alpha, 3) + "\n");
+        FileIO::out(log, "Beta:                 " + Util::to_string(beta, 3) + "\n");
+        FileIO::out(log, "Similarity threshold: " + Util::to_string(similarity_threshold, 3) + "\n");
         FileIO::out(log, "\n");
 
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
@@ -227,8 +229,8 @@ int main(int argc, char* argv[])
         // Write the alignment to csv files
         FileIO::out(log, "Writing the alignment to file..................");
         auto s51 = std::chrono::high_resolution_clock::now();
-        FileIO::alignment_to_matrix_file(directory + ALIGNMENT_MATRIX_FILENAME, g_labels, h_labels, alignment);
-        FileIO::alignment_to_list_file(directory + ALIGNMENT_LIST_FILENAME, g_labels, h_labels, alignment);
+        FileIO::alignment_to_matrix_file(directory + ALIGNMENT_MATRIX_FILENAME, g_labels, h_labels, alignment, similarity_threshold);
+        FileIO::alignment_to_list_file(directory + ALIGNMENT_LIST_FILENAME, g_labels, h_labels, alignment, similarity_threshold);
         auto f51 = std::chrono::high_resolution_clock::now();
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51-s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
