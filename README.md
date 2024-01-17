@@ -116,7 +116,7 @@ Users interested in expanding functionalities in MiNAA are welcome to do so. Iss
 
 ## License
 
-MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab (2023).
+MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) licence. &copy; SolisLemus lab (2024).
 
 ## Citation
 
