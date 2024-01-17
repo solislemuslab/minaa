@@ -1,4 +1,4 @@
-Executing:   ./minaa.exe example/g.csv example/h.csv -a=0.6 -g 
+Executing:   ./minaa.exe examples/g.csv examples/h.csv -a=0.6 -g 
 Y_M_D-H_M_S: 2024_01_16-22_02_40
 
 INPUTS
@@ -6,7 +6,7 @@ G File:               g.csv
 H File:               h.csv
 Alpha:                0.600
 Beta:                 1.000
-Similarity threshold: 0.0000
+Similarity threshold: 0.000
 
 BEGINNING ALIGNMENT
 Reading graph files............................done. (9ms)

@@ -1,4 +1,4 @@
-Executing:   ./minaa.exe example/g.csv example/h.csv -Galias=nonsmoker -Halias=smoker -p -t 
+Executing:   ./minaa.exe examples/g.csv examples/h.csv -Galias=nonsmoker -Halias=smoker -p -t 
 Y_M_D-H_M_S: 2024_01_16-23_10_14
 
 INPUTS
