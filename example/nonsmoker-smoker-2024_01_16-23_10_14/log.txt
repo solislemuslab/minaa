@@ -1,0 +1,20 @@
+Executing:   ./minaa.exe example/g.csv example/h.csv -Galias=nonsmoker -Halias=smoker -p -t 
+Y_M_D-H_M_S: 2024_01_16-23_10_14
+
+INPUTS
+G File:               nonsmoker.csv
+H File:               smoker.csv
+Alpha:                1.000
+Beta:                 1.000
+Similarity threshold: 0.000
+
+BEGINNING ALIGNMENT
+Reading graph files............................done. (7ms)
+Writing graph files............................done. (11ms)
+Calculating GDVs...............................done. (20ms)
+Writing GDVs to files..........................done. (4ms)
+Calculating the topological cost matrix........done. (16ms)
+Writing the topological cost matrix to file....done. (5ms)
+Aligning the graphs............................done. (46ms)
+Writing the alignment to file..................done. (1ms)
+ALIGNMENT COMPLETED (114ms)

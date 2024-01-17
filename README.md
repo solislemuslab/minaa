@@ -104,23 +104,11 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 ### Examples
 
-`./minaa.exe network0.csv network1.csv -a=0.6`
-
-Here we align network0 with network1 using no biological data. `-a=0.6` sets alpha equal to 0.6, meaning 60% of the topological cost function comes from similarity calculated by GDVs, and 40% from simpler node degree data.
-
-`./minaa.exe network0.csv network1.csv -B=bio_costs.csv -b=0.85 -st=0.5`
-
-Here we align network0 with network1 using topological information and the given biological cost matrix, bio_costs. Since alpha was unspecified, it defaults to 1. Since beta was set to 0.85, 85% of the cost weight is from the calculated topological cost matrix, and 15% is from the given biological cost matrix. Since the similarity threshold was set to 0.5, any aligned pair with similarity score less than or equal to 0.5 is excluded from the alignment results.
-
-`./minaa.exe network0.csv network1.csv -Galias=control -Halias=treatment -p -t`
-
-Here we align network0 with network1, where network1 is given the alias "control", and network2 is given the alias "treatment". The timestamp option was specified, so the name of the output folder will be control-treatment-T, where T is the date and time of execution. Additionally, because the passthrough option was specified, network0.csv and network1.csv will be passed through to the output folder as control.csv and treatment.csv, respectively.
-
-See the `example/` directory for a sample input and output to MiNAA, which you can look at and replicate yourself.
+Examples of MiNAA's usage with real data and in-depth explanations can be found in the `examples/` directory.
 
 ## Simulations in the Manuscript
 
-All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulations` folder.
+All scripts and instructions to reproduce the analyses in the manuscript can be found in the `simulations/` directory.
 
 ## Contributions, Questions, Issues, and Feedback
 

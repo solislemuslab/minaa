@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
         if (do_bio) FileIO::out(log, "Bio File:             " + bio_name + ".csv\n");
         FileIO::out(log, "Alpha:                " + Util::to_string(alpha, 3) + "\n");
         FileIO::out(log, "Beta:                 " + Util::to_string(beta, 3) + "\n");
-        FileIO::out(log, "Similarity threshold: " + Util::to_string(similarity_threshold, 4) + "\n");
+        FileIO::out(log, "Similarity threshold: " + Util::to_string(similarity_threshold, 3) + "\n");
         FileIO::out(log, "\n");
 
         FileIO::out(log, "BEGINNING ALIGNMENT\n");
