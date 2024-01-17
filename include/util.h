@@ -1,11 +1,11 @@
-#ifndef UTIL_H  
+#ifndef UTIL_H
 #define UTIL_H
 
 namespace Util
 {
     std::string now();
     std::string to_string(double, int);
-    std::vector<std::string> parse_args(int, char**);
+    std::vector<std::string> parse_args(int, char **);
     std::vector<std::vector<unsigned>> binarify(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> one_minus(std::vector<std::vector<double>>);

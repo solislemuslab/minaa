@@ -1,4 +1,4 @@
-#ifndef FILEIO_H  
+#ifndef FILEIO_H
 #define FILEIO_H
 
 namespace FileIO

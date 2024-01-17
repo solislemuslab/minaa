@@ -12,10 +12,10 @@ namespace Util
 {
     /**
      * Gets the current date and time, formatted as a string.
-     * 
+     *
      * @return the current date and time, formatted as a string.
-     * 
-     * @throws 
+     *
+     * @throws
      */
     std::string now()
     {
@@ -31,10 +31,10 @@ namespace Util
 
     /**
      * Returns the given double as a string, with the given number of decimal places.
-     * 
+     *
      * @param d The double to convert to a string.
      * @param n Te number of decimal places to include in the string.
-     * 
+     *
      * @return The given double as a string, with the given number of decimal places.
      */
     std::string to_string(double d, int n)
@@ -58,15 +58,15 @@ namespace Util
      * args[9]:  do a passthrough?
      * args[10]: include a timestamp?
      * args[11]: include a greekstamp?
-     * 
+     *
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
-     * 
+     *
      * @return A list with values for all command line arguments, in a certain order.
-     * 
+     *
      * @throws std::invalid_argument if an argument is misformatted.
      */
-    std::vector<std::string> parse_args(int argc, char* argv[])
+    std::vector<std::string> parse_args(int argc, char *argv[])
     {
         std::vector<std::string> args = {"", "", "", "", "1", "1", "0", "", "", "", "0", "0", "0", "0"};
 
@@ -174,9 +174,9 @@ namespace Util
 
     /**
      * Parse the given double matrix into a binary matrix.
-     * 
+     *
      * @param double_matrix The matrix to convert to binary.
-     * 
+     *
      * @return A binary matrix.
      */
     std::vector<std::vector<unsigned>> binarify(std::vector<std::vector<double>> double_matrix)
@@ -204,9 +204,9 @@ namespace Util
 
     /**
      * Normalize the entries of the given matrix to be in range [0, 1].
-     * 
+     *
      * @param matrix The matrix to normalize.
-     * 
+     *
      * @return The normalized matrix.
      */
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>> matrix)
@@ -261,9 +261,9 @@ namespace Util
 
     /**
      * Set all entries in the given matrix to 1 - value.
-     * 
+     *
      * @param matrix The matrix to update each entry of.
-     * 
+     *
      * @return The updated matrix.
      */
     std::vector<std::vector<double>> one_minus(std::vector<std::vector<double>> matrix)
@@ -284,27 +284,30 @@ namespace Util
 
     /**
      * Combine the topological and biological cost matrices.
-     * 
+     *
      * @param topological_costs The topological cost matrix.
      * @param biological_costs The biological cost matrix.
      * @param beta of the weight goes to topological similarity, (1 - beta) goes to biological similarity.
-     * 
+     *
      * @return The combined cost matrix.
-     * 
-     * @throws 
+     *
+     * @throws
      */
     std::vector<std::vector<double>> combine(
-        std::vector<std::vector<double>> topological_costs, std::vector<std::vector<double>> biological_costs, double beta) {
+        std::vector<std::vector<double>> topological_costs, std::vector<std::vector<double>> biological_costs, double beta)
+    {
         // Handle absent biological costs
-        if (biological_costs.empty()) {
+        if (biological_costs.empty())
+        {
             return topological_costs;
         }
         // Handle invalid beta
-        if (beta < 0 || beta > 1) {
+        if (beta < 0 || beta > 1)
+        {
             std::cerr << "Beta must be between 0 and 1. Defaulting to beta = 1." << std::endl;
             return topological_costs;
         }
-        
+
         std::vector<std::vector<double>> overall_costs;
 
         for (unsigned i = 0; i < topological_costs.size(); ++i)
@@ -319,5 +322,5 @@ namespace Util
 
         return overall_costs;
     }
-    
+
 }
