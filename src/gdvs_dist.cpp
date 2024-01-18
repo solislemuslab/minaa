@@ -9,14 +9,14 @@
 namespace GDVs_Dist
 {
     const double O[73] = {
-    1, 2, 2, 2, 3, 4, 3, 3, 4, 3, 
-    4, 4, 4, 4, 3, 4, 6, 5, 4, 5, 
-    6, 6, 4, 4, 4, 5, 7, 4, 6, 6, 
-    7, 4, 6, 6, 6, 5, 6, 7, 7, 5, 
-    7, 6, 7, 6, 5, 5, 6, 8, 7, 6, 
-    6, 8, 6, 9, 5, 6, 4, 6, 6, 7, 
-    8, 6, 6, 8, 7, 6, 7, 7, 8, 5, 
-    6, 6, 4};
+        1, 2, 2, 2, 3, 4, 3, 3, 4, 3,
+        4, 4, 4, 4, 3, 4, 6, 5, 4, 5,
+        6, 6, 4, 4, 4, 5, 7, 4, 6, 6,
+        7, 4, 6, 6, 6, 5, 6, 7, 7, 5,
+        7, 6, 7, 6, 5, 5, 6, 8, 7, 6,
+        6, 8, 6, 9, 5, 6, 4, 6, 6, 7,
+        8, 6, 6, 8, 7, 6, 7, 7, 8, 5,
+        6, 6, 4};
     const double WEIGHT_SUM = 45.4827;
     double alpha;
 
@@ -86,7 +86,7 @@ namespace GDVs_Dist
     {
         unsigned max = 0;
         for (unsigned i = 0; i < gdvs.size(); ++i)
-        { 
+        {
             if (max < gdvs[i][0])
             {
                 max = gdvs[i][0];
@@ -103,13 +103,13 @@ namespace GDVs_Dist
         std::vector<std::vector<unsigned>> g_gdvs, std::vector<std::vector<unsigned>> h_gdvs, double alpha)
     {
         GDVs_Dist::alpha = alpha;
-        
+
         // Calculate the highest degree among all the nodes in G, H
         unsigned g_max_deg = max_deg(g_gdvs);
-        unsigned h_max_deg = max_deg(h_gdvs); 
+        unsigned h_max_deg = max_deg(h_gdvs);
 
         // Initialize the cost matrix to the right dimensions
-        std::vector<std::vector<double>> costs(g_gdvs.size(), std::vector<double>(h_gdvs.size())); 
+        std::vector<std::vector<double>> costs(g_gdvs.size(), std::vector<double>(h_gdvs.size()));
 
         // cost(g_gdvs[0], h_gdvs[1], g_max_deg, h_max_deg); // DEBUG
 
@@ -119,7 +119,7 @@ namespace GDVs_Dist
             for (unsigned j = 0; j < h_gdvs.size(); ++j)
             {
                 costs[i][j] = cost(g_gdvs[i], h_gdvs[j], g_max_deg, h_max_deg);
-            } 
+            }
         }
 
         return costs;

@@ -23,7 +23,7 @@ namespace Hungarian
 
     const int MAX = 1;
 
-    /* 
+    /*
      * If the matrix is not square, pad it so it is.
      */
     void pad_matrix(std::vector<std::vector<double>> &matrix)
@@ -36,18 +36,18 @@ namespace Hungarian
             for (auto &vec : matrix)
             {
                 vec.resize(i_size, MAX);
-            }   
+            }
         }
         else if (i_size < j_size)
         {
             while (matrix.size() < j_size)
             {
                 matrix.push_back(std::vector<double>(j_size, MAX));
-            } 
+            }
         }
     }
 
-    /* 
+    /*
      * Clear the temporary vectors.
      */
     inline void clear_covers(std::vector<unsigned char> &cover)
@@ -58,7 +58,7 @@ namespace Hungarian
         }
     }
 
-    /* 
+    /*
      * Wipe all primes from the mask matrix.
      */
     void clear_primes(std::vector<std::vector<unsigned char>> &mask)
@@ -72,11 +72,11 @@ namespace Hungarian
                     val = 0;
                 }
             }
-        }      
+        }
     }
 
-    /* 
-     * 
+    /*
+     *
      */
     void find_a_zero(int &row, int &col, const std::vector<std::vector<double>> &costs,
                      const std::vector<unsigned char> &row_cover, const std::vector<unsigned char> &col_cover)
@@ -108,11 +108,11 @@ namespace Hungarian
             if (r >= costs.size())
             {
                 done = true;
-            }        
+            }
         }
     }
 
-    /* 
+    /*
      * Returns true if there is a starred zero in the given row.
      */
     bool star_in_row(int row, const std::vector<std::vector<unsigned char>> &mask)
@@ -127,7 +127,7 @@ namespace Hungarian
         return false;
     }
 
-    /* 
+    /*
      * Sets col as the column containing the first starred zero in the given row, if there is one.
      */
     void find_star_in_row(int row, int &col, const std::vector<std::vector<unsigned char>> &mask)
@@ -140,10 +140,10 @@ namespace Hungarian
                 col = c;
                 return;
             }
-        }   
+        }
     }
 
-    /* 
+    /*
      * Sets row as the row containing the first starred zero in the given column, if there is one.
      */
     void find_star_in_col(int col, int &row, const std::vector<std::vector<unsigned char>> &mask)
@@ -159,7 +159,7 @@ namespace Hungarian
         }
     }
 
-    /* 
+    /*
      * Sets col as the column containing the first primed zero in the given row, if there is one.
      */
     void find_prime_in_row(int row, int &col, const std::vector<std::vector<unsigned char>> &mask)
@@ -171,11 +171,11 @@ namespace Hungarian
                 col = c;
                 return;
             }
-        }   
+        }
     }
 
-    /* 
-     * 
+    /*
+     *
      */
     void augment_path(std::vector<std::vector<int>> &path, unsigned path_count, std::vector<std::vector<unsigned char>> &mask)
     {
@@ -187,12 +187,12 @@ namespace Hungarian
             }
             else
             {
-                mask[path[p][0]][path[p][1]] = 1;   
+                mask[path[p][0]][path[p][1]] = 1;
             }
         }
     }
 
-    /* 
+    /*
      * Find the smallest uncovered value in the cost matrix.
      */
     void find_smallest(double &minval, const std::vector<std::vector<double>> &costs,
@@ -210,12 +210,12 @@ namespace Hungarian
                     }
                 }
             }
-        }       
+        }
     }
 
     /* END OF UTILITY FUNCTIONS */
 
-    /* 
+    /*
      * Reduce each row/col subtracting the minimum value in each row/col from all elements it.
      */
     void step1(std::vector<std::vector<double>> &costs, int &step)
@@ -230,10 +230,10 @@ namespace Hungarian
                 {
                     n -= smallest;
                 }
-            }  
+            }
         }
 
-        // For each col of the matrix, find the smallest element and subtract it from every element in its col. 
+        // For each col of the matrix, find the smallest element and subtract it from every element in its col.
         for (unsigned j = 0; j < costs.size(); ++j)
         {
             double minval = MAX;
@@ -298,7 +298,7 @@ namespace Hungarian
     {
         unsigned colcount = 0;
 
-        // Cover each column containing a starred zero.  
+        // Cover each column containing a starred zero.
         for (unsigned r = 0; r < mask.size(); ++r)
         {
             for (unsigned c = 0; c < mask.size(); ++c)
@@ -309,13 +309,15 @@ namespace Hungarian
                 }
             }
         }
-            
-        for (auto &n : col_cover) {
-            if (n == 1) {
+
+        for (auto &n : col_cover)
+        {
+            if (n == 1)
+            {
                 ++colcount;
             }
         }
-        
+
         // If all columns are covered, the starred zeros make complete set of unique assignments.
         if (colcount >= mask.size())
         {
@@ -327,7 +329,7 @@ namespace Hungarian
         }
     }
 
-    /* 
+    /*
      * Find a noncovered zero and prime it. Save the smallest uncovered value and Go to Step 6.
      */
     void step4(const std::vector<std::vector<double>> &costs, std::vector<std::vector<unsigned char>> &mask,
@@ -351,9 +353,9 @@ namespace Hungarian
             {
                 double p = double(prog++) / (costs.size() * costs.size()); // PROGRESS
                 print_progress(p);                                         // PROGRESS
-                
+
                 mask[row][col] = 2;
-                if (star_in_row(row, mask)) 
+                if (star_in_row(row, mask))
                 {
                     // cover this row and uncover the column containing the starred zero
                     find_star_in_row(row, col, mask);
@@ -423,7 +425,7 @@ namespace Hungarian
         step = 3;
     }
 
-    /* 
+    /*
      * Add the value found in Step 4 to every element of each covered row, and subtract it
      * from every element of each uncovered column.  Return to Step 4 without altering any
      * stars, primes, or covered lines. Notice that this step uses the smallest uncovered
@@ -449,7 +451,7 @@ namespace Hungarian
                 if (row_cover[r] == 1)
                 {
                     costs[r][c] += minval;
-                }  
+                }
                 if (col_cover[c] == 0)
                 {
                     costs[r][c] -= minval;
@@ -459,12 +461,12 @@ namespace Hungarian
 
         step = 4;
     }
-    
+
     /*
      * Calculates the optimal cost from mask matrix.
      */
     std::vector<std::vector<double>> output_solution(const std::vector<std::vector<double>> &original,
-        const std::vector<std::vector<unsigned char>> &mask)
+                                                     const std::vector<std::vector<unsigned char>> &mask)
     {
         std::vector<std::vector<double>> alignment;
 
@@ -527,7 +529,7 @@ namespace Hungarian
         std::vector<unsigned char> col_cover(costs.size(), 0);
 
         int path_row_0; // temporary to hold the smallest uncovered value
-        int path_col_0; 
+        int path_col_0;
 
         // Array for the augmenting path algorithm
         std::vector<std::vector<int>> path(costs.size() + 1, std::vector<int>(2, 0));
@@ -540,7 +542,6 @@ namespace Hungarian
             switch (step)
             {
             case 1:
-                
                 step1(costs, step);
                 break;
             case 2:

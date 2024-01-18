@@ -1,0 +1,24 @@
+Executing:   ./minaa.exe examples/g.csv examples/h.csv -B=examples/bio.csv -b=0.85 -st=0.5 -s 
+Y_M_D-H_M_S: 2024_01_16-22_00_30
+
+INPUTS
+G File:               g.csv
+H File:               h.csv
+Bio File:             bio.csv
+Alpha:                1.000
+Beta:                 0.850
+Similarity threshold: 0.5000
+
+BEGINNING ALIGNMENT
+Reading graph files............................done. (8ms)
+Calculating GDVs...............................done. (19ms)
+Writing GDVs to files..........................done. (4ms)
+Calculating the topological cost matrix........done. (16ms)
+Writing the topological cost matrix to file....done. (5ms)
+Processing biological data.....................done. (4ms)
+Converting biological similarity to costs......done. (0ms)
+Calculating the overall cost matrix............done. (0ms)
+Writing the overall cost matrix to file........done. (6ms)
+Aligning the graphs............................done. (35ms)
+Writing the alignment to file..................done. (1ms)
+ALIGNMENT COMPLETED (105ms)
