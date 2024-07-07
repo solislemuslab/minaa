@@ -6,7 +6,7 @@
 
 ## Description
 
-MiNAA takes as input a pair of node-edge networks, and finds a correspondance between them such that each node in one is mapped to its most similar node in the other. MiNAA is capable of using both *topological* (structural) information about the network, and *biological* information about the taxa each node represents, in order to produce a good approximation of the optimal alignment. Due to the complexity of this task, an approximation is the best that can be done in an efficient runtime. Network alignment in this setting is done primarily for comparative purposes. For example, an alignment might map clusters of taxa to each other, revealing conserved or analogous functions between microbial communities. See our [software note](https://arxiv.org/abs/2212.05880) (preprint) for additional details.
+MiNAA takes as input a pair of node-edge networks, and finds a correspondance between them such that each node in one is mapped to its most similar node in the other. MiNAA is capable of using both *topological* (structural) information about the network, and *biological* information about the taxa each node represents, in order to produce a good approximation of the optimal alignment. Due to the complexity of this task, an approximation is the best that can be done in an efficient runtime. Network alignment in this setting is done primarily for comparative purposes. For example, an alignment might map clusters of taxa to each other, revealing conserved or analogous functions between microbial communities. See our [software note](https://joss.theoj.org/papers/10.21105/joss.05448) for additional details.
 
 ## Requirements
 
@@ -124,13 +124,16 @@ MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) license. 
 If you use MiNAA in your work, we kindly ask that you cite the following paper:
 
 ```bibtex
-@ARTICLE{Nelson2022,
-  title         = "MiNAA: Microbiome Network Alignment Algorithm",
-  author        = "Nelson, Reed and Aghdam, Rosa and
-                   Solis-Lemus, Claudia",
-  year          =  2022,
-  archivePrefix = "arXiv",
-  primaryClass  = "q-bio.PE",
-  eprint        = "xxx"
-}
+@article{Nelson2024,
+  doi = {10.21105/joss.05448}, 
+  url = {https://doi.org/10.21105/joss.05448},
+  year = {2024},
+  publisher = {The Open Journal},
+  volume = {9},
+  number = {96}, 
+  pages = {5448}, 
+  author = {Reed Nelson and Rosa Aghdam and Claudia Solis-Lemus},
+  title = {MiNAA: Microbiome Network Alignment Algorithm},
+  journal = {Journal of Open Source Software} 
+} 
 ```
