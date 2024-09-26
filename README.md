@@ -64,6 +64,10 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-st=**: similarity threshold; The similarity value above which aligned pairs are included in the output.
   - Require: a real number in range [0, 1].
   - Default: 0.
+- **-c**: conserved subgraphs; whether or not to output a list of the conserved subgraphs in the alignment between G and H.
+  - Require: none.
+  - Default: this list is not calculated or returned.
+  - Note: We define a conserved subgraph as a connected subgraph of G whose nodes are aligned to a connected subgraph of H.
 
 #### Uncommon
 

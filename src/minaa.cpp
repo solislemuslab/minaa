@@ -45,10 +45,11 @@ int main(int argc, char *argv[])
         auto g_alias = args[7];                            // graph G alias
         auto h_alias = args[8];                            // graph H alias
         auto bio_alias = args[9];                          // biological data alias
-        auto do_passthrough = (args[10] == "1");           // do a passthrough of input files?
-        auto do_timestamp = (args[11] == "1");             // include a timestamp in the directory name?
-        auto do_greekstamp = (args[12] == "1");            // include a greekstamp in the directory name?
-        auto do_similarity_conversion = (args[13] == "1"); // convert biological similarity to costs?
+        auto do_subgraph_id = (args[10] == "1");           // do conserved subgraph identification?
+        auto do_passthrough = (args[11] == "1");           // do a passthrough of input files?
+        auto do_timestamp = (args[12] == "1");             // include a timestamp in the directory name?
+        auto do_greekstamp = (args[13] == "1");            // include a greekstamp in the directory name?
+        auto do_similarity_conversion = (args[14] == "1"); // convert biological similarity to costs?
         auto do_bio = (bio_file != "");                    // biological data file provided?
 
         const auto BASE_PATH = "alignments";
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
         const auto OVERALL_COSTS_FILENAME = "overall_costs.csv";
         const auto ALIGNMENT_MATRIX_FILENAME = "alignment_matrix.csv";
         const auto ALIGNMENT_LIST_FILENAME = "alignment_list.csv";
+        const auto CONSERVED_SUBGRAPHS_FILENAME = "conserved_subgraphs.csv";
 
         // Generate output names
         auto g_name = FileIO::name_file(g_file, g_alias);
@@ -234,6 +236,17 @@ int main(int argc, char *argv[])
         auto f51 = std::chrono::high_resolution_clock::now();
         auto d51 = std::chrono::duration_cast<std::chrono::milliseconds>(f51 - s51).count();
         FileIO::out(log, "done. (" + std::to_string(d51) + "ms)\n");
+
+        if (do_subgraph_id) {
+            // Conserved subgraph identification
+            FileIO::out(log, "Identifying conserved subgraphs................");
+            auto s60 = std::chrono::high_resolution_clock::now();
+            auto subgraphs = Util::conserved_subgraphs(g_graph, h_graph, alignment, similarity_threshold);
+            FileIO::subgraphs_to_file(directory + CONSERVED_SUBGRAPHS_FILENAME, g_labels, h_labels, subgraphs);
+            auto f60 = std::chrono::high_resolution_clock::now();
+            auto d60 = std::chrono::duration_cast<std::chrono::milliseconds>(f60 - s60).count();
+            FileIO::out(log, "done. (" + std::to_string(d60) + "ms)\n");
+        }
 
         auto f = std::chrono::high_resolution_clock::now();
         auto d = std::chrono::duration_cast<std::chrono::milliseconds>(f - s).count();

@@ -10,6 +10,7 @@ namespace Util
     std::vector<std::vector<double>> normalize(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> one_minus(std::vector<std::vector<double>>);
     std::vector<std::vector<double>> combine(std::vector<std::vector<double>>, std::vector<std::vector<double>>, double);
+    std::vector<std::vector<std::pair<unsigned, unsigned>>> conserved_subgraphs(std::vector<std::vector<unsigned>>, std::vector<std::vector<unsigned>>, std::vector<std::vector<double>>, double);
 }
 
 #endif

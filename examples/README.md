@@ -31,12 +31,12 @@ Here we align network **g** with network **h** using topological information and
 ## Example 3
 
 ```bash
-./minaa.exe examples/g.csv examples/h.csv -Galias=nonsmoker -Halias=smoker -p -t
+./minaa.exe examples/g.csv examples/h.csv -Galias=nonsmoker -Halias=smoker -p -t -c
 ```
 
 Output to: `nonsmoker-smoker-2024_01_16-22_05_34/`
 
-Here we align network **g** with network **h**, where **g** is given the alias "nonsmoker", and **h** is given the alias "smoker". The timestamp option `-t` was specified, so the name of the output folder will be nonsmoker-smoker-T, where T is the date and time of execution. Additionally, because the passthrough option `-p` was specified, g.csv and h.csv will be passed through to the output folder as nonsmoker.csv and smoker.csv, respectively.
+Here we align network **g** with network **h**, where **g** is given the alias "nonsmoker", and **h** is given the alias "smoker". The timestamp option `-t` was specified, so the name of the output folder will be nonsmoker-smoker-T, where T is the date and time of execution. Because the passthrough option `-p` was specified, g.csv and h.csv will be passed through to the output folder as nonsmoker.csv and smoker.csv, respectively. Finally, because the `-c` option was specified, the output folder will include the alignment's conserved subgraphs, in a file called `conserved_subgraphs.csv`.
 
 ## Example 4
 
