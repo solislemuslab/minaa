@@ -21,6 +21,7 @@ namespace FileIO
     void matrix_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>);
     void alignment_to_matrix_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
     void alignment_to_list_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>, double);
+    void subgraphs_to_file(std::string, std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<std::pair<unsigned, unsigned>>>);
 }
 
 #endif
