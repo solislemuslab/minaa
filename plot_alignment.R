@@ -1,106 +1,145 @@
-plot_alignment <- function(g_filepath, h_filepath, alignment_filepath, output_filepath, th_align, zero_degree, vertex_label_value, size_aligned) {
+plot_alignment <- function(
+    g_filepath,
+    h_filepath,
+    alignment_filepath,
+    output_filepath,
+    st = 0,
+    hide_singletons = FALSE
+) {
+    # # Load necessary libraries
+    # required_packages <- c("igraph", "ggraph", "ggplot2", "readr", "dplyr")
+    # installed_packages <- rownames(installed.packages())
+    # for (pkg in required_packages) {
+    #     if (!pkg %in% installed_packages) {
+    #         install.packages(pkg, dependencies = TRUE)
+    #     }
+    # }
 
-  # Load adjacency matrices and alignment matrix
-  adj_G <- as.matrix(read.csv(g_filepath, header = TRUE, row.names = 1, check.names = FALSE))
-  adj_H <- as.matrix(read.csv(h_filepath, header = TRUE, row.names = 1, check.names = FALSE))
-  alignment_GH <- as.matrix(read.csv(alignment_filepath, header = TRUE, row.names = 1, check.names = FALSE))
+    library(igraph)
+    library(ggraph)
+    library(ggplot2)
+    library(readr)
+    library(dplyr)
 
-  g_size <- nrow(adj_G)
-  h_size <- nrow(adj_H)
-  adj_G <- adj_G[1:g_size, 1:g_size]
-  adj_H <- adj_H[1:h_size, 1:h_size]
-  alignment_GH <- alignment_GH[1:g_size, 1:h_size]
-
-  # Create graph objects with unique vertex names
-  graph_G <- graph_from_adjacency_matrix(adj_G, mode = "undirected")
-  V(graph_G)$name <- rownames(adj_G)
-
-  graph_H <- graph_from_adjacency_matrix(adj_H, mode = "undirected")
-  V(graph_H)$name <- rownames(adj_H)
-
-  # Identify aligned nodes
-  alignment_indices <- which(alignment_GH >= th_align, arr.ind = TRUE)
-  aligned_nodes_G <- V(graph_G)$name[alignment_indices[, 1]]
-  aligned_nodes_H <- V(graph_H)$name[alignment_indices[, 2]]
-
-  # Optionally remove nodes with degree 0, except aligned nodes
-  zero_deg_nodes_G <- V(graph_G)[degree(graph_G) < zero_degree & !(V(graph_G)$name %in% aligned_nodes_G)]
-  zero_deg_nodes_H <- V(graph_H)[degree(graph_H) < zero_degree & !(V(graph_H)$name %in% aligned_nodes_H)]
-  graph_G <- delete.vertices(graph_G, zero_deg_nodes_G)
-  graph_H <- delete.vertices(graph_H, zero_deg_nodes_H)
-
-  # Re-calculate the aligned nodes after potential removal
-  aligned_indices_G <- match(aligned_nodes_G, V(graph_G)$name)
-  aligned_indices_H <- match(aligned_nodes_H, V(graph_H)$name)
-
-  # Filter out NA values from aligned indices
-  valid_indices <- which(!is.na(aligned_indices_G) & !is.na(aligned_indices_H))
-  aligned_indices_G <- aligned_indices_G[valid_indices]
-  aligned_indices_H <- aligned_indices_H[valid_indices]
-
-  # Create a combined graph for alignment visualization
-  combined_graph <- graph.disjoint.union(graph_G, graph_H)
-
-  # Define layout for combined graph with circular layout
-  layout_G <- layout_in_circle(graph_G)
-  layout_H <- layout_in_circle(graph_H)
-
-  png(output_filepath, width = 1600, height = 1200, res = 120)
-
-  # Adjust the layout to place aligned nodes directly opposite each other
-  adjust_opposite_positions <- function(layout_G, layout_H, indices_G, indices_H) {
-    num_nodes <- length(indices_G)
-    angle_step <- pi / (num_nodes + 1)
-    start_angle <- pi / 2
-
-    for (i in seq_along(indices_G)) {
-      angle <- start_angle - (i * angle_step)
-      layout_G[indices_G[i], ] <- c(cos(angle), sin(angle))
-      layout_H[indices_H[i], ] <- c(-cos(angle), sin(angle))
+    # Helper function to read adjacency matrix
+    read_adjacency <- function(filepath) {
+        df <- read_csv(filepath, show_col_types = FALSE)
+        mat <- as.matrix(df[, -1])
+        rownames(mat) <- df[[1]]
+        return(mat)
     }
-    return(list(layout_G, layout_H))
-  }
 
-  layouts <- adjust_opposite_positions(layout_G, layout_H, aligned_indices_G, aligned_indices_H)
-  layout_G <- layouts[[1]]
-  layout_H <- layouts[[2]]
+    # Read adjacency matrices
+    g_mat <- read_adjacency(g_filepath)
+    h_mat <- read_adjacency(h_filepath)
 
-  # Reduce the separation distance between G and H networks
-  layout_G <- layout_G - cbind(rep(2, nrow(layout_G)), rep(0, nrow(layout_G)))
-  layout_H <- layout_H + cbind(rep(2, nrow(layout_H)), rep(0, nrow(layout_H)))
+    # Create igraph objects (assuming undirected graphs; adjust 'mode' if needed)
+    g_graph <- graph_from_adjacency_matrix(g_mat, mode = "undirected", diag = FALSE)
+    h_graph <- graph_from_adjacency_matrix(h_mat, mode = "undirected", diag = FALSE)
 
-  # Combine layouts
-  layout_combined <- rbind(layout_G, layout_H)
+    # Read alignment matrix
+    alignment_df <- read_csv(alignment_filepath, show_col_types = FALSE)
+    alignment_mat <- as.matrix(alignment_df[, -1])
+    rownames(alignment_mat) <- alignment_df[[1]]
 
-  # Add edges based on alignment matrix GH
-  for (i in seq_along(aligned_indices_G)) {
-    combined_graph <- add_edges(combined_graph, c(aligned_indices_G[i], aligned_indices_H[i] + vcount(graph_G)))
-  }
+    # Extract alignment pairs with similarity > the similarity threshold
+    alignment_pairs <- which(alignment_mat > st, arr.ind = TRUE)
+    align_df <- data.frame(
+        g_node = rownames(alignment_mat)[alignment_pairs[, 1]],
+        h_node = colnames(alignment_mat)[alignment_pairs[, 2]],
+        similarity = alignment_mat[alignment_pairs]
+    )
 
-  # Define colors for vertices and edges
-  vertex_colors <- c(rep("lightblue", vcount(graph_G)), rep("lightgreen", vcount(graph_H)))
-  vertex_colors[aligned_indices_G] <- "dodgerblue"
-  vertex_colors[aligned_indices_H + vcount(graph_G)] <- "green"
-  edge_colors <- c(rep("black", ecount(graph_G) + ecount(graph_H)), rep("purple", length(aligned_indices_G)))
+    if (hide_singletons) {
+        # Remove nodes in G and H with degree 0
+        deg_g <- degree(g_graph)
+        non_single_g <- names(deg_g[deg_g > 0])
+        g_graph <- induced_subgraph(g_graph, vids = non_single_g)
 
-  # Define sizes and label sizes for vertices
-  vertex_sizes <- rep(1, vcount(combined_graph))
-  vertex_sizes[c(aligned_indices_G, aligned_indices_H + vcount(graph_G))] <- size_aligned
-  vertex_label_sizes <- rep(vertex_label_value, vcount(combined_graph))
-  vertex_label_sizes[c(aligned_indices_G, aligned_indices_H + vcount(graph_G))] <- 0.8
+        deg_h <- degree(h_graph)
+        non_single_h <- names(deg_h[deg_h > 0])
+        h_graph <- induced_subgraph(h_graph, vids = non_single_h)
 
-  # Plot the combined graph with alignment edges
-  plot(combined_graph,
-    layout = layout_combined,
-    vertex.label = V(combined_graph)$name, # Add vertex labels
-    vertex.size = vertex_sizes, # Adjust vertex size for better visualization
-    vertex.label.cex = vertex_label_sizes, # Adjust label size for better readability
-    vertex.color = vertex_colors,
-    edge.color = edge_colors,
-    edge.width = c(rep(1, ecount(graph_G) + ecount(graph_H)), rep(2, length(aligned_indices_G))),
-    main = "Result of MiNAA",
-    asp = 0 # Set aspect ratio to ensure circular layout
-  )
+        # Update alignment_df to include only existing nodes after subsetting
+        align_df <- align_df %>%
+            filter(g_node %in% V(g_graph)$name & h_node %in% V(h_graph)$name)
+    }
 
-  dev.off()
+    # Rename nodes to ensure uniqueness
+    V(g_graph)$name <- paste0("G_", V(g_graph)$name)
+    V(h_graph)$name <- paste0("H_", V(h_graph)$name)
+
+    combined_graph <- disjoint_union(g_graph, h_graph)
+
+    # Prepare alignment edges
+    if (nrow(align_df) > 0) {
+        align_edges <- align_df %>%
+            mutate(
+                from = paste0("G_", g_node),
+                to = paste0("H_", h_node)
+            )
+    } else {
+        align_edges <- data.frame(from = character(0), to = character(0), similarity = numeric(0))
+    }
+
+    # Create a layout with G on the left and H on the right
+    set.seed(123) # For reproducibility
+    layout_g <- layout_with_fr(g_graph)
+    layout_h <- layout_with_fr(h_graph)
+
+    # Shift H layout to the right of G
+    shift_x <- max(layout_g[, 1]) - min(layout_h[, 1]) + 5
+    layout_h[, 1] <- layout_h[, 1] + shift_x
+
+    # Combine layouts
+    combined_layout <- rbind(layout_g, layout_h)
+    V(combined_graph)$x <- combined_layout[, 1]
+    V(combined_graph)$y <- combined_layout[, 2]
+
+    # Prepare data for alignment edges
+    if (nrow(align_edges) > 0) {
+        align_coords <- align_edges %>%
+            mutate(
+                from_x = V(combined_graph)$x[match(from, V(combined_graph)$name)],
+                from_y = V(combined_graph)$y[match(from, V(combined_graph)$name)],
+                to_x = V(combined_graph)$x[match(to, V(combined_graph)$name)],
+                to_y = V(combined_graph)$y[match(to, V(combined_graph)$name)]
+            )
+    }
+
+    # Plot #
+    
+    # Adjust the plot size based on the number of nodes
+    num_nodes <- vcount(combined_graph)
+    plot_width <- max(2000, 100 + 20 * num_nodes)
+    plot_height <- max(1000, 100 + 10 * num_nodes)
+
+    png(filename = output_filepath, width = plot_width, height = plot_height, res = 150)
+
+    p <- ggraph(combined_graph, layout = "manual", x = V(combined_graph)$x, y = V(combined_graph)$y) +
+        # Internal edges within G and H
+        geom_edge_link(aes(alpha = 0.5), color = "grey", linewidth = 0.5) +
+        # G nodes in red, H in blue
+        geom_node_point(aes(color = ifelse(startsWith(name, "G_"), "G", "H")), size = 3) +
+        # Node labels without the prefix
+        geom_node_text(aes(label = gsub("^[GH]_", "", name)), repel = TRUE, size = 3)
+        # Color mapping
+        scale_color_manual(values = c("G" = "red", "H" = "blue")) +
+        theme_void() +
+        theme(legend.position = "none")
+
+    if (nrow(align_edges) > 0) {
+        # Add alignment edges
+        p <- p +
+            geom_segment(
+                data = align_coords,
+                aes(x = from_x, y = from_y, xend = to_x, yend = to_y),
+                color = "purple", linewidth = 0.5, alpha = 0.6
+            )
+    }
+
+    print(p)
+    dev.off()
+
+    message("Plot saved to ", output_filepath)
 }

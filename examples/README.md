@@ -47,14 +47,12 @@ plot_alignment(
     h_filepath = "examples/h.csv",
     alignment_filepath = "examples/g-h/alignment_matrix.csv",
     output_filepath = "examples/g-h/plot.png",
-    th_align = 0.2,
-    zero_degree = 0,
-    vertex_label_value = 0.1,
-    size_aligned = 5
+    st = 0.5,
+    hide_singletons = TRUE
 )
 ```
 
-This is an example execution in R of the alignment visualization script `plot_alignment.R`.
+This is an example execution in R of the alignment visualization script `plot_alignment.R`. The resulting `plot.png` is in `examples/g-h/`.
 
 ## Attributions
 
