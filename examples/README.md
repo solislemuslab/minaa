@@ -10,7 +10,9 @@ Once MiNAA is successfully compiled, the examples below can be run from this pro
 
 ## Example 1
 
-`./minaa.exe examples/g.csv examples/h.csv -a=0.6 -g`
+```bash
+./minaa.exe examples/g.csv examples/h.csv -a=0.6 -g
+```
 
 Output to: `g-h-a0.6/`
 
@@ -18,7 +20,9 @@ Here we align network **g** with network **h** using no biological data. `-a=0.6
 
 ## Example 2
 
-`./minaa.exe examples/g.csv examples/h.csv -B=examples/bio.csv -b=0.85 -st=0.5 -s`
+```bash
+./minaa.exe examples/g.csv examples/h.csv -B=examples/bio.csv -b=0.85 -st=0.5 -s
+```
 
 Output to: `g-h/`
 
@@ -26,11 +30,29 @@ Here we align network **g** with network **h** using topological information and
 
 ## Example 3
 
-`./minaa.exe examples/g.csv examples/h.csv -Galias=nonsmoker -Halias=smoker -p -t`
+```bash
+./minaa.exe examples/g.csv examples/h.csv -Galias=nonsmoker -Halias=smoker -p -t -c
+```
 
 Output to: `nonsmoker-smoker-2024_01_16-22_05_34/`
 
-Here we align network **g** with network **h**, where **g** is given the alias "nonsmoker", and **h** is given the alias "smoker". The timestamp option `-t` was specified, so the name of the output folder will be nonsmoker-smoker-T, where T is the date and time of execution. Additionally, because the passthrough option `-p` was specified, g.csv and h.csv will be passed through to the output folder as nonsmoker.csv and smoker.csv, respectively.
+Here we align network **g** with network **h**, where **g** is given the alias "nonsmoker", and **h** is given the alias "smoker". The timestamp option `-t` was specified, so the name of the output folder will be nonsmoker-smoker-T, where T is the date and time of execution. Because the passthrough option `-p` was specified, g.csv and h.csv will be passed through to the output folder as nonsmoker.csv and smoker.csv, respectively. Finally, because the `-c` option was specified, the output folder will include the alignment's conserved subgraphs, in a file called `conserved_subgraphs.csv`.
+
+## Example 4
+
+```R
+source("plot_alignment.R")
+plot_alignment(
+    g_filepath = "examples/g.csv",
+    h_filepath = "examples/h.csv",
+    alignment_filepath = "examples/g-h/alignment_matrix.csv",
+    output_filepath = "examples/g-h/plot.png",
+    st = 0.5,
+    hide_singletons = TRUE
+)
+```
+
+This is an example execution in R of the alignment visualization script `plot_alignment.R`. The resulting `plot.png` is in `examples/g-h/`.
 
 ## Attributions
 

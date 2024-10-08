@@ -584,8 +584,10 @@ namespace FileIO
      *
      * @throws std::runtime_error If the file could not be written.
      */
-    void matrix_to_file(std::string filepath, std::vector<std::string> g_labels, std::vector<std::string> h_labels,
-                        std::vector<std::vector<double>> matrix)
+    void matrix_to_file(std::string filepath, 
+        std::vector<std::string> g_labels, 
+        std::vector<std::string> h_labels,
+        std::vector<std::vector<double>> matrix)
     {
         // Create and open the file
         std::ofstream fout;
@@ -628,8 +630,11 @@ namespace FileIO
      *
      * @throws std::runtime_error If the file could not be written.
      */
-    void alignment_to_matrix_file(std::string filepath, std::vector<std::string> g_labels,
-                                  std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double similarity_threshold)
+    void alignment_to_matrix_file(std::string filepath, 
+        std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels,
+        std::vector<std::vector<double>> alignment, 
+        double similarity_threshold)
     {
         // Create and open the file
         std::ofstream fout;
@@ -680,8 +685,11 @@ namespace FileIO
      *
      * @throws std::runtime_error If the file could not be written.
      */
-    void alignment_to_list_file(std::string filepath, std::vector<std::string> g_labels,
-                                std::vector<std::string> h_labels, std::vector<std::vector<double>> alignment, double similarity_threshold)
+    void alignment_to_list_file(std::string filepath, 
+        std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels, 
+        std::vector<std::vector<double>> alignment, 
+        double similarity_threshold)
     {
         // Convert the alignment matrix into a list
         std::vector<std::array<double, 3>> list;
@@ -725,6 +733,55 @@ namespace FileIO
         for (unsigned i = 0; i < list.size(); ++i)
         {
             fout << g_labels[list[i][0]] << "," << h_labels[list[i][1]] << "," << list[i][2] << std::endl;
+        }
+
+        fout.close();
+    }
+
+    /**
+     * Write the given conserved subgraphs to a csv file.
+     *
+     * @param filepath The path to the output file.
+     * @param g_labels Labels for the G graph.
+     * @param h_labels Labels for the H graph.
+     * @param subgraphs The subgraphs to write to the file.
+     *
+     * @throws std::runtime_error If the file could not be written.
+     */
+    void subgraphs_to_file(std::string filepath,
+        std::vector<std::string> g_labels,
+        std::vector<std::string> h_labels, 
+        std::vector<std::vector<std::pair<unsigned, unsigned>>> subgraphs)
+    {
+        // Create and open the file
+        std::ofstream fout;
+        fout.exceptions(std::ofstream::badbit);
+        try
+        {
+            fout.open(filepath);
+        }
+        catch (const std::ofstream::failure &e)
+        {
+            throw std::runtime_error("Unable to open file " + filepath);
+        }
+
+        // Write the subgraphs to the file
+        for (const auto& subgraph : subgraphs)
+        {
+            for (const auto& pair : subgraph)
+            {
+                unsigned g_index = pair.first;
+                unsigned h_index = pair.second;
+
+                // Ensure the indices are within the bounds of the labels
+                if (g_index >= g_labels.size() || h_index >= h_labels.size())
+                {
+                    throw std::runtime_error("Index out of bounds for labels.");
+                }
+
+                fout << g_labels[g_index] << "," << h_labels[h_index] << std::endl;
+            }
+            fout << std::endl;
         }
 
         fout.close();

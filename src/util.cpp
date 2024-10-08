@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <limits>
 #include <sstream>
+#include <stack>
 #include <vector>
 
 #include "file_io.h"
@@ -55,9 +56,10 @@ namespace Util
      * args[6]:  G alias
      * args[7]:  H alias
      * args[8]:  B alias
-     * args[9]:  do a passthrough?
-     * args[10]: include a timestamp?
-     * args[11]: include a greekstamp?
+     * args[9]:  do a conserved subgraph identification?
+     * args[10]: do a passthrough?
+     * args[11]: include a timestamp?
+     * args[12]: include a greekstamp?
      *
      * @param argc The number of command line arguments.
      * @param argv The command line arguments.
@@ -68,9 +70,9 @@ namespace Util
      */
     std::vector<std::string> parse_args(int argc, char *argv[])
     {
-        std::vector<std::string> args = {"", "", "", "", "1", "1", "0", "", "", "", "0", "0", "0", "0"};
+        std::vector<std::string> args = {"", "", "", "", "1", "1", "0", "", "", "", "0", "0", "0", "0", "0"};
 
-        if (argc < 3 || argc > 14)
+        if (argc < 3 || argc > 15)
         {
             throw std::invalid_argument("Invalid number of arguments.\nUsage: ./minaaa.exe <G.csv> <H.csv> \nSee README.md for additional options and details.");
         }
@@ -147,21 +149,25 @@ namespace Util
                     throw std::invalid_argument("The B alias contains an illegal character.");
                 }
             }
-            else if (arg.find("-p") != std::string::npos)
+            else if (arg.find("-c") != std::string::npos)
             {
                 args[10] = "1";
             }
-            else if (arg.find("-t") != std::string::npos)
+            else if (arg.find("-p") != std::string::npos)
             {
                 args[11] = "1";
             }
-            else if (arg.find("-g") != std::string::npos)
+            else if (arg.find("-t") != std::string::npos)
             {
                 args[12] = "1";
             }
-            else if (arg.find("-s") != std::string::npos)
+            else if (arg.find("-g") != std::string::npos)
             {
                 args[13] = "1";
+            }
+            else if (arg.find("-s") != std::string::npos)
+            {
+                args[14] = "1";
             }
             else
             {
@@ -290,8 +296,6 @@ namespace Util
      * @param beta of the weight goes to topological similarity, (1 - beta) goes to biological similarity.
      *
      * @return The combined cost matrix.
-     *
-     * @throws
      */
     std::vector<std::vector<double>> combine(
         std::vector<std::vector<double>> topological_costs, std::vector<std::vector<double>> biological_costs, double beta)
@@ -321,6 +325,79 @@ namespace Util
         }
 
         return overall_costs;
+    }
+
+    /**
+     * Given a pair of graphs G and H and an alignment on them, we define a conserved subgraph as a connected subgraph of G whose nodes are aligned to a connected subgraph of H.
+     * This function returns all such conserved subgraphs, including singleton nodes.
+     * 
+     * @param g_graph The adjacency matrix of graph G.
+     * @param h_graph The adjacency matrix of graph H.
+     * @param alignment The alignment matrix.
+     * @param similarity_threshold The threshold for considering a two nodes to be aligned.
+     *
+     * @return A list of conserved subgraphs in the alignment.
+     */
+    std::vector<std::vector<std::pair<unsigned, unsigned>>> conserved_subgraphs(
+        const std::vector<std::vector<unsigned>> g_graph,
+        const std::vector<std::vector<unsigned>> h_graph,
+        const std::vector<std::vector<double>> alignment,
+        double similarity_threshold)
+    {
+        // The nodes of the merged graph are those nodes in G with an alignment in H
+        std::vector<std::pair<unsigned, unsigned>> merged_nodes;
+        for (unsigned i = 0; i < alignment.size(); ++i) {
+            for (unsigned j = 0; j < alignment[i].size(); ++j) {
+                if (alignment[i][j] > similarity_threshold) {
+                    merged_nodes.push_back({i, j});
+                    break;
+                }
+            }
+        }
+
+        // Identify the edges of the merged graph
+        std::vector<std::vector<unsigned>> merged_graph(merged_nodes.size(), std::vector<unsigned>(merged_nodes.size(), 0));
+        for (unsigned i = 0; i < merged_graph.size(); ++i) {
+            for (unsigned j = 0; j < merged_graph.size(); ++j) {
+                if (g_graph[merged_nodes[i].first][merged_nodes[j].first]) {
+                    if (h_graph[merged_nodes[i].second][merged_nodes[j].second]) {
+                        merged_graph[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        // Traverse the merged graph to find connected subgraphs
+        std::vector<std::vector<std::pair<unsigned, unsigned>>> conserved_subgraphs;
+        std::vector<bool> visited(merged_nodes.size(), false);
+
+        for (unsigned i = 0; i < merged_nodes.size(); ++i) {
+            if (!visited[i]) {
+                // Start a new connected subgraph
+                std::vector<std::pair<unsigned, unsigned>> subgraph;
+                std::stack<unsigned> stack;
+                stack.push(i);
+                visited[i] = true;
+
+                while (!stack.empty()) {
+                    unsigned u = stack.top();
+                    stack.pop();
+                    subgraph.push_back(merged_nodes[u]);
+
+                    // Visit all neighbors of u
+                    for (unsigned v = 0; v < merged_nodes.size(); ++v) {
+                        if (merged_graph[u][v] && !visited[v]) {
+                            stack.push(v);
+                            visited[v] = true;
+                        }
+                    }
+                }
+
+                conserved_subgraphs.push_back(subgraph);
+            }
+        }
+
+        return conserved_subgraphs;
     }
 
 }

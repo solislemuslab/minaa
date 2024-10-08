@@ -1,8 +1,8 @@
 # MiNAA: Microbiome Network Alignment Algorithm
 
-<img src="logo.png" style="width:40%;" align=right>
+<img src="img/logo.png" style="width:40%;" align=right>
 
-[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/blob/main/LICENSE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa) [![status](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3/status.svg)](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3)
+[![GitHub Releases](https://img.shields.io/github/v/release/solislemuslab/minaa?display_name=tag)](https://github.com/solislemuslab/minaa/releases) [![GitHub license](https://img.shields.io/github/license/solislemuslab/minaa?color=yellow)](https://github.com/solislemuslab/minaa/blob/main/LICENSE) [![GitHub Issues](https://img.shields.io/github/issues/solislemuslab/minaa)](https://github.com/solislemuslab/minaa/issues) ![ ](https://img.shields.io/github/languages/code-size/solislemuslab/minaa?color=white) [![status](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3/status.svg)](https://joss.theoj.org/papers/b4d9f26021065b1759d50413f60aa9c3)
 
 ## Description
 
@@ -64,6 +64,10 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 - **-st=**: similarity threshold; The similarity value above which aligned pairs are included in the output.
   - Require: a real number in range [0, 1].
   - Default: 0.
+- **-c**: conserved subgraphs; whether or not to output a list of the conserved subgraphs in the alignment between G and H.
+  - Require: none.
+  - Default: this list is not calculated or returned.
+  - Note: We define a conserved subgraph as a connected subgraph of G whose nodes are aligned to a connected subgraph of H. See the Examples section for a visual.
 
 #### Uncommon
 
@@ -105,6 +109,12 @@ This utility has the form `./minaa.exe <G> <H> [-B=bio] [-a=alpha] [-b=beta]`.
 
 ### Examples
 
+<img src="img/conserved_subgraph.png" style="width:60%;" align=center>
+
+On the left are adjacency matrices for simple networks G and H, and an imagined **alignment matrix** as returned by MiNAA. On the right is a visual depiction of G overlaying H, and the connected purple graph is what we call a **conserved subgraph** in the alignment of G and H. We color a node purple if that node in G is aligned to a node in H, and we color an edge purple if a pair of adjacent nodes in G are also adjacent in the nodes they're aligned to in H. Note that the blue edge, red edge, and red node `e` are not considered part of this conserved subgraph.
+
+#### Example Execution
+
 Examples of MiNAA's usage with real data and in-depth explanations can be found in the `examples/` directory.
 
 ## Simulations in the Manuscript
@@ -117,7 +127,7 @@ Users interested in expanding functionalities in MiNAA are welcome to do so. Iss
 
 ## License
 
-MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) license. &copy; SolisLemus lab (2024).
+MiNAA is licensed under the [MIT](https://opensource.org/licenses/MIT) license. &copy; Solis-Lemus Lab (2024).
 
 ## Citation
 
